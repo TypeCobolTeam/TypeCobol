@@ -12,73 +12,53 @@
        01 not-suggested PIC X.
        PROCEDURE DIVISION.
       * STRING is not supported for completion yet.
-      * Check that user filter is considered even in default context
-           STRING v
+      * Cursor after keyword, suggest variables
+           STRING 
            GOBACK
            .
        END PROGRAM TCOMFL06.
 ---------------------------------------------------------------------------------
-{"line":15,"character":19}
+{"line":15,"character":18}
 ---------------------------------------------------------------------------------
 [
   {
     "label": "var1 (Alphanumeric) (var1)",
     "kind": 6,
-    "insertText": "var1",
-    "data": {
-      "start": {
-        "line": 15,
-        "character": 18
-      },
-      "end": {
-        "line": 15,
-        "character": 19
-      }
-    }
+    "insertText": "var1"
+  },
+  {
+    "label": "other-data (Alphanumeric) (other-data)",
+    "kind": 6,
+    "insertText": "other-data"
   },
   {
     "label": "var2 (Numeric) (var2)",
     "kind": 6,
-    "insertText": "var2",
-    "data": {
-      "start": {
-        "line": 15,
-        "character": 18
-      },
-      "end": {
-        "line": 15,
-        "character": 19
-      }
-    }
+    "insertText": "var2"
+  },
+  {
+    "label": "group1 (Alphanumeric) (group1)",
+    "kind": 6,
+    "insertText": "group1"
   },
   {
     "label": "var3 (Alphanumeric) (group1::var3)",
     "kind": 6,
-    "insertText": "group1::var3",
-    "data": {
-      "start": {
-        "line": 15,
-        "character": 18
-      },
-      "end": {
-        "line": 15,
-        "character": 19
-      }
-    }
+    "insertText": "group1::var3"
+  },
+  {
+    "label": "group2 (Alphanumeric) (group1::group2)",
+    "kind": 6,
+    "insertText": "group1::group2"
   },
   {
     "label": "var4 (Numeric) (group1::group2::var4)",
     "kind": 6,
-    "insertText": "group1::group2::var4",
-    "data": {
-      "start": {
-        "line": 15,
-        "character": 18
-      },
-      "end": {
-        "line": 15,
-        "character": 19
-      }
-    }
+    "insertText": "group1::group2::var4"
+  },
+  {
+    "label": "not-suggested (Alphanumeric) (not-suggested)",
+    "kind": 6,
+    "insertText": "not-suggested"
   }
 ]

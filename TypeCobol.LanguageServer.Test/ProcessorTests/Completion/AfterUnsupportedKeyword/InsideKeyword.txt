@@ -1,0 +1,38 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TCOMFL06.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 var1 PIC X.
+       01 other-data PIC X.
+       01 var2 PIC 9.
+       01 group1.
+          05 var3 PIC X.
+          05 group2.
+             10 var4 PIC 9.
+       01 not-suggested PIC X.
+       PROCEDURE DIVISION.
+      * STRING is not supported for completion yet.
+      * Cursor inside -> suggest keyword followed by space
+           STRING
+           GOBACK
+           .
+       END PROGRAM TCOMFL06.
+---------------------------------------------------------------------------------
+{"line":15,"character":14}
+---------------------------------------------------------------------------------
+[
+  {
+    "label": "STRING ",
+    "kind": 14,
+    "data": {
+      "start": {
+        "line": 15,
+        "character": 11
+      },
+      "end": {
+        "line": 15,
+        "character": 17
+      }
+    }
+  }
+]

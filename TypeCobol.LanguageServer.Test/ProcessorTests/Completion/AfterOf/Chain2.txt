@@ -1,0 +1,101 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TCOBCOMP.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+      * should suggest
+       01 SAY-MAIN-GROUP1.
+          05 SUB-GROUP1.
+             10 VAR1                 PIC X.
+      * should suggest
+       01 SAY-MAIN-GROUP2.
+      * should suggest
+          05 SAY-GROUP2.
+             10 SUB-GROUP1.
+                15 VAR1              PIC X.
+       01 NOT-MAIN-GLOUP.
+      * should suggest
+          05 SAY-GROUP3.
+             10 NOT-GLOUP.
+                15 SUB-GROUP1.
+                   20 NOT-SUB-GROUP.
+                      25 VAR1        PIC X.
+      * should not suggest: not matching chain
+       01 NOT-MAIN-GROUP1.
+          05 NOT-SUB-GLOUP1.
+             10 VAR1                 PIC X.
+       01 NOT-MAIN-GROUP2.
+          05 SUB-GROUP1.
+             10 VAR2                 PIC X.
+
+       PROCEDURE DIVISION.
+       MAIN.
+           MOVE 1 TO VAR1 OF SUB-GROUP1 OF GR
+           GOBACK
+           .
+
+       END PROGRAM TCOBCOMP.
+---------------------------------------------------------------------------------
+{"line":31,"character":45}
+---------------------------------------------------------------------------------
+[
+  {
+    "label": "SAY-MAIN-GROUP1 (Alphanumeric) (SAY-MAIN-GROUP1)",
+    "kind": 6,
+    "insertText": "SAY-MAIN-GROUP1",
+    "data": {
+      "start": {
+        "line": 31,
+        "character": 43
+      },
+      "end": {
+        "line": 31,
+        "character": 45
+      }
+    }
+  },
+  {
+    "label": "SAY-GROUP2 (Alphanumeric) (SAY-MAIN-GROUP2::SAY-GROUP2)",
+    "kind": 6,
+    "insertText": "SAY-MAIN-GROUP2::SAY-GROUP2",
+    "data": {
+      "start": {
+        "line": 31,
+        "character": 43
+      },
+      "end": {
+        "line": 31,
+        "character": 45
+      }
+    }
+  },
+  {
+    "label": "SAY-MAIN-GROUP2 (Alphanumeric) (SAY-MAIN-GROUP2)",
+    "kind": 6,
+    "insertText": "SAY-MAIN-GROUP2",
+    "data": {
+      "start": {
+        "line": 31,
+        "character": 43
+      },
+      "end": {
+        "line": 31,
+        "character": 45
+      }
+    }
+  },
+  {
+    "label": "SAY-GROUP3 (Alphanumeric) (NOT-MAIN-GLOUP::SAY-GROUP3)",
+    "kind": 6,
+    "insertText": "NOT-MAIN-GLOUP::SAY-GROUP3",
+    "data": {
+      "start": {
+        "line": 31,
+        "character": 43
+      },
+      "end": {
+        "line": 31,
+        "character": 45
+      }
+    }
+  }
+]

@@ -124,6 +124,9 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
             // Mirror the EnterDataDefinition method
             if (dataDefinition.IsTableOccurence)
             {
+                // Add occurence separator
+                _currentStatement.AddChild(new GeneratedDisplaySeparator(_dataLogicalLevel + 1));
+
                 // Exit PERFORM
                 _currentStatement = _currentStatement.Parent;
 

@@ -2,9 +2,8 @@
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Scanner;
+using TypeCobol.Compiler.Text;
 using TypeCobol.LanguageServer.VsCodeProtocol;
-
-using Range = TypeCobol.LanguageServer.VsCodeProtocol.Range;
 
 namespace TypeCobol.LanguageServer.Processor
 {
@@ -21,7 +20,7 @@ namespace TypeCobol.LanguageServer.Processor
         {
             List<CompletionItem> items;
 
-            var wrappedCodeElements = TypeCobolServer.CodeElementFinder(compilationUnit, position);
+            var wrappedCodeElements = TypeCobolServer.CodeElementFinder(compilationUnit, position, out var cursorLine);
             if (wrappedCodeElements == null)
                 return null;
 
@@ -107,16 +106,25 @@ namespace TypeCobol.LanguageServer.Processor
             }
             else
             {
-                //If no known keyword has been found, let's try to get the context and return available variables. 
-                if (matchingCodeElement == null && wrappedCodeElements.Any())
+                //If no known keyword has been found, let's try to get the context.
+                if (matchingCodeElement == null && wrappedCodeElements.Any() && cursorLine != null)
                 {
-                    userFilterToken =
-                        wrappedCodeElements.First().ArrangedConsumedTokens.FirstOrDefault(
-                            t =>
-                                position.character <= t.StopIndex + 1 && position.character > t.StartIndex
-                                && t.Line == position.line + 1
-                                && t.TokenType == TokenType.UserDefinedWord); //Get the userFilterToken to filter the results
-                    items = new CompletionForVariable(userFilterToken, _ => true).ComputeProposals(compilationUnit, wrappedCodeElements.First());
+                    if (ShouldSuggestKeywords())
+                    {
+                        // Suggest statement-starting keywords
+                        items = new CompletionForKeywords(userFilterToken).ComputeProposals(compilationUnit, wrappedCodeElements.First());
+                    }
+                    else
+                    {
+                        // Default to variables
+                        userFilterToken =
+                            wrappedCodeElements.First().ArrangedConsumedTokens.FirstOrDefault(
+                                t =>
+                                    position.character <= t.StopIndex + 1 && position.character > t.StartIndex
+                                                                          && t.Line == position.line + 1
+                                                                          && t.TokenType == TokenType.UserDefinedWord); //Get the userFilterToken to filter the results
+                        items = new CompletionForVariable(userFilterToken, _ => true).ComputeProposals(compilationUnit, wrappedCodeElements.First());
+                    }
                 }
                 else
                 {
@@ -131,7 +139,7 @@ namespace TypeCobol.LanguageServer.Processor
             if (userFilterToken != null)
             {
                 //Add the range object to let the client know the position of the user filter token
-                var range = Range.FromPositions(userFilterToken.Line - 1, userFilterToken.StartIndex, userFilterToken.Line - 1, userFilterToken.StopIndex + 1);
+                var range = VsCodeProtocol.Range.FromPositions(userFilterToken.Line - 1, userFilterToken.StartIndex, userFilterToken.Line - 1, userFilterToken.StopIndex + 1);
                 //-1 on line to 0 based / +1 on stop index to include the last character
                 items.ForEach(c =>
                 {
@@ -143,6 +151,47 @@ namespace TypeCobol.LanguageServer.Processor
             }
 
             return items;
+
+            // Check what is before cursor, also set userFilterToken when possible
+            bool ShouldSuggestKeywords()
+            {
+                /*
+                 * Inside PROCEDURE DIVISION ?
+                 *
+                 * Using the scan state InsideDataDivision flag is imprecise as this flag only tracks
+                 * the encounter of 'DATA DIVISION' and 'PROCEDURE DIVISION' headers. Assuming being
+                 * inside PROCEDURE DIVISION when the flag is false is incorrect as we could be located
+                 * in ENVIRONMENT DIVISION.
+                 *
+                 * Moreover the flag is not updated when editing lines, its value depends on the state
+                 * when the line was parsed initially.
+                 */
+                if (cursorLine.ScanState?.InsideDataDivision ?? false) return false;
+
+                // In AreaB ?
+                if (position.character < (int)CobolFormatAreas.End_A) return false;
+
+                var tokensBeforeCursor = cursorLine.SourceTokens.Where(t => t.StartIndex < position.character && t.TokenType != TokenType.SpaceSeparator).ToList();
+
+                if (tokensBeforeCursor.Count == 0)
+                {
+                    // Nothing before cursor
+                    userFilterToken = null;
+                    return true;
+                }
+
+                if (tokensBeforeCursor.Count == 1)
+                {
+                    // A single token is on the line, use it as filter. More often than not it is a UserDefinedWord or keyword so it will work...
+                    var tokenBeforeCursor = tokensBeforeCursor[0];
+                    userFilterToken = tokenBeforeCursor;
+                    return position.character <= tokenBeforeCursor.StopIndex + 1;
+                }
+
+                // Not at beginning of line
+                userFilterToken = null;
+                return false;
+            }
         }
     }
 }

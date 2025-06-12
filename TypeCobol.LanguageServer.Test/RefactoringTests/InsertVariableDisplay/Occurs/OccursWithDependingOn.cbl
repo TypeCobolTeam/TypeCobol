@@ -108,6 +108,9 @@ refactoring.source=
       D        (Idx-d4df4249-1) '>'
       D        DISPLAY '    var2 (' Idx-d4df4249-1 ') <' var2
       D        (Idx-d4df4249-1) '>'
+      D        DISPLAY '    -------------------------------------------'
+      D                '-----------------------------------------------'
+      D                '--------------------------'
       D      END-PERFORM
       D    ELSE
       D      DISPLAY 'Cannot DISPLAY "root-table-1" because its DEPENDI'
@@ -131,12 +134,18 @@ refactoring.source=
       D            DISPLAY '      var4 (' Idx-d4df4249-1 ' '
       D            Idx-d4df4249-2 ') <' var4 (Idx-d4df4249-1
       D            Idx-d4df4249-2) '>'
+      D            DISPLAY '      -------------------------------------'
+      D                    '-------------------------------------------'
+      D                    '----------------------------------'
       D          END-PERFORM
       D        ELSE
       D          DISPLAY 'Cannot DISPLAY "table-level1-1" because its D'
       D                  'EPENDING ON "table-level1-1-count" is out of '
       D                  'range.'
       D        END-IF
+      D        DISPLAY '    -------------------------------------------'
+      D                '-----------------------------------------------'
+      D                '--------------------------'
       D      END-PERFORM
       D    ELSE
       D      DISPLAY 'Cannot DISPLAY "root-table-2" because its DEPENDI'
@@ -168,18 +177,28 @@ refactoring.source=
       D                Idx-d4df4249-2 ' ' Idx-d4df4249-3 ') <' var6
       D                (Idx-d4df4249-1 Idx-d4df4249-2 Idx-d4df4249-3)
       D                '>'
+      D                DISPLAY '        -------------------------------'
+      D                        '---------------------------------------'
+      D                        '---------------------------------------'
+      D                        '---'
       D              END-PERFORM
       D            ELSE
       D              DISPLAY 'Cannot DISPLAY "table-level2-1" because i'
       D                      'ts DEPENDING ON "table-level2-1-count" is'
       D                      ' out of range.'
       D            END-IF
+      D            DISPLAY '      -------------------------------------'
+      D                    '-------------------------------------------'
+      D                    '----------------------------------'
       D          END-PERFORM
       D        ELSE
       D          DISPLAY 'Cannot DISPLAY "table-level1-2" because its D'
       D                  'EPENDING ON "table-level1-2-count" is out of '
       D                  'range.'
       D        END-IF
+      D        DISPLAY '    -------------------------------------------'
+      D                '-----------------------------------------------'
+      D                '--------------------------'
       D      END-PERFORM
       D    ELSE
       D      DISPLAY 'Cannot DISPLAY "root-table-3" because its DEPENDI'

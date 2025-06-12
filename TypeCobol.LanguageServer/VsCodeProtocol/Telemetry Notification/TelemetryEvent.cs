@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System.Diagnostics;
+using System.Reflection;
+using System.Text;
 
 namespace TypeCobol.LanguageServer.VsCodeProtocol
 {
@@ -12,19 +14,42 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
         /// The event will contain :
         /// - the exception's .NET type
         /// - the exception's message
-        /// - the exception's target site (which is the method that threw the exception, top of the StackTrace)
+        /// - the exception's target site (which is the first user-code method in the StackTrace)
         /// </summary>
         /// <param name="exception">Non-null exception instance to describe.</param>
         /// <returns>Non-null instance of TelemetryEvent.</returns>
         public static TelemetryEvent CreateFrom(Exception exception)
         {
-            string exceptionType = exception.GetType().FullName;
-            string exceptionMessage = exception.Message;
-            string exceptionSource = exception.Source;
-            var exceptionTargetSite = new StringBuilder();
-            if (exception.TargetSite != null)
+            // Explore StackTrace to get first user-code method
+            MethodBase targetSite = exception.TargetSite;
+            try
             {
-                var targetSite = exception.TargetSite;
+                var stackTrace = new StackTrace(exception);
+                foreach (var stackFrame in stackTrace.GetFrames())
+                {
+                    var method = stackFrame.GetMethod();
+
+                    // Get module name
+                    string methodModule = method?.Module.Name;
+                    if (methodModule == null) continue;
+
+                    // Keep method if it belongs to one of our assemblies (i.e. name of declaring assembly starts with 'TypeCobol')
+                    if (methodModule.StartsWith(nameof(TypeCobol)))
+                    {
+                        targetSite = method;
+                        break;
+                    }
+                }
+            }
+            catch
+            {
+                // Something went wrong when reading the StackTrace...
+                // Keep logging the exception with its original target site.
+            }
+
+            var exceptionTargetSite = new StringBuilder();
+            if (targetSite != null)
+            {
                 exceptionTargetSite.Append(targetSite.DeclaringType?.FullName); // Fullname of the type declaring the method
                 exceptionTargetSite.Append('.');
                 exceptionTargetSite.Append(targetSite.Name);
@@ -38,9 +63,9 @@ namespace TypeCobol.LanguageServer.VsCodeProtocol
                 type = "exception",
                 data = new Dictionary<string, string>()
                 {
-                    { "Type", exceptionType },
-                    { nameof(Exception.Message), exceptionMessage },
-                    { nameof(Exception.Source), exceptionSource },
+                    { "Type", exception.GetType().FullName },
+                    { nameof(Exception.Message), exception.Message },
+                    { nameof(Exception.Source), exception.Source },
                     { nameof(Exception.TargetSite), exceptionTargetSite.ToString() }
                 }
             };

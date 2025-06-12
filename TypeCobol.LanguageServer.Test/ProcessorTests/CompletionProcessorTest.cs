@@ -65,7 +65,7 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
         public void SimpleCompletionForVariable() => ExecuteTest();
 
         [TestMethod]
-        public void CompletionAfterUnsupportedKeyword() => ExecuteTest();
+        public void CompletionAfterUserDefinedWord() => ExecuteTest();
 
         [TestMethod]
         public void AfterCall_WithoutUserFilterText() => ExecuteTest();
@@ -92,16 +92,22 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
         public void AfterMove_NamesUsingUnderscores() => ExecuteTest();
 
         [TestMethod]
-        public void AfterOf_IfAddress() => ExecuteTest();
+        public void AfterOf_Chain1() => ExecuteTest();
 
         [TestMethod]
-        public void AfterOf_Multiple() => ExecuteTest();
+        public void AfterOf_Chain2() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterOf_IfAddress() => ExecuteTest();
 
         [TestMethod]
         public void AfterOf_NoResult() => ExecuteTest();
 
         [TestMethod]
         public void AfterOf_SetAddress() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterOf_SeveralParents() => ExecuteTest();
 
         [TestMethod]
         public void AfterOf_Variable() => ExecuteTest();
@@ -147,5 +153,41 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
 
         [TestMethod]
         public void AfterTo_SetOf() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterUnsupportedKeyword_InsideKeyword() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterUnsupportedKeyword_RightAfterKeyword() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterUnsupportedKeyword_WithoutUserFilter() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterUnsupportedKeyword_WithUserFilter() => ExecuteTest();
+
+        [TestMethod]
+#if EUROINFO_RULES
+        public void AtBeginningOfLine_KeywordNoUserFilterEI() => ExecuteTest();
+#else
+        public void AtBeginningOfLine_KeywordNoUserFilter() => ExecuteTest();
+#endif
+
+        [TestMethod]
+#if EUROINFO_RULES
+        public void AtBeginningOfLine_KeywordUserFilter1EI() => ExecuteTest();
+#else
+        public void AtBeginningOfLine_KeywordUserFilter1() => ExecuteTest();
+#endif
+
+        [TestMethod]
+#if EUROINFO_RULES
+        public void AtBeginningOfLine_KeywordUserFilter2EI() => ExecuteTest();
+#else
+        public void AtBeginningOfLine_KeywordUserFilter2() => ExecuteTest();
+#endif
+
+        [TestMethod]
+        public void AtBeginningOfLine_KeywordUserFilter3() => ExecuteTest();
     }
 }

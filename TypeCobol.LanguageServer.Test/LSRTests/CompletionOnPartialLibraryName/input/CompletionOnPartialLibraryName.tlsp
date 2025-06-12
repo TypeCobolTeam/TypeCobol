@@ -67,7 +67,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"3\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"MyPublicProcedure   \",\"kind\":3,\"insertText\":\"MyPublicProcedure\",\"data\":[null,{\"label\":\"StackedLibrary.MyPublicProcedure\",\"parameters\":[]},null]}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"3\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"MyPublicProcedure\",\"kind\":3,\"insertText\":\"MyPublicProcedure\",\"data\":[null,{\"label\":\"StackedLibrary.MyPublicProcedure\",\"parameters\":[]},null]}]}}"
     },
     {
       "category": 0,

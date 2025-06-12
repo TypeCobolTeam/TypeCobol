@@ -53,7 +53,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"CustomDep.MyProcedure INPUT Param1(DATE)  OUTPUT Param2(DATE)\",\"kind\":2,\"insertText\":\"CustomDep::MyProcedure INPUT\",\"data\":[null,{\"label\":\"CustomDep.MyProcedure\",\"parameters\":[{\"label\":\"INPUT Param1(DATE)\"},{\"label\":\"OUTPUT Param2(DATE)\"}]},null]},{\"label\":\"W-Alphanum\",\"kind\":6,\"insertText\":\"W-Alphanum\"},{\"label\":\"CustomDep\",\"kind\":9},{\"label\":\"TestingPgm\",\"kind\":9}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"CustomDep.MyProcedure INPUT Param1(DATE) OUTPUT Param2(DATE)\",\"kind\":2,\"insertText\":\"CustomDep::MyProcedure INPUT\",\"data\":[null,{\"label\":\"CustomDep.MyProcedure\",\"parameters\":[{\"label\":\"INPUT Param1(DATE)\"},{\"label\":\"OUTPUT Param2(DATE)\"}]},null]},{\"label\":\"W-Alphanum\",\"kind\":6,\"insertText\":\"W-Alphanum\"},{\"label\":\"CustomDep\",\"kind\":9},{\"label\":\"TestingPgm\",\"kind\":9}]}}"
     },
     {
       "category": 0,
@@ -85,7 +85,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"MyProcedure INPUT Param1(DATE)  OUTPUT Param2(DATE)\",\"kind\":2,\"insertText\":\"MyProcedure INPUT\",\"data\":[null,{\"label\":\"CustomDep.MyProcedure\",\"parameters\":[{\"label\":\"INPUT Param1(DATE)\"},{\"label\":\"OUTPUT Param2(DATE)\"}]},null]}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"MyProcedure INPUT Param1(DATE) OUTPUT Param2(DATE)\",\"kind\":2,\"insertText\":\"MyProcedure INPUT\",\"data\":[null,{\"label\":\"CustomDep.MyProcedure\",\"parameters\":[{\"label\":\"INPUT Param1(DATE)\"},{\"label\":\"OUTPUT Param2(DATE)\"}]},null]}]}}"
     },
     {
       "category": 0,

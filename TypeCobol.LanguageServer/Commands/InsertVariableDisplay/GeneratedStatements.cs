@@ -292,10 +292,10 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
                     wordBuilder.Append("')");
                 }
 
-                // Do not attempt to represent reference modifier when it is not a direct access (access using the direct parent)
-                if (Accessor.ReferenceModifier != null && Accessor.Data == Target.Parent)
+                // Do not attempt to represent reference modifier when it is not a direct access (i.e. not accessing using the immediate parent)
+                // or too complex (using an expression when accessing an anonymous data located inside an OCCURS)
+                if (Accessor.Data == Target.Parent && Accessor.ReferenceModifier is { Count: 1 })
                 {
-                    Debug.Assert(Accessor.ReferenceModifier.Count == 1);
                     wordBuilder.Append(' ');
                     wordBuilder.Append(Accessor.ReferenceModifier[0]);
                 }
@@ -480,6 +480,36 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
             builder.AppendLine();
             builder.AppendIndent(indent);
             builder.AppendWord("END-IF");
+        }
+    }
+
+    /// <summary>
+    /// Class to write a simple DISPLAY statement for a separator literal.
+    /// The separator is made of repeated '-' characters and starts with
+    /// indentation defined by given logical level.
+    /// </summary>
+    internal class GeneratedDisplaySeparator : GeneratedStatement
+    {
+        private const int SYSOUT_LINE_LENGTH = 120;
+
+        private readonly int _logicalLevel;
+
+        public GeneratedDisplaySeparator(int logicalLevel)
+            : base(true)
+        {
+            _logicalLevel = logicalLevel;
+        }
+
+        protected override void WriteStatementOpening(CobolStringBuilder builder)
+        {
+            string separator = new string(' ', 2 * _logicalLevel).PadRight(SYSOUT_LINE_LENGTH, '-');
+            builder.AppendWord("DISPLAY");
+            builder.AppendLiteralForDisplay(separator);
+        }
+
+        protected override void WriteStatementEnd(CobolStringBuilder builder)
+        {
+            throw new InvalidOperationException("DISPLAY statement is not composite.");
         }
     }
 }
