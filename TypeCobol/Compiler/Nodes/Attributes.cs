@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System.Diagnostics;
 using System.Text.RegularExpressions;
 using JetBrains.Annotations;
 
@@ -114,7 +113,6 @@ namespace TypeCobol.Compiler.Nodes {
 
     internal class ReceiverUsageAttribute : Attribute
     {
-
         public object GetValue(object o, SymbolTable table)
         {
             var node = (Node)o;
@@ -132,16 +130,13 @@ namespace TypeCobol.Compiler.Nodes {
 
                 foreach (var varWritten in variablesWrittenRaw)
                 {
-                    if (varWritten.Count > 1)
-                        throw new Exception("Ambiguous Receiver Name");// Ambiguous variable handeling is done before, in the checkers
-                    else
-                        variablesWritten.Add(varWritten.First());
+                    // Ambiguous variable handling is done before, in the checkers
+                    Debug.Assert(varWritten.Count == 1);
+                    variablesWritten.Add(varWritten[0]);
                 }
-
             }
-            if (variablesWritten == null) return null;
-            if (variablesWritten.Count == 0) return null;
-            else return variablesWritten.First().Usage;
+
+            return variablesWritten.Count == 0 ? null : variablesWritten[0].Usage;
         }
     }
     internal class HashAttribute : Attribute
