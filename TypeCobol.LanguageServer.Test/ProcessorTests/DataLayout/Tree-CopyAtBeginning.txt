@@ -1,0 +1,149 @@
+{"line":0,"character":0}
+---------------------------------------------------------------------------------
+{
+  "dataValues": [
+    0,
+    0,
+    0,
+    "copy",
+    null,
+    0,
+    0,
+    0,
+    null,
+    -1,
+    0
+  ],
+  "children": [
+    {
+      "dataValues": [
+        1,
+        0,
+        0,
+        "working-storage",
+        null,
+        0,
+        0,
+        0,
+        null,
+        0,
+        0
+      ],
+      "children": [
+        {
+          "dataValues": [
+            2,
+            1,
+            1,
+            "TCOQLF",
+            "GROUP",
+            0,
+            1,
+            6,
+            null,
+            0,
+            2
+          ],
+          "children": [
+            {
+              "dataValues": [
+                3,
+                2,
+                5,
+                "TCOQLF-Var1",
+                "PIC X",
+                0,
+                1,
+                1,
+                null,
+                0,
+                2
+              ],
+              "children": []
+            },
+            {
+              "dataValues": [
+                3,
+                3,
+                5,
+                "TCOQLF-Var2",
+                "PIC X",
+                0,
+                2,
+                1,
+                null,
+                1,
+                2
+              ],
+              "children": []
+            },
+            {
+              "dataValues": [
+                3,
+                4,
+                5,
+                "TCOQLF-Var3",
+                "PIC X",
+                0,
+                3,
+                1,
+                null,
+                2,
+                2
+              ],
+              "children": []
+            },
+            {
+              "dataValues": [
+                3,
+                5,
+                5,
+                "TCOQLF-Var4",
+                "PIC X",
+                0,
+                4,
+                1,
+                null,
+                3,
+                2
+              ],
+              "children": []
+            },
+            {
+              "dataValues": [
+                3,
+                6,
+                5,
+                "TCOQLF-Var5",
+                "PIC X",
+                0,
+                5,
+                1,
+                null,
+                4,
+                2
+              ],
+              "children": []
+            },
+            {
+              "dataValues": [
+                3,
+                7,
+                5,
+                "TCOQLF-Var6",
+                "PIC X",
+                0,
+                6,
+                1,
+                null,
+                5,
+                2
+              ],
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

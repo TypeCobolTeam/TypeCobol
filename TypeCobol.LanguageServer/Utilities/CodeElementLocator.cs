@@ -10,6 +10,20 @@ namespace TypeCobol.LanguageServer.Utilities
     // TODO Factorize with TypeCobolServer.CodeElementFinder / CodeElementMatcher / other classes ?
     internal static class CodeElementLocator
     {
+        public static bool IsBefore(this Position position, CodeElement codeElement)
+        {
+            // On a previous line or before start of CE
+            int codeElementLineStart = codeElement.Line - 1;
+            return position.line < codeElementLineStart || (position.line == codeElementLineStart && position.character < codeElement.StartIndex);
+        }
+
+        public static bool IsAfter(this Position position, CodeElement codeElement)
+        {
+            // On a following line or after the end of CE
+            int codeElementLineEnd = codeElement.LineEnd - 1;
+            return position.line > codeElementLineEnd || (position.line == codeElementLineEnd && position.character > codeElement.StopIndex);
+        }
+
         /// <summary>
         /// Search for CodeElement and corresponding Node at the given position.
         /// </summary>
@@ -35,13 +49,13 @@ namespace TypeCobol.LanguageServer.Utilities
             // Check code elements on the line
             foreach (var codeElement in lineWithCodeElements.Line.CodeElements)
             {
-                if (CursorIsBefore(codeElement))
+                if (position.IsBefore(codeElement))
                 {
                     // Cursor is located before this code element, return the preceding one if not null
                     return precedingCodeElement != null ? WithCorrespondingNode(precedingCodeElement) : (null, null);
                 }
 
-                if (!CursorIsAfter(codeElement))
+                if (!position.IsAfter(codeElement))
                 {
                     // Cursor is within this code element, return it
                     return WithCorrespondingNode(codeElement);
@@ -56,20 +70,6 @@ namespace TypeCobol.LanguageServer.Utilities
             return WithCorrespondingNode(precedingCodeElement);
 
             static bool HasCodeElements(ICodeElementsLine line) => line.HasCodeElements;
-
-            bool CursorIsBefore(CodeElement codeElement)
-            {
-                // On a previous line or before start of CE
-                int codeElementLineStart = codeElement.Line - 1;
-                return position.line < codeElementLineStart || (position.line == codeElementLineStart && position.character < codeElement.StartIndex);
-            }
-
-            bool CursorIsAfter(CodeElement codeElement)
-            {
-                // On a following line or after the end of CE
-                int codeElementLineEnd = codeElement.LineEnd - 1;
-                return position.line > codeElementLineEnd || (position.line == codeElementLineEnd && position.character > codeElement.StopIndex);
-            }
 
             (CodeElement, Node) WithCorrespondingNode(CodeElement codeElement)
             {
