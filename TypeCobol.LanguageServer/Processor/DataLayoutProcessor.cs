@@ -122,11 +122,23 @@ namespace TypeCobol.LanguageServer
                 return null;
             }
 
-            // Get the node corresponding to the position, and then its enclosing program
+            // No need to look for program when document is a copy, simply return the main program generated around the copy content
+            if (compilationUnit.TextSourceInfo.IsCopy)
+            {
+                return mainProgram;
+            }
+
+            // In a regular program, get the node corresponding to the position, and then its enclosing program
             var location = CodeElementLocator.FindCodeElementAt(compilationUnit, position);
             var program = location.Node?.GetProgramNode();
             if (program == null)
             {
+                if (position.IsBefore(mainProgram.CodeElement))
+                {
+                    // Cursor is located before main program, so return it
+                    return mainProgram;
+                }
+
                 // Most certainly the AST is invalid, abort with an exception
                 throw new InvalidDataException($"Could not find enclosing program in '{compilationUnit.TextSourceInfo.Name}' for position ({position.line}, {position.character}).");
             }

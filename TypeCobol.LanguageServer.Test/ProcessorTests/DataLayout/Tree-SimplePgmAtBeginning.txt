@@ -1,0 +1,445 @@
+{"line":0,"character":0}
+---------------------------------------------------------------------------------
+{
+  "dataValues": [
+    0,
+    0,
+    0,
+    "TCOZEFR0",
+    null,
+    0,
+    0,
+    0,
+    null,
+    -1,
+    0
+  ],
+  "children": [
+    {
+      "dataValues": [
+        1,
+        0,
+        0,
+        "working-storage",
+        null,
+        0,
+        0,
+        0,
+        null,
+        0,
+        0
+      ],
+      "children": [
+        {
+          "dataValues": [
+            2,
+            12,
+            1,
+            "FILLER",
+            "GROUP OCCURS 1",
+            1,
+            1,
+            81,
+            null,
+            0,
+            0
+          ],
+          "children": [
+            {
+              "dataValues": [
+                3,
+                13,
+                5,
+                "Array1",
+                "GROUP OCCURS 9",
+                2,
+                1,
+                81,
+                null,
+                0,
+                2
+              ],
+              "children": [
+                {
+                  "dataValues": [
+                    4,
+                    14,
+                    10,
+                    "Var1",
+                    "PIC X",
+                    2,
+                    1,
+                    1,
+                    null,
+                    0,
+                    2
+                  ],
+                  "children": []
+                },
+                {
+                  "dataValues": [
+                    4,
+                    15,
+                    10,
+                    "Array2",
+                    "GROUP OCCURS 8",
+                    3,
+                    2,
+                    8,
+                    null,
+                    1,
+                    2
+                  ],
+                  "children": [
+                    {
+                      "dataValues": [
+                        5,
+                        16,
+                        15,
+                        "Var2",
+                        "PIC X",
+                        3,
+                        2,
+                        1,
+                        null,
+                        0,
+                        2
+                      ],
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "dataValues": [
+            2,
+            17,
+            1,
+            "FILLER",
+            "GROUP",
+            0,
+            1,
+            4,
+            null,
+            1,
+            0
+          ],
+          "children": [
+            {
+              "dataValues": [
+                3,
+                18,
+                5,
+                "GRP-REDEFINED",
+                "GROUP",
+                0,
+                1,
+                3,
+                null,
+                0,
+                2
+              ],
+              "children": [
+                {
+                  "dataValues": [
+                    4,
+                    19,
+                    10,
+                    "VAR-1",
+                    "PIC 9(05) COMP-3",
+                    0,
+                    1,
+                    3,
+                    null,
+                    0,
+                    2
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "dataValues": [
+                3,
+                20,
+                5,
+                "FILLER",
+                "GROUP REDEFINES GRP-REDEFINED",
+                0,
+                1,
+                3,
+                null,
+                1,
+                1
+              ],
+              "children": [
+                {
+                  "dataValues": [
+                    4,
+                    21,
+                    10,
+                    "VAR-RED1",
+                    "PIC 9(05) COMP-3",
+                    0,
+                    1,
+                    3,
+                    null,
+                    0,
+                    2
+                  ],
+                  "children": []
+                }
+              ]
+            },
+            {
+              "dataValues": [
+                3,
+                22,
+                5,
+                "GROUP-WITH-88-1",
+                "GROUP",
+                0,
+                4,
+                1,
+                null,
+                2,
+                2
+              ],
+              "children": [
+                {
+                  "dataValues": [
+                    4,
+                    23,
+                    10,
+                    "GROUP-WITH-88-2",
+                    "PIC 9(01)",
+                    0,
+                    4,
+                    1,
+                    null,
+                    0,
+                    2
+                  ],
+                  "children": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dataValues": [
+        1,
+        0,
+        0,
+        "local-storage",
+        null,
+        0,
+        0,
+        0,
+        null,
+        1,
+        0
+      ],
+      "children": [
+        {
+          "dataValues": [
+            2,
+            28,
+            1,
+            "Var1-in-ls",
+            "PIC XX",
+            0,
+            1,
+            2,
+            null,
+            0,
+            2
+          ],
+          "children": []
+        },
+        {
+          "dataValues": [
+            2,
+            29,
+            1,
+            "num1",
+            "PIC 9(03)",
+            0,
+            1,
+            3,
+            null,
+            1,
+            2
+          ],
+          "children": []
+        },
+        {
+          "dataValues": [
+            2,
+            30,
+            1,
+            "num2",
+            "comp-1",
+            0,
+            1,
+            4,
+            null,
+            2,
+            2
+          ],
+          "children": []
+        },
+        {
+          "dataValues": [
+            2,
+            31,
+            1,
+            "num3",
+            "comp-2",
+            0,
+            1,
+            8,
+            null,
+            3,
+            2
+          ],
+          "children": []
+        },
+        {
+          "dataValues": [
+            2,
+            32,
+            1,
+            "num4",
+            "PIC 9(03) comp-3",
+            0,
+            1,
+            2,
+            null,
+            4,
+            2
+          ],
+          "children": []
+        },
+        {
+          "dataValues": [
+            2,
+            33,
+            1,
+            "num5",
+            "PIC 9(03) comp-4",
+            0,
+            1,
+            2,
+            null,
+            5,
+            2
+          ],
+          "children": []
+        },
+        {
+          "dataValues": [
+            2,
+            34,
+            1,
+            "num6",
+            "PIC 9(03) comp-5",
+            0,
+            1,
+            2,
+            null,
+            6,
+            2
+          ],
+          "children": []
+        },
+        {
+          "dataValues": [
+            2,
+            35,
+            1,
+            "num7",
+            "PIC 9(03) packed-decimal",
+            0,
+            1,
+            2,
+            null,
+            7,
+            2
+          ],
+          "children": []
+        },
+        {
+          "dataValues": [
+            2,
+            36,
+            1,
+            "num8",
+            "PIC 9(03) binary",
+            0,
+            1,
+            2,
+            null,
+            8,
+            2
+          ],
+          "children": []
+        },
+        {
+          "dataValues": [
+            2,
+            37,
+            1,
+            "num9",
+            "PIC 9(03) comp",
+            0,
+            1,
+            2,
+            null,
+            9,
+            2
+          ],
+          "children": []
+        }
+      ]
+    },
+    {
+      "dataValues": [
+        1,
+        0,
+        0,
+        "linkage",
+        null,
+        0,
+        0,
+        0,
+        null,
+        2,
+        0
+      ],
+      "children": [
+        {
+          "dataValues": [
+            2,
+            40,
+            1,
+            "Var2-in-lk",
+            "PIC X(2)",
+            0,
+            1,
+            2,
+            null,
+            0,
+            2
+          ],
+          "children": []
+        }
+      ]
+    }
+  ]
+}
