@@ -93,18 +93,28 @@ refactoring.source=
       D                Idx-d4df4249-2 ' ' Idx-d4df4249-3 ') (2:20) <'
       D                table-level2-1 (Idx-d4df4249-1 Idx-d4df4249-2
       D                Idx-d4df4249-3) (2:20) '>'
+      D                DISPLAY '        -------------------------------'
+      D                        '---------------------------------------'
+      D                        '---------------------------------------'
+      D                        '---'
       D              END-PERFORM
       D            ELSE
       D              DISPLAY 'Cannot DISPLAY "table-level2-1" because i'
       D                      'ts DEPENDING ON "table-level2-1-count" is'
       D                      ' out of range.'
       D            END-IF
+      D            DISPLAY '      -------------------------------------'
+      D                    '-------------------------------------------'
+      D                    '----------------------------------'
       D          END-PERFORM
       D        ELSE
       D          DISPLAY 'Cannot DISPLAY "table-level1-2" because its D'
       D                  'EPENDING ON "table-level1-2-count" is out of '
       D                  'range.'
       D        END-IF
+      D        DISPLAY '    -------------------------------------------'
+      D                '-----------------------------------------------'
+      D                '--------------------------'
       D      END-PERFORM
       D    ELSE
       D      DISPLAY 'Cannot DISPLAY "root-table-3" because its DEPENDI'

@@ -1,0 +1,115 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TCOMFL06.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 var1 PIC X.
+       01 other-data PIC X.
+       01 var2 PIC 9.
+       PROCEDURE DIVISION.
+           S
+           GOBACK
+           .
+       END PROGRAM TCOMFL06.
+---------------------------------------------------------------------------------
+{"line":8,"character":12}
+---------------------------------------------------------------------------------
+[
+  {
+    "label": "SEARCH ",
+    "kind": 14,
+    "data": {
+      "start": {
+        "line": 8,
+        "character": 11
+      },
+      "end": {
+        "line": 8,
+        "character": 12
+      }
+    }
+  },
+  {
+    "label": "SET ",
+    "kind": 14,
+    "data": {
+      "start": {
+        "line": 8,
+        "character": 11
+      },
+      "end": {
+        "line": 8,
+        "character": 12
+      }
+    }
+  },
+  {
+    "label": "SORT ",
+    "kind": 14,
+    "data": {
+      "start": {
+        "line": 8,
+        "character": 11
+      },
+      "end": {
+        "line": 8,
+        "character": 12
+      }
+    }
+  },
+  {
+    "label": "START ",
+    "kind": 14,
+    "data": {
+      "start": {
+        "line": 8,
+        "character": 11
+      },
+      "end": {
+        "line": 8,
+        "character": 12
+      }
+    }
+  },
+  {
+    "label": "STOP ",
+    "kind": 14,
+    "data": {
+      "start": {
+        "line": 8,
+        "character": 11
+      },
+      "end": {
+        "line": 8,
+        "character": 12
+      }
+    }
+  },
+  {
+    "label": "STRING ",
+    "kind": 14,
+    "data": {
+      "start": {
+        "line": 8,
+        "character": 11
+      },
+      "end": {
+        "line": 8,
+        "character": 12
+      }
+    }
+  },
+  {
+    "label": "SUBTRACT ",
+    "kind": 14,
+    "data": {
+      "start": {
+        "line": 8,
+        "character": 11
+      },
+      "end": {
+        "line": 8,
+        "character": 12
+      }
+    }
+  }
+]

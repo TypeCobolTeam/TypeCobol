@@ -10,25 +10,52 @@ namespace TypeCobol.LanguageServer
 {
     internal class CompletionForOf : CompletionContext
     {
-        private static List<CompletionItem> GetCompletionForOfParent(Node node, Token variableNameToken, TypeCobolOptions options)
+        /// <summary>
+        /// Get completion items for OF used to define the parent variable.
+        /// Beware of complex scenarios involving multiple chained OF.
+        /// Chain example: firstVariable OF subGroupVariable OF variableBeforeOf OF [completion requested]
+        /// </summary>
+        /// <param name="node">The current node</param>
+        /// <param name="variableNameBeforeOf">The token with the name of the variable before the OF to be completed</param>
+        /// <param name="firstVariableName">The token with the name of the first variable in the OF chain</param>
+        /// <param name="options">The compiler options</param>
+        /// <returns>The completion items as a (not null) List</returns>
+        private List<CompletionItem> GetCompletionForOfParent(Node node, Token variableNameBeforeOf, Token firstVariableName, TypeCobolOptions options)
         {
             var completionItems = new List<CompletionItem>();
             if (node == null)
                 return completionItems;
 
-            // TODO Do not take first but consider all possible parents, see #2717
-            // TODO Use user filter (if any) to pre-filter potential parents
-            var currentVariable = node.SymbolTable.GetVariables(
-                    v => v != null && v.Name.Equals(variableNameToken.Text, StringComparison.OrdinalIgnoreCase), SymbolTable.Scope.Global)
-                .FirstOrDefault();
+            // Get all variables matching the name of the first variable in the OF chain
+            var firstVariables = node.SymbolTable.GetVariables(
+                    v => v != null && v.Name.Equals(firstVariableName.Text, StringComparison.OrdinalIgnoreCase), SymbolTable.Scope.Global);
 
-            if (currentVariable == null)
+            if (firstVariables == null)
                 return completionItems;
 
-            if (currentVariable.Parent is DataDefinition currentParent)
+            foreach (var firstVariable in firstVariables)
             {
-                completionItems.Add(CompletionFactoryHelpers.CreateCompletionItemForSingleVariable(null, currentParent, options, true));
+                // Flag indicating when start to match parent (immediately if the variable before the OF is the first in the chain)
+                bool matching = variableNameBeforeOf == firstVariableName;
+
+                // Loop on the chain from first variable and look for matching parent
+                Node parentNode = firstVariable.Parent;
+                while (parentNode is DataDefinition parentDataDefinition)
+                {
+                    if (string.Equals(parentDataDefinition.Name, variableNameBeforeOf.Text, StringComparison.OrdinalIgnoreCase))
+                    {
+                        // Variable before OF is reached in the chain => start matching parent
+                        matching = true;
+                    }
+                    else if (matching && MatchesWithUserFilter(parentDataDefinition))
+                    {
+                        completionItems.Add(CompletionFactoryHelpers.CreateCompletionItemForSingleVariable(null, parentDataDefinition, options, true));
+                    }
+
+                    parentNode = parentDataDefinition.Parent;
+                }
             }
+
             return completionItems;
         }
 
@@ -66,10 +93,13 @@ namespace TypeCobol.LanguageServer
                     break;
                 }
                 case TokenType.UserDefinedWord:
-                {
-                    completionItems = GetCompletionForOfParent(node, tokenBeforeOf, compilationUnit.CompilerOptions);
-                    break;
-                }
+                    {
+                        // Retrieve the first variable in the IN/OF chain
+                        var tokenFirstVariable = tokensUntilCursor.TakeWhile(t => t.TokenType is TokenType.UserDefinedWord or TokenType.IN or TokenType.OF).LastOrDefault();
+
+                        completionItems = GetCompletionForOfParent(node, tokenBeforeOf, tokenFirstVariable, compilationUnit.CompilerOptions);
+                        break;
+                    }
             }
 
             return completionItems;

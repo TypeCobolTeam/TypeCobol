@@ -76,7 +76,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"DVZZSTKD.Foo   \",\"kind\":3,\"insertText\":\"DVZZSTKD::Foo\",\"data\":[{\"start\":{\"line\":5,\"character\":16},\"end\":{\"line\":5,\"character\":21}},{\"label\":\"DVZZSTKD.Foo\",\"parameters\":[]},null]},{\"label\":\"DVZZSTKD\",\"kind\":9,\"data\":{\"start\":{\"line\":5,\"character\":16},\"end\":{\"line\":5,\"character\":21}}}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"DVZZSTKD.Foo\",\"kind\":3,\"insertText\":\"DVZZSTKD::Foo\",\"data\":[{\"start\":{\"line\":5,\"character\":16},\"end\":{\"line\":5,\"character\":21}},{\"label\":\"DVZZSTKD.Foo\",\"parameters\":[]},null]},{\"label\":\"DVZZSTKD\",\"kind\":9,\"data\":{\"start\":{\"line\":5,\"character\":16},\"end\":{\"line\":5,\"character\":21}}}]}}"
     },
     {
       "category": 0,
