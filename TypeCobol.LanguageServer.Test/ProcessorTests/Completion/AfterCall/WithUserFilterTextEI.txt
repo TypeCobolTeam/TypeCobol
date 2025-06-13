@@ -2,14 +2,12 @@
        PROGRAM-ID. TCOMFL06.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-      * should not suggest: no picture
+      * no variable suggested for E-I
        01 GROUP-PROCESS.
           05 VAR1            PIC X.
        01 GROUP1.
           05 VAR2            PIC X.
-      * should suggest: alphanumeric picture
           05 VAR-PROCESS     PIC X.
-      * should not suggest: not alphanumeric picture
           05 VAR-PROCESS     PIC 9.
        PROCEDURE DIVISION.
        main.
@@ -39,7 +37,7 @@
        
        END PROGRAM TCOMFL06.
 ---------------------------------------------------------------------------------
-{"line":15,"character":20}
+{"line":13,"character":20}
 ---------------------------------------------------------------------------------
 [
   {
@@ -49,11 +47,11 @@
     "data": [
       {
         "start": {
-          "line": 15,
+          "line": 13,
           "character": 16
         },
         "end": {
-          "line": 15,
+          "line": 13,
           "character": 20
         }
       },
@@ -65,30 +63,15 @@
     ]
   },
   {
-    "label": "VAR-PROCESS",
-    "kind": 6,
-    "insertText": "VAR-PROCESS",
-    "data": {
-      "start": {
-        "line": 15,
-        "character": 16
-      },
-      "end": {
-        "line": 15,
-        "character": 20
-      }
-    }
-  },
-  {
     "label": "ProcNested1",
     "kind": 9,
     "data": {
       "start": {
-        "line": 15,
+        "line": 13,
         "character": 16
       },
       "end": {
-        "line": 15,
+        "line": 13,
         "character": 20
       }
     }

@@ -70,11 +70,19 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
         [TestMethod]
         public void CompletionAfterUserDefinedWord() => ExecuteTest();
 
+#if EUROINFO_RULES
+        [TestMethod]
+        public void AfterCall_WithoutUserFilterTextEI() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterCall_WithUserFilterTextEI() => ExecuteTest();
+#else
         [TestMethod]
         public void AfterCall_WithoutUserFilterText() => ExecuteTest();
 
         [TestMethod]
         public void AfterCall_WithUserFilterText() => ExecuteTest();
+#endif
 
         [TestMethod]
         public void AfterDisplay_NamesUsingHyphens() => ExecuteTest();

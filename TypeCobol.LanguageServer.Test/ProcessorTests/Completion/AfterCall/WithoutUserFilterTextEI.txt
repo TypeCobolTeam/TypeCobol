@@ -2,18 +2,15 @@
        PROGRAM-ID. TCOMFL06.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-      * should not suggest: no picture
-       01 GROUP-PROCESS.
-          05 VAR1            PIC X.
-       01 GROUP1.
-          05 VAR2            PIC X.
-      * should suggest: alphanumeric picture
-          05 VAR-PROCESS     PIC X.
-      * should not suggest: not alphanumeric picture
-          05 VAR-PROCESS     PIC 9.
+      * no variable suggested for E-I
+           01 GROUP1.
+              05 VAR1            PIC X.
+              05 VAR2            PIC BX.
+              05 VAR3            PIC A.
+              05 VAR4 USAGE POINTER.
        PROCEDURE DIVISION.
        main.
-           CALL proc
+           CALL 
            GOBACK
            .
        DECLARE PROCEDURE proc1 PRIVATE.
@@ -39,7 +36,7 @@
        
        END PROGRAM TCOMFL06.
 ---------------------------------------------------------------------------------
-{"line":15,"character":20}
+{"line":12,"character":16}
 ---------------------------------------------------------------------------------
 [
   {
@@ -47,16 +44,7 @@
     "kind": 3,
     "insertText": "proc1",
     "data": [
-      {
-        "start": {
-          "line": 15,
-          "character": 16
-        },
-        "end": {
-          "line": 15,
-          "character": 20
-        }
-      },
+      null,
       {
         "label": "TCOMFL06.proc1",
         "parameters": []
@@ -65,32 +53,45 @@
     ]
   },
   {
-    "label": "VAR-PROCESS",
-    "kind": 6,
-    "insertText": "VAR-PROCESS",
-    "data": {
-      "start": {
-        "line": 15,
-        "character": 16
+    "label": "another-proc1",
+    "kind": 3,
+    "insertText": "another-proc1",
+    "data": [
+      null,
+      {
+        "label": "TCOMFL06.another-proc1",
+        "parameters": []
       },
-      "end": {
-        "line": 15,
-        "character": 20
-      }
-    }
+      null
+    ]
+  },
+  {
+    "label": "func1",
+    "kind": 3,
+    "insertText": "func1",
+    "data": [
+      null,
+      {
+        "label": "TCOMFL06.func1",
+        "parameters": []
+      },
+      null
+    ]
+  },
+  {
+    "label": "TCOMFL06",
+    "kind": 9
   },
   {
     "label": "ProcNested1",
-    "kind": 9,
-    "data": {
-      "start": {
-        "line": 15,
-        "character": 16
-      },
-      "end": {
-        "line": 15,
-        "character": 20
-      }
-    }
+    "kind": 9
+  },
+  {
+    "label": "NestedProc1",
+    "kind": 9
+  },
+  {
+    "label": "AnotherNested",
+    "kind": 9
   }
 ]
