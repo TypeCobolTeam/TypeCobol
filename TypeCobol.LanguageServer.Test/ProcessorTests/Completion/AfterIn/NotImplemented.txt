@@ -1,0 +1,20 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TCOBCOMP.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+      * suggest nothing: usage of IN not implemented
+       01 GROUP1.
+          05 VAR1               PIC X.
+          05 VAR2               PIC X.
+          05 SAY-VAR3           PIC 9.
+
+       PROCEDURE DIVISION.
+       MAIN.
+           XML GENERATE VAR1 FROM VAR2 COUNT IN SAY
+           GOBACK
+           .
+       END PROGRAM TCOBCOMP.
+---------------------------------------------------------------------------------
+{"line":12,"character":51}
+---------------------------------------------------------------------------------
+[]

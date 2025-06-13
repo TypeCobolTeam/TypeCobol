@@ -5,7 +5,7 @@
       * should suggest: matching parent
        01 SAY-GROUP1.
           05 VAR1               PIC 9.
-       01 GROUP2-SAY.
+       01 GROUP2-SAY REDEFINES SAY-GROUP1.
           05 VAR1               PIC 9.
        01 GROUP3-SAY-GROUP3.
           05 VAR1               PIC 9.
@@ -18,10 +18,14 @@
       * should not suggest: not matching parent
        01 GROUP4.
           05 VAR1               PIC 9.
+       01 FILLER.
+          05 VAR1               PIC 9.
+       01 .
+          05 VAR1               PIC 9.
 
        PROCEDURE DIVISION.
        MAIN.
-           DISPLAY VAR1 OF SAY
+           DISPLAY VAR1 IN SAY
            GOBACK
            .
       * should not suggest: paragraph
@@ -35,7 +39,7 @@
 
        END PROGRAM TCOBCOMP.
 ---------------------------------------------------------------------------------
-{"line":23,"character":30}
+{"line":27,"character":30}
 ---------------------------------------------------------------------------------
 [
   {
@@ -44,11 +48,11 @@
     "insertText": "SAY-GROUP1",
     "data": {
       "start": {
-        "line": 23,
+        "line": 27,
         "character": 27
       },
       "end": {
-        "line": 23,
+        "line": 27,
         "character": 30
       }
     }
@@ -59,11 +63,11 @@
     "insertText": "GROUP2-SAY",
     "data": {
       "start": {
-        "line": 23,
+        "line": 27,
         "character": 27
       },
       "end": {
-        "line": 23,
+        "line": 27,
         "character": 30
       }
     }
@@ -74,41 +78,41 @@
     "insertText": "GROUP3-SAY-GROUP3",
     "data": {
       "start": {
-        "line": 23,
+        "line": 27,
         "character": 27
       },
       "end": {
-        "line": 23,
+        "line": 27,
         "character": 30
       }
     }
   },
   {
-    "label": "SAY-GROUP-QUALIF (Alphanumeric) (SAY-GROUP-QUALIF OF GROUP-QUALIF-1)",
+    "label": "SAY-GROUP-QUALIF (Alphanumeric) (SAY-GROUP-QUALIF IN GROUP-QUALIF-1)",
     "kind": 6,
-    "insertText": "SAY-GROUP-QUALIF OF GROUP-QUALIF-1",
+    "insertText": "SAY-GROUP-QUALIF IN GROUP-QUALIF-1",
     "data": {
       "start": {
-        "line": 23,
+        "line": 27,
         "character": 27
       },
       "end": {
-        "line": 23,
+        "line": 27,
         "character": 30
       }
     }
   },
   {
-    "label": "SAY-GROUP-QUALIF (Alphanumeric) (SAY-GROUP-QUALIF OF GROUP-QUALIF-2)",
+    "label": "SAY-GROUP-QUALIF (Alphanumeric) (SAY-GROUP-QUALIF IN GROUP-QUALIF-2)",
     "kind": 6,
-    "insertText": "SAY-GROUP-QUALIF OF GROUP-QUALIF-2",
+    "insertText": "SAY-GROUP-QUALIF IN GROUP-QUALIF-2",
     "data": {
       "start": {
-        "line": 23,
+        "line": 27,
         "character": 27
       },
       "end": {
-        "line": 23,
+        "line": 27,
         "character": 30
       }
     }

@@ -1,0 +1,38 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TCOBCOMP.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+
+      * should suggest: named parent
+       01 GROUP-WITH-FILLER.
+      * should not suggest: FILLER
+          05 FILLER.
+             10 VAR1           PIC X.
+      * should suggest: named parent
+       01 GROUP-WITH-ANONYMOUS.
+      * should not suggest: anonymous
+          05 .
+             10 VAR1           PIC X.
+
+       PROCEDURE DIVISION.
+       MAIN.
+           DISPLAY VAR1 IN 
+           GOBACK
+           .
+
+       END PROGRAM TCOBCOMP.
+---------------------------------------------------------------------------------
+{"line":18,"character":27}
+---------------------------------------------------------------------------------
+[
+  {
+    "label": "GROUP-WITH-FILLER (Alphanumeric) (GROUP-WITH-FILLER)",
+    "kind": 6,
+    "insertText": "GROUP-WITH-FILLER"
+  },
+  {
+    "label": "GROUP-WITH-ANONYMOUS (Alphanumeric) (GROUP-WITH-ANONYMOUS)",
+    "kind": 6,
+    "insertText": "GROUP-WITH-ANONYMOUS"
+  }
+]
