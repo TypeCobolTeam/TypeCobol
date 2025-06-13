@@ -13,7 +13,7 @@
 
        PROCEDURE DIVISION.
        MAIN.
-           MOVE 1 TO VAR1 OF GR
+           MOVE 1 TO VAR1 IN GR
            GOBACK
            .
 
@@ -23,9 +23,9 @@
 ---------------------------------------------------------------------------------
 [
   {
-    "label": "SUB-GROUP1 (Alphanumeric) (SUB-GROUP1 OF MAIN-GROUP1)",
+    "label": "SUB-GROUP1 (Alphanumeric) (SUB-GROUP1 IN MAIN-GROUP1)",
     "kind": 6,
-    "insertText": "SUB-GROUP1 OF MAIN-GROUP1",
+    "insertText": "SUB-GROUP1 IN MAIN-GROUP1",
     "data": {
       "start": {
         "line": 15,

@@ -16,6 +16,12 @@
        01 SAY-FUNCTION-POINTER USAGE FUNCTION-POINTER.
        01 GROUP2 OCCURS 10 INDEXED BY SAY-INDEX
                                  PIC X.
+       01 GROUP-QUALIF-1.
+          05 SUB-GROUP-QUALIF-1.
+             10 SAY-VAR-QUALIF   PIC X.
+       01 GROUP-QUALIF-2.
+          05 SUB-GROUP-QUALIF-2.
+             10 SAY-VAR-QUALIF   PIC X.
        77 SAY77                  PIC X.
 
       * should not suggest: not matching, 88
@@ -42,7 +48,7 @@
 
        END PROGRAM TCOBCOMP.
 ---------------------------------------------------------------------------------
-{"line":30,"character":19}
+{"line":36,"character":19}
 ---------------------------------------------------------------------------------
 [
   {
@@ -51,11 +57,11 @@
     "insertText": "SAY-VAR1",
     "data": {
       "start": {
-        "line": 30,
+        "line": 36,
         "character": 16
       },
       "end": {
-        "line": 30,
+        "line": 36,
         "character": 19
       }
     }
@@ -66,11 +72,11 @@
     "insertText": "REDEF-SAY-VAR1",
     "data": {
       "start": {
-        "line": 30,
+        "line": 36,
         "character": 16
       },
       "end": {
-        "line": 30,
+        "line": 36,
         "character": 19
       }
     }
@@ -81,41 +87,41 @@
     "insertText": "GROUP1-SAY",
     "data": {
       "start": {
-        "line": 30,
+        "line": 36,
         "character": 16
       },
       "end": {
-        "line": 30,
+        "line": 36,
         "character": 19
       }
     }
   },
   {
-    "label": "VAR2-SAY (Alphanumeric) (GROUP1-SAY::VAR2-SAY)",
+    "label": "VAR2-SAY (Alphanumeric) (VAR2-SAY)",
     "kind": 6,
-    "insertText": "GROUP1-SAY::VAR2-SAY",
+    "insertText": "VAR2-SAY",
     "data": {
       "start": {
-        "line": 30,
+        "line": 36,
         "character": 16
       },
       "end": {
-        "line": 30,
+        "line": 36,
         "character": 19
       }
     }
   },
   {
-    "label": "SAY66 (?) (GROUP1-SAY::SAY66)",
+    "label": "SAY66 (?) (SAY66)",
     "kind": 6,
-    "insertText": "GROUP1-SAY::SAY66",
+    "insertText": "SAY66",
     "data": {
       "start": {
-        "line": 30,
+        "line": 36,
         "character": 16
       },
       "end": {
-        "line": 30,
+        "line": 36,
         "character": 19
       }
     }
@@ -126,11 +132,11 @@
     "insertText": "VAR3-SAY-VAR3",
     "data": {
       "start": {
-        "line": 30,
+        "line": 36,
         "character": 16
       },
       "end": {
-        "line": 30,
+        "line": 36,
         "character": 19
       }
     }
@@ -141,11 +147,11 @@
     "insertText": "SAY-POINTER",
     "data": {
       "start": {
-        "line": 30,
+        "line": 36,
         "character": 16
       },
       "end": {
-        "line": 30,
+        "line": 36,
         "character": 19
       }
     }
@@ -156,11 +162,11 @@
     "insertText": "SAY-PROCEDURE-POINTER",
     "data": {
       "start": {
-        "line": 30,
+        "line": 36,
         "character": 16
       },
       "end": {
-        "line": 30,
+        "line": 36,
         "character": 19
       }
     }
@@ -171,26 +177,56 @@
     "insertText": "SAY-FUNCTION-POINTER",
     "data": {
       "start": {
-        "line": 30,
+        "line": 36,
         "character": 16
       },
       "end": {
-        "line": 30,
+        "line": 36,
         "character": 19
       }
     }
   },
   {
-    "label": "SAY-INDEX (Numeric) (GROUP2::SAY-INDEX)",
+    "label": "SAY-INDEX (Numeric) (SAY-INDEX)",
     "kind": 6,
-    "insertText": "GROUP2::SAY-INDEX",
+    "insertText": "SAY-INDEX",
     "data": {
       "start": {
-        "line": 30,
+        "line": 36,
         "character": 16
       },
       "end": {
-        "line": 30,
+        "line": 36,
+        "character": 19
+      }
+    }
+  },
+  {
+    "label": "SAY-VAR-QUALIF (Alphanumeric) (SAY-VAR-QUALIF OF SUB-GROUP-QUALIF-1 OF GROUP-QUALIF-1)",
+    "kind": 6,
+    "insertText": "SAY-VAR-QUALIF OF SUB-GROUP-QUALIF-1 OF GROUP-QUALIF-1",
+    "data": {
+      "start": {
+        "line": 36,
+        "character": 16
+      },
+      "end": {
+        "line": 36,
+        "character": 19
+      }
+    }
+  },
+  {
+    "label": "SAY-VAR-QUALIF (Alphanumeric) (SAY-VAR-QUALIF OF SUB-GROUP-QUALIF-2 OF GROUP-QUALIF-2)",
+    "kind": 6,
+    "insertText": "SAY-VAR-QUALIF OF SUB-GROUP-QUALIF-2 OF GROUP-QUALIF-2",
+    "data": {
+      "start": {
+        "line": 36,
+        "character": 16
+      },
+      "end": {
+        "line": 36,
         "character": 19
       }
     }
@@ -201,11 +237,11 @@
     "insertText": "SAY77",
     "data": {
       "start": {
-        "line": 30,
+        "line": 36,
         "character": 16
       },
       "end": {
-        "line": 30,
+        "line": 36,
         "character": 19
       }
     }

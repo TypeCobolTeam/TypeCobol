@@ -2,7 +2,7 @@
        PROGRAM-ID. TCOBCOMP.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-      * should suggest nothing!
+      * suggest nothing: usage of OF not implemented
        01 SAY-GROUP1.
           05 VAR1               PIC 9.
        01 GROUP2-SAY.

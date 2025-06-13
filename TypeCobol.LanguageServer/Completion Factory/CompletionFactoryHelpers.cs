@@ -191,7 +191,7 @@ namespace TypeCobol.LanguageServer
             return results;
         }
 
-        public static CompletionItem CreateCompletionItemForSingleVariable(DataDefinition parent, DataDefinition variable, TypeCobolOptions options, bool qualify)
+        public static CompletionItem CreateCompletionItemForSingleVariable(DataDefinition parent, DataDefinition variable, TypeCobolOptions options, bool qualify, TokenType qualificationTokenType = TokenType.OF)
         {
             string name = variable.Name;
             string type = variable.DataType.Name;
@@ -230,7 +230,8 @@ namespace TypeCobol.LanguageServer
                 if (options.IsCobolLanguage)
                 {
                     nameParts.Reverse();
-                    insertText = string.Join(" OF ", nameParts);
+                    var qualificationToken = TokenUtils.GetTokenStringFromTokenType(qualificationTokenType);
+                    insertText = string.Join($" {qualificationToken} ", nameParts);
                 }
                 else
                 {
