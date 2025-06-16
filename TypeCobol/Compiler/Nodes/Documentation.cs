@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
 using System.Text;
 using System.Xml.Serialization;
 using System.Runtime.Serialization.Json;
@@ -180,20 +176,13 @@ namespace TypeCobol.Compiler.Nodes
         
         public static Documentation CreateAppropriateDocumentation(IDocumentable node)
         {
-            if (node is Program)
+            return node switch
             {
-                return new DocumentationForProgram(node as Program);
-            }
-            else if (node is FunctionDeclaration)
-            {
-                return new DocumentationForFunction(node as FunctionDeclaration);
-            }
-            else if (node is TypeDefinition)
-            {
-                return new DocumentationForType(node as TypeDefinition);
-            }
-            else
-                throw new Exception("Documentable Nodes are: Program, FunctionDeclaration, TypeDefinition");
+                Program program => new DocumentationForProgram(program),
+                FunctionDeclaration functionDeclaration => new DocumentationForFunction(functionDeclaration),
+                TypeDefinition typeDefinition => new DocumentationForType(typeDefinition),
+                _ => throw new NotSupportedException("Documentable Nodes are: Program, FunctionDeclaration, TypeDefinition")
+            };
         }
     }
 

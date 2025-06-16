@@ -146,7 +146,7 @@ namespace TypeCobol.Compiler
                     var message = string.IsNullOrEmpty(libraryName)
                         ? $"Cobol source file not found: {fileName}"
                         : $"Cobol source file not found: {fileName} in {libraryName}";
-                    throw new Exception(message);
+                    throw new FileNotFoundException(message);
                 }
             }
             else
