@@ -1,6 +1,7 @@
 ﻿#if EUROINFO_RULES
 using TypeCobol.CustomExceptions;
 #endif
+using TypeCobol.LanguageServer.Context;
 using TypeCobol.LanguageServer.JsonRPC;
 using TypeCobol.LanguageServer.VsCodeProtocol;
 #if EUROINFO_RULES
@@ -244,7 +245,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
                 return new GetDataLayoutResult() { csvResult = csvResult };
             }
 
-            throw new Exception($"Unknown document: '{uri}'");
+            throw new UnknownDocumentException(uri);
         }
 
 #if EUROINFO_RULES
@@ -268,7 +269,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
                        };
             }
 
-            throw new Exception($"Unknown document: '{parameter.textDocument.uri}'");
+            throw new UnknownDocumentException(parameter.textDocument.uri);
         }
 #endif
 
