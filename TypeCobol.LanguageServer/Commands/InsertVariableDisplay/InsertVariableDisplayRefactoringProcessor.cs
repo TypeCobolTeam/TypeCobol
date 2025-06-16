@@ -3,6 +3,7 @@ using TypeCobol.Compiler;
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
+using TypeCobol.Compiler.Scanner;
 using TypeCobol.Compiler.Text;
 using TypeCobol.LanguageServer.Utilities;
 using TypeCobol.LanguageServer.VsCodeProtocol;
@@ -174,7 +175,7 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
                     while (lineIndex >= 0)
                     {
                         var codeLine = codeLines[lineIndex];
-                        if (codeLine.Type is CobolTextLineType.Comment or CobolTextLineType.MultiFormalizedComment)
+                        if (IsComment(codeLine) || codeLine.Type == CobolTextLineType.MultiFormalizedComment)
                         {
                             // Insert before this comment/debug line
                             line = lineIndex + 1;
@@ -222,7 +223,7 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
                     while (lineIndex < codeLines.Count)
                     {
                         var codeLine = codeLines[lineIndex];
-                        if (codeLine.Type is CobolTextLineType.Comment) // Do not consider MultiFormalizedComment as they are attached to the code following them
+                        if (IsComment(codeLine)) // Do not consider MultiFormalizedComment as they are attached to the code following them
                         {
                             // Insert after this comment/debug line
                             line = ++lineIndex;
@@ -245,5 +246,12 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
 
         private static TextEdit InsertAtEnd(ISearchableReadOnlyList<ICodeElementsLine> codeLines, Node node, string code)
             => InsertAfter(codeLines, node.GetLastNode(), code);
+
+        private static bool IsComment(ITokensLine line)
+        {
+            return line.Type == CobolTextLineType.Comment // Regular comment line
+                   ||
+                   (line.Type == CobolTextLineType.Debug && line.ScanState is { WithDebuggingMode: false }); // Inactive Debug line -> treat as Comment
+        }
     }
 }
