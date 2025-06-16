@@ -95,8 +95,8 @@ namespace TypeCobol.LanguageServer.Processor
                                                                            || dataDefinition.Usage == DataUsage.Pointer32; //Or usage is pointer/pointer-32
                         items = new CompletionForVariable(userFilterToken, keepCompatibleTypes).ComputeProposals(compilationUnit, matchingCodeElement);
                         break;
-                    case TokenType.OF:
-                        items = new CompletionForOf(userFilterToken, position).ComputeProposals(compilationUnit, matchingCodeElement);
+                    case TokenType.IN or TokenType.OF:
+                        items = new CompletionForInOrOf(userFilterToken, position, lastSignificantToken.TokenType).ComputeProposals(compilationUnit, matchingCodeElement);
                         break;
                     default:
                         // Unable to suggest anything
