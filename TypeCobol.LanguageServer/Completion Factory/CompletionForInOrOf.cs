@@ -49,7 +49,7 @@ namespace TypeCobol.LanguageServer
                     }
                     else if (matching && MatchesWithUserFilter(parentDataDefinition))
                     {
-                        completionItems.Add(CompletionFactoryHelpers.CreateCompletionItemForSingleVariable(null, parentDataDefinition, options, true, _completedTokenType));
+                        completionItems.Add(CompletionFactoryHelpers.CreateCompletionItemForSingleVariable(null, parentDataDefinition, options, true, _lastSignificantTokenType));
                     }
 
                     parentNode = parentDataDefinition.Parent;
@@ -60,13 +60,13 @@ namespace TypeCobol.LanguageServer
         }
 
         private readonly Position _position;
-        private readonly TokenType _completedTokenType; // IN or OF
+        private readonly TokenType _lastSignificantTokenType; // IN or OF
 
-        public CompletionForInOrOf(Token userFilterToken, Position position, TokenType completedTokenType)
+        public CompletionForInOrOf(Token userFilterToken, Position position, TokenType lastSignificantTokenType)
             : base(userFilterToken)
         {
             _position = position;
-            _completedTokenType = completedTokenType;
+            _lastSignificantTokenType = lastSignificantTokenType;
         }
 
         public override List<CompletionItem> ComputeProposals(CompilationUnit compilationUnit, CodeElement codeElement)
@@ -97,7 +97,7 @@ namespace TypeCobol.LanguageServer
                     }
                 case TokenType.ADDRESS:
                     {
-                        if (_completedTokenType == TokenType.OF)
+                        if (_lastSignificantTokenType == TokenType.OF)
                         {
                             // Manage specifically ADDRESS OF
                             var contextToken = tokensUntilCursor.Skip(2).FirstOrDefault(); // Try to get the token that may define the completion context
