@@ -10,7 +10,7 @@
       * should suggest: alphanumeric picture
           05 VAR-PROCESS     PIC X.
       * should not suggest: not alphanumeric picture
-          05 VAR-PROCESS     PIC 9.
+          05 NOT-VAR-PROCESS PIC 9.
        PROCEDURE DIVISION.
        main.
            CALL proc
