@@ -28,7 +28,8 @@ namespace TypeCobol.LanguageServer
             { TokenType.SET, false },
             { TokenType.OF, false },
             { TokenType.INTO, false },
-            { TokenType.DISPLAY, false }
+            { TokenType.DISPLAY, false },
+            { TokenType.IN, false },
         };
 
         /// <summary>
