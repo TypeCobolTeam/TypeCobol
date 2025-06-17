@@ -1,0 +1,17 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. CustomDep.
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SPECIAL-NAMES.      DECIMAL-POINT IS COMMA.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       LINKAGE SECTION.
+       PROCEDURE DIVISION.
+       DECLARE PROCEDURE MyProcedure PUBLIC
+            INPUT Param1 TYPE DATE
+            OUTPUT Param2 TYPE DATE.
+        END-DECLARE.
+               
+       
+      
+       END PROGRAM CustomDep.

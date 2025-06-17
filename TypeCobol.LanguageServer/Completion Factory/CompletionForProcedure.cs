@@ -29,7 +29,12 @@ namespace TypeCobol.LanguageServer
             if (node.SymbolTable != null)
             {
                 procedures = node.SymbolTable.GetFunctions(StartsWithUserFilter, SymbolTable.Scope.Intrinsic);
+#if EUROINFO_RULES
+                // No dynamic CALL => do not propose variables
+                variables = [];
+#else
                 variables = node.SymbolTable.GetVariables(da => MatchesWithUserFilter(da) && da.Picture != null && da.DataType == DataType.Alphanumeric, SymbolTable.Scope.Program);
+#endif
             }
             else
             {

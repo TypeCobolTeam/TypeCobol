@@ -302,13 +302,6 @@ namespace TypeCobol.LanguageServer.Test
 
         [TestMethod]
         [TestCategory("Completion")]
-        public void ProcedureCompletion()
-        {
-            LSRTestHelper.Test("ProcedureCompletion", LsrTestingOptions.NoLsrTesting, true, false, false, null, null, "CustomDependencies");
-        }
-
-        [TestMethod]
-        [TestCategory("Completion")]
         public void PerformCompletion()
         {
             LSRTestHelper.Test("PerformCompletion", LsrTestingOptions.NoLsrTesting, true);
@@ -388,20 +381,6 @@ namespace TypeCobol.LanguageServer.Test
 
         [TestMethod]
         [TestCategory("Completion")]
-        public void ProcedureCompletionInputInoutOutput()
-        {
-            LSRTestHelper.Test("ProcedureCompletionInputInoutOutput", LsrTestingOptions.NoLsrTesting, true);
-        }
-
-        [TestMethod]
-        [TestCategory("Completion")]
-        public void ProcedureCompletionInputInoutOutput_Case()
-        {
-            LSRTestHelper.Test("ProcedureCompletionInputInoutOutput-Case", LsrTestingOptions.NoLsrTesting, true);
-        }
-
-        [TestMethod]
-        [TestCategory("Completion")]
         public void ProcedureCompletionInputInoutOutput_NoContext()
         {
             LSRTestHelper.Test("ProcedureCompletionInputInoutOutput-NoContext", LsrTestingOptions.NoLsrTesting, true);
@@ -431,6 +410,27 @@ namespace TypeCobol.LanguageServer.Test
 
         [TestMethod]
         [TestCategory("Completion")]
+        public void ProcedureCompletion()
+        {
+            LSRTestHelper.Test("ProcedureCompletion_EI", LsrTestingOptions.NoLsrTesting, true, false, false, null, null, "CustomDependencies");
+        }
+
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void ProcedureCompletionInputInoutOutput()
+        {
+            LSRTestHelper.Test("ProcedureCompletionInputInoutOutput_EI", LsrTestingOptions.NoLsrTesting, true);
+        }
+
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void ProcedureCompletionInputInoutOutput_Case()
+        {
+            LSRTestHelper.Test("ProcedureCompletionInputInoutOutput-Case_EI", LsrTestingOptions.NoLsrTesting, true);
+        }
+
+        [TestMethod]
+        [TestCategory("Completion")]
         public void ReplacingSyntaxOff()
         {
             LSRTestHelper.Test("ReplacingSyntaxOff", LsrTestingOptions.NoLsrTesting, true, false, false, "CopyFolder");
@@ -443,6 +443,27 @@ namespace TypeCobol.LanguageServer.Test
             LSRTestHelper.Test("EI_ExtractRemarksData", LsrTestingOptions.NoLsrTesting, true, false, false, "CopyFolder");
             LSRTestHelper.Test("EI_ExtractRemarksData_CPYInsideCPX", LsrTestingOptions.NoLsrTesting, true, false, false, "CopyFolder");
             LSRTestHelper.Test("EI_ExtractRemarksData_DebugLines", LsrTestingOptions.NoLsrTesting, true);
+        }
+#else
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void ProcedureCompletion()
+        {
+            LSRTestHelper.Test("ProcedureCompletion", LsrTestingOptions.NoLsrTesting, true, false, false, null, null, "CustomDependencies");
+        }
+
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void ProcedureCompletionInputInoutOutput()
+        {
+            LSRTestHelper.Test("ProcedureCompletionInputInoutOutput", LsrTestingOptions.NoLsrTesting, true);
+        }
+
+        [TestMethod]
+        [TestCategory("Completion")]
+        public void ProcedureCompletionInputInoutOutput_Case()
+        {
+            LSRTestHelper.Test("ProcedureCompletionInputInoutOutput-Case", LsrTestingOptions.NoLsrTesting, true);
         }
 #endif
 

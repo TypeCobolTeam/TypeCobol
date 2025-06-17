@@ -1,5 +1,14 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. TCOMFL06.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+           01 GROUP1.
+      * should suggest: alphanumeric picture
+              05 VAR1            PIC X.
+      * should not suggest: not alphanumeric picture
+              05 VAR2            PIC BX.
+              05 VAR3            PIC A.
+              05 VAR4 USAGE POINTER.
        PROCEDURE DIVISION.
        main.
            CALL 
@@ -28,7 +37,7 @@
        
        END PROGRAM TCOMFL06.
 ---------------------------------------------------------------------------------
-{"line":4,"character":16}
+{"line":13,"character":16}
 ---------------------------------------------------------------------------------
 [
   {
@@ -69,6 +78,11 @@
       },
       null
     ]
+  },
+  {
+    "label": "VAR1",
+    "kind": 6,
+    "insertText": "VAR1"
   },
   {
     "label": "TCOMFL06",
