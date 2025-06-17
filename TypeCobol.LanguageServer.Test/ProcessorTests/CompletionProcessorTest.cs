@@ -25,7 +25,7 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
          */
         protected readonly CompletionProcessor _processor = new(new SignatureCompletionContext());
 
-        private void ExecuteTest([CallerMemberName] string sourceFileName = null)
+        private void ExecuteTest(bool isCobolLanguage = false, [CallerMemberName] string sourceFileName = null)
         {
             Debug.Assert(sourceFileName != null);
 
@@ -40,7 +40,10 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
             string expectedProposals = testData[2];
 
             // Parse original source code
-            var options = new TypeCobolOptions();
+            var options = new TypeCobolOptions
+            {
+                IsCobolLanguage = isCobolLanguage
+            };
             var format = DocumentFormat.RDZReferenceFormat;
             /*
              * Assuming the source code is not part of a copy. Testing completion inside a copy
@@ -80,13 +83,31 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
         public void AfterDisplay_NamesUsingUnderscores() => ExecuteTest();
 
         [TestMethod]
+        public void AfterIn_Chain1() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterIn_Chain2() => ExecuteTest(true);
+
+        [TestMethod]
+        public void AfterIn_Filler() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterIn_NotImplemented() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterIn_SeveralParents() => ExecuteTest(true);
+
+        [TestMethod]
+        public void AfterIn_Variable() => ExecuteTest(true);
+
+        [TestMethod]
         public void AfterInto_String() => ExecuteTest();
 
         [TestMethod]
         public void AfterInto_Unstring() => ExecuteTest();
 
         [TestMethod]
-        public void AfterMove_NamesUsingHyphens() => ExecuteTest();
+        public void AfterMove_NamesUsingHyphens() => ExecuteTest(true);
 
         [TestMethod]
         public void AfterMove_NamesUsingUnderscores() => ExecuteTest();
@@ -95,22 +116,22 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
         public void AfterOf_Chain1() => ExecuteTest();
 
         [TestMethod]
-        public void AfterOf_Chain2() => ExecuteTest();
+        public void AfterOf_Chain2() => ExecuteTest(true);
 
         [TestMethod]
         public void AfterOf_IfAddress() => ExecuteTest();
 
         [TestMethod]
-        public void AfterOf_NoResult() => ExecuteTest();
+        public void AfterOf_NotImplemented() => ExecuteTest();
 
         [TestMethod]
         public void AfterOf_SetAddress() => ExecuteTest();
 
         [TestMethod]
-        public void AfterOf_SeveralParents() => ExecuteTest();
+        public void AfterOf_SeveralParents() => ExecuteTest(true);
 
         [TestMethod]
-        public void AfterOf_Variable() => ExecuteTest();
+        public void AfterOf_Variable() => ExecuteTest(true);
 
         [TestMethod]
         public void AfterPerform_NamesUsingHyphens() => ExecuteTest();

@@ -1,0 +1,88 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TCOBCOMP.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+      * should suggest: matching parents
+       01 SAY-GROUP1.
+          05 GROUP11.
+             10 GROUP111.
+                15 VAR1         PIC 9.
+       01 SAY-GROUP2.
+          05 GROUP11.
+             10 GROUP111.
+                15 VAR1         PIC 9.
+       01 SAY-GROUP3.
+          05 GROUP11.
+             10 GROUP111.
+                15 VAR1         PIC 9.
+      * should not suggest: not matching parent
+       01 GROUP4.
+          05 GROUP44.
+             10 GROUP444.
+          05 VAR1               PIC 9.
+
+       PROCEDURE DIVISION.
+       MAIN.
+           DISPLAY VAR1 IN GROUP111 OF GROUP11 IN SAY
+           GOBACK
+           .
+      * should not suggest: paragraph
+       P_SAY_HELLO.
+           DISPLAY "Hello"
+           .
+      * should not suggest: section
+       S_SAY_CONTINUE SECTION.
+           CONTINUE
+           .
+
+       END PROGRAM TCOBCOMP.
+---------------------------------------------------------------------------------
+{"line":25,"character":53}
+---------------------------------------------------------------------------------
+[
+  {
+    "label": "SAY-GROUP1 (Alphanumeric) (SAY-GROUP1)",
+    "kind": 6,
+    "insertText": "SAY-GROUP1",
+    "data": {
+      "start": {
+        "line": 25,
+        "character": 50
+      },
+      "end": {
+        "line": 25,
+        "character": 53
+      }
+    }
+  },
+  {
+    "label": "SAY-GROUP2 (Alphanumeric) (SAY-GROUP2)",
+    "kind": 6,
+    "insertText": "SAY-GROUP2",
+    "data": {
+      "start": {
+        "line": 25,
+        "character": 50
+      },
+      "end": {
+        "line": 25,
+        "character": 53
+      }
+    }
+  },
+  {
+    "label": "SAY-GROUP3 (Alphanumeric) (SAY-GROUP3)",
+    "kind": 6,
+    "insertText": "SAY-GROUP3",
+    "data": {
+      "start": {
+        "line": 25,
+        "character": 50
+      },
+      "end": {
+        "line": 25,
+        "character": 53
+      }
+    }
+  }
+]

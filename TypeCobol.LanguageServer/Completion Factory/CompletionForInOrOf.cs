@@ -8,25 +8,25 @@ using TypeCobol.LanguageServer.VsCodeProtocol;
 
 namespace TypeCobol.LanguageServer
 {
-    internal class CompletionForOf : CompletionContext
+    internal class CompletionForInOrOf : CompletionContext
     {
         /// <summary>
-        /// Get completion items for OF used to define the parent variable.
-        /// Beware of complex scenarios involving multiple chained OF.
+        /// Get completion items for IN/OF used to define the parent variable.
+        /// Beware of complex scenarios involving multiple chained IN/OF.
         /// Chain example: firstVariable OF subGroupVariable OF variableBeforeOf OF [completion requested]
         /// </summary>
         /// <param name="node">The current node</param>
-        /// <param name="variableNameBeforeOf">The token with the name of the variable before the OF to be completed</param>
-        /// <param name="firstVariableName">The token with the name of the first variable in the OF chain</param>
+        /// <param name="variableNameBefore">The token with the name of the variable before the IN/OF to be completed</param>
+        /// <param name="firstVariableName">The token with the name of the first variable in the IN/OF chain</param>
         /// <param name="options">The compiler options</param>
         /// <returns>The completion items as a (not null) List</returns>
-        private List<CompletionItem> GetCompletionForOfParent(Node node, Token variableNameBeforeOf, Token firstVariableName, TypeCobolOptions options)
+        private List<CompletionItem> GetCompletionForParent(Node node, Token variableNameBefore, Token firstVariableName, TypeCobolOptions options)
         {
             var completionItems = new List<CompletionItem>();
             if (node == null)
                 return completionItems;
 
-            // Get all variables matching the name of the first variable in the OF chain
+            // Get all variables matching the name of the first variable in the IN/OF chain
             var firstVariables = node.SymbolTable.GetVariables(
                     v => v != null && v.Name.Equals(firstVariableName.Text, StringComparison.OrdinalIgnoreCase), SymbolTable.Scope.Global);
 
@@ -35,21 +35,21 @@ namespace TypeCobol.LanguageServer
 
             foreach (var firstVariable in firstVariables)
             {
-                // Flag indicating when start to match parent (immediately if the variable before the OF is the first in the chain)
-                bool matching = variableNameBeforeOf == firstVariableName;
+                // Flag indicating when start to match parent (immediately if the variable before the IN/OF is the first in the chain)
+                bool matching = variableNameBefore == firstVariableName;
 
                 // Loop on the chain from first variable and look for matching parent
                 Node parentNode = firstVariable.Parent;
                 while (parentNode is DataDefinition parentDataDefinition)
                 {
-                    if (string.Equals(parentDataDefinition.Name, variableNameBeforeOf.Text, StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(parentDataDefinition.Name, variableNameBefore.Text, StringComparison.OrdinalIgnoreCase))
                     {
-                        // Variable before OF is reached in the chain => start matching parent
+                        // Variable before IN/OF is reached in the chain => start matching parent
                         matching = true;
                     }
                     else if (matching && MatchesWithUserFilter(parentDataDefinition))
                     {
-                        completionItems.Add(CompletionFactoryHelpers.CreateCompletionItemForSingleVariable(null, parentDataDefinition, options, true));
+                        completionItems.Add(CompletionFactoryHelpers.CreateCompletionItemForSingleVariable(null, parentDataDefinition, options, true, _lastSignificantTokenType));
                     }
 
                     parentNode = parentDataDefinition.Parent;
@@ -60,11 +60,13 @@ namespace TypeCobol.LanguageServer
         }
 
         private readonly Position _position;
+        private readonly TokenType _lastSignificantTokenType; // IN or OF
 
-        public CompletionForOf(Token userFilterToken, Position position)
+        public CompletionForInOrOf(Token userFilterToken, Position position, TokenType lastSignificantTokenType)
             : base(userFilterToken)
         {
             _position = position;
+            _lastSignificantTokenType = lastSignificantTokenType;
         }
 
         public override List<CompletionItem> ComputeProposals(CompilationUnit compilationUnit, CodeElement codeElement)
@@ -81,23 +83,26 @@ namespace TypeCobol.LanguageServer
                 .Reverse()
                 .ToList();
 
-            //Detect what's before the OF token
-            var tokenBeforeOf = tokensUntilCursor?.Skip(1).FirstOrDefault(); //Skip(1) will skip the OF token
+            // Detect what's before the IN/OF token
+            var tokenBefore = tokensUntilCursor?.Skip(1).FirstOrDefault(); // Skip(1) will skip the IN/OF token
 
-            switch (tokenBeforeOf?.TokenType) //In the future, this will allow to switch between different token declared before OF. 
+            switch (tokenBefore?.TokenType) // In the future, this will allow to switch between different token declared before IN/OF
             {
-                case TokenType.ADDRESS:
-                {
-                    var contextToken = tokensUntilCursor.Skip(2).FirstOrDefault(); //Try to get the token that may define the completion context
-                    completionItems = GetCompletionForAddressOf(node, contextToken, compilationUnit.CompilerOptions);
-                    break;
-                }
                 case TokenType.UserDefinedWord:
                     {
-                        // Retrieve the first variable in the IN/OF chain
+                        // IN/OF is used to qualify a variable => retrieve the first variable in the IN/OF chain
                         var tokenFirstVariable = tokensUntilCursor.TakeWhile(t => t.TokenType is TokenType.UserDefinedWord or TokenType.IN or TokenType.OF).LastOrDefault();
-
-                        completionItems = GetCompletionForOfParent(node, tokenBeforeOf, tokenFirstVariable, compilationUnit.CompilerOptions);
+                        completionItems = GetCompletionForParent(node, tokenBefore, tokenFirstVariable, compilationUnit.CompilerOptions);
+                        break;
+                    }
+                case TokenType.ADDRESS:
+                    {
+                        if (_lastSignificantTokenType == TokenType.OF)
+                        {
+                            // Manage specifically ADDRESS OF
+                            var contextToken = tokensUntilCursor.Skip(2).FirstOrDefault(); // Try to get the token that may define the completion context
+                            completionItems = GetCompletionForAddressOf(node, contextToken, compilationUnit.CompilerOptions);
+                        }
                         break;
                     }
             }
@@ -106,9 +111,9 @@ namespace TypeCobol.LanguageServer
         }
 
         /// <summary>
-        /// Get completion Item for a types ADDRESS OF demand. 
+        /// Get completion Item for a types ADDRESS OF demand.
         /// This method will modify the completionItems ref parameter.
-        /// CompletionItems will be filtered on variables declared in LINKAGE SECTION and with LevelNumber equal to 01 or 77. 
+        /// CompletionItems will be filtered on variables declared in LINKAGE SECTION and with LevelNumber equal to 01 or 77.
         /// </summary>
         /// <param name="node">Node found on cursor position</param>
         /// <param name="contextToken">ContextToken to select if it's a SET or something else</param>
