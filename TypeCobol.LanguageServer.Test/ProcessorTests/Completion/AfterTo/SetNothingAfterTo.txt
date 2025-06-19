@@ -40,6 +40,11 @@
 ---------------------------------------------------------------------------------
 [
   {
+    "label": "VAR_INDEX (Numeric) (GROUP2::VAR_INDEX)",
+    "kind": 6,
+    "insertText": "GROUP2::VAR_INDEX"
+  },
+  {
     "label": "VAR1 (Numeric) (VAR1)",
     "kind": 6,
     "insertText": "VAR1"
@@ -53,10 +58,5 @@
     "label": "VAR3 (Numeric) (VAR3)",
     "kind": 6,
     "insertText": "VAR3"
-  },
-  {
-    "label": "VAR_INDEX (Numeric) (GROUP2::VAR_INDEX)",
-    "kind": 6,
-    "insertText": "GROUP2::VAR_INDEX"
   }
 ]

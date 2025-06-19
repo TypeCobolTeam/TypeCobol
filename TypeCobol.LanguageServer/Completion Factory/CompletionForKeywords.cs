@@ -132,13 +132,12 @@ namespace TypeCobol.LanguageServer
 
         }
 
-        public override List<CompletionItem> ComputeProposals(CompilationUnit compilationUnit, CodeElement codeElement)
+        protected override IEnumerable<IEnumerable<CompletionItem>> ComputeProposalGroups(CompilationUnit compilationUnit, CodeElement codeElement)
         {
-            return _KeywordSuggestions
+            return [ _KeywordSuggestions
                 .Where(suggestion => suggestion.Key.StartsWith(UserFilterText, StringComparison.OrdinalIgnoreCase))
                 .SelectMany(suggestion => suggestion.Value)
-                .Select(suggestionText => new CompletionItem() { label = suggestionText, kind = CompletionItemKind.Keyword })
-                .ToList();
+                .Select(suggestionText => new CompletionItem() { label = suggestionText, kind = CompletionItemKind.Keyword }) ];
         }
     }
 }

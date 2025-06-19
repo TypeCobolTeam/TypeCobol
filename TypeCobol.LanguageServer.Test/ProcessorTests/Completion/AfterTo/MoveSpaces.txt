@@ -41,39 +41,9 @@
 ---------------------------------------------------------------------------------
 [
   {
-    "label": "SAY-VAR1 (Alphanumeric) (SAY-VAR1)",
-    "kind": 6,
-    "insertText": "SAY-VAR1",
-    "data": {
-      "start": {
-        "line": 25,
-        "character": 26
-      },
-      "end": {
-        "line": 25,
-        "character": 29
-      }
-    }
-  },
-  {
     "label": "GROUP1-SAY (Alphanumeric) (GROUP1-SAY)",
     "kind": 6,
     "insertText": "GROUP1-SAY",
-    "data": {
-      "start": {
-        "line": 25,
-        "character": 26
-      },
-      "end": {
-        "line": 25,
-        "character": 29
-      }
-    }
-  },
-  {
-    "label": "VAR3-SAY-VAR3 (Alphanumeric) (VAR3-SAY-VAR3)",
-    "kind": 6,
-    "insertText": "VAR3-SAY-VAR3",
     "data": {
       "start": {
         "line": 25,
@@ -116,9 +86,39 @@
     }
   },
   {
+    "label": "SAY-VAR1 (Alphanumeric) (SAY-VAR1)",
+    "kind": 6,
+    "insertText": "SAY-VAR1",
+    "data": {
+      "start": {
+        "line": 25,
+        "character": 26
+      },
+      "end": {
+        "line": 25,
+        "character": 29
+      }
+    }
+  },
+  {
     "label": "VAR2-SAY (Alphabetic) (GROUP1-SAY::VAR2-SAY)",
     "kind": 6,
     "insertText": "GROUP1-SAY::VAR2-SAY",
+    "data": {
+      "start": {
+        "line": 25,
+        "character": 26
+      },
+      "end": {
+        "line": 25,
+        "character": 29
+      }
+    }
+  },
+  {
+    "label": "VAR3-SAY-VAR3 (Alphanumeric) (VAR3-SAY-VAR3)",
+    "kind": 6,
+    "insertText": "VAR3-SAY-VAR3",
     "data": {
       "start": {
         "line": 25,

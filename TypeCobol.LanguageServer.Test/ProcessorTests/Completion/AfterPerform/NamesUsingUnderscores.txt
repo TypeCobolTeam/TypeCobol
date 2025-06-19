@@ -48,34 +48,6 @@
 ---------------------------------------------------------------------------------
 [
   {
-    "label": "p1_say_hello",
-    "kind": 18,
-    "data": {
-      "start": {
-        "line": 14,
-        "character": 19
-      },
-      "end": {
-        "line": 14,
-        "character": 22
-      }
-    }
-  },
-  {
-    "label": "p2_say_world",
-    "kind": 18,
-    "data": {
-      "start": {
-        "line": 14,
-        "character": 19
-      },
-      "end": {
-        "line": 14,
-        "character": 22
-      }
-    }
-  },
-  {
     "label": "p1_say_goodbye",
     "kind": 18,
     "data": {
@@ -90,7 +62,35 @@
     }
   },
   {
+    "label": "p1_say_hello",
+    "kind": 18,
+    "data": {
+      "start": {
+        "line": 14,
+        "character": 19
+      },
+      "end": {
+        "line": 14,
+        "character": 22
+      }
+    }
+  },
+  {
     "label": "p2_say_end",
+    "kind": 18,
+    "data": {
+      "start": {
+        "line": 14,
+        "character": 19
+      },
+      "end": {
+        "line": 14,
+        "character": 22
+      }
+    }
+  },
+  {
+    "label": "p2_say_world",
     "kind": 18,
     "data": {
       "start": {
@@ -160,7 +160,7 @@
     }
   },
   {
-    "label": "say_var1 PIC9",
+    "label": "say_var1 PIC 9",
     "kind": 6,
     "insertText": "say_var1",
     "data": {
@@ -175,7 +175,7 @@
     }
   },
   {
-    "label": "var2_say PIC9",
+    "label": "var2_say PIC 9",
     "kind": 6,
     "insertText": "var2_say",
     "data": {
@@ -190,7 +190,7 @@
     }
   },
   {
-    "label": "var3_say_var3 PIC9",
+    "label": "var3_say_var3 PIC 9",
     "kind": 6,
     "insertText": "var3_say_var3",
     "data": {

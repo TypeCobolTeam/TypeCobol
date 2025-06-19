@@ -46,36 +46,6 @@
 ---------------------------------------------------------------------------------
 [
   {
-    "label": "SAY_VAR1 (Numeric) (SAY_VAR1)",
-    "kind": 6,
-    "insertText": "SAY_VAR1",
-    "data": {
-      "start": {
-        "line": 30,
-        "character": 16
-      },
-      "end": {
-        "line": 30,
-        "character": 19
-      }
-    }
-  },
-  {
-    "label": "REDEF_SAY_VAR1 (Numeric) (REDEF_SAY_VAR1)",
-    "kind": 6,
-    "insertText": "REDEF_SAY_VAR1",
-    "data": {
-      "start": {
-        "line": 30,
-        "character": 16
-      },
-      "end": {
-        "line": 30,
-        "character": 19
-      }
-    }
-  },
-  {
     "label": "GROUP1_SAY (Alphanumeric) (GROUP1_SAY)",
     "kind": 6,
     "insertText": "GROUP1_SAY",
@@ -91,69 +61,9 @@
     }
   },
   {
-    "label": "VAR2_SAY (Alphanumeric) (GROUP1_SAY::VAR2_SAY)",
+    "label": "REDEF_SAY_VAR1 (Numeric) (REDEF_SAY_VAR1)",
     "kind": 6,
-    "insertText": "GROUP1_SAY::VAR2_SAY",
-    "data": {
-      "start": {
-        "line": 30,
-        "character": 16
-      },
-      "end": {
-        "line": 30,
-        "character": 19
-      }
-    }
-  },
-  {
-    "label": "SAY66 (?) (GROUP1_SAY::SAY66)",
-    "kind": 6,
-    "insertText": "GROUP1_SAY::SAY66",
-    "data": {
-      "start": {
-        "line": 30,
-        "character": 16
-      },
-      "end": {
-        "line": 30,
-        "character": 19
-      }
-    }
-  },
-  {
-    "label": "VAR3_SAY_VAR3 (Numeric) (VAR3_SAY_VAR3)",
-    "kind": 6,
-    "insertText": "VAR3_SAY_VAR3",
-    "data": {
-      "start": {
-        "line": 30,
-        "character": 16
-      },
-      "end": {
-        "line": 30,
-        "character": 19
-      }
-    }
-  },
-  {
-    "label": "SAY_POINTER (Alphanumeric) (SAY_POINTER)",
-    "kind": 6,
-    "insertText": "SAY_POINTER",
-    "data": {
-      "start": {
-        "line": 30,
-        "character": 16
-      },
-      "end": {
-        "line": 30,
-        "character": 19
-      }
-    }
-  },
-  {
-    "label": "SAY_PROCEDURE-POINTER (Alphanumeric) (SAY_PROCEDURE-POINTER)",
-    "kind": 6,
-    "insertText": "SAY_PROCEDURE-POINTER",
+    "insertText": "REDEF_SAY_VAR1",
     "data": {
       "start": {
         "line": 30,
@@ -196,9 +106,99 @@
     }
   },
   {
+    "label": "SAY_POINTER (Alphanumeric) (SAY_POINTER)",
+    "kind": 6,
+    "insertText": "SAY_POINTER",
+    "data": {
+      "start": {
+        "line": 30,
+        "character": 16
+      },
+      "end": {
+        "line": 30,
+        "character": 19
+      }
+    }
+  },
+  {
+    "label": "SAY_PROCEDURE-POINTER (Alphanumeric) (SAY_PROCEDURE-POINTER)",
+    "kind": 6,
+    "insertText": "SAY_PROCEDURE-POINTER",
+    "data": {
+      "start": {
+        "line": 30,
+        "character": 16
+      },
+      "end": {
+        "line": 30,
+        "character": 19
+      }
+    }
+  },
+  {
+    "label": "SAY_VAR1 (Numeric) (SAY_VAR1)",
+    "kind": 6,
+    "insertText": "SAY_VAR1",
+    "data": {
+      "start": {
+        "line": 30,
+        "character": 16
+      },
+      "end": {
+        "line": 30,
+        "character": 19
+      }
+    }
+  },
+  {
+    "label": "SAY66 (?) (GROUP1_SAY::SAY66)",
+    "kind": 6,
+    "insertText": "GROUP1_SAY::SAY66",
+    "data": {
+      "start": {
+        "line": 30,
+        "character": 16
+      },
+      "end": {
+        "line": 30,
+        "character": 19
+      }
+    }
+  },
+  {
     "label": "SAY77 (Alphanumeric) (SAY77)",
     "kind": 6,
     "insertText": "SAY77",
+    "data": {
+      "start": {
+        "line": 30,
+        "character": 16
+      },
+      "end": {
+        "line": 30,
+        "character": 19
+      }
+    }
+  },
+  {
+    "label": "VAR2_SAY (Alphanumeric) (GROUP1_SAY::VAR2_SAY)",
+    "kind": 6,
+    "insertText": "GROUP1_SAY::VAR2_SAY",
+    "data": {
+      "start": {
+        "line": 30,
+        "character": 16
+      },
+      "end": {
+        "line": 30,
+        "character": 19
+      }
+    }
+  },
+  {
+    "label": "VAR3_SAY_VAR3 (Numeric) (VAR3_SAY_VAR3)",
+    "kind": 6,
+    "insertText": "VAR3_SAY_VAR3",
     "data": {
       "start": {
         "line": 30,

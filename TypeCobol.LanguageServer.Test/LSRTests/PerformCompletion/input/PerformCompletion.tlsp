@@ -43,7 +43,7 @@
     },
     {
         "category": 1,
-        "message": "{\"jsonrpc\":\"2.0\",\"id\":\"35\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"Parag1\",\"kind\":18},{\"label\":\"Parag2\",\"kind\":18},{\"label\":\"Parag3\",\"kind\":18},{\"label\":\"Parag4\",\"kind\":18},{\"label\":\"Parag5\",\"kind\":18},{\"label\":\"Parag6\",\"kind\":18},{\"label\":\"Sec1\",\"kind\":18},{\"label\":\"Sec2\",\"kind\":18},{\"label\":\"W-Numeric PIC9(10)\",\"kind\":6,\"insertText\":\"W-Numeric\"},{\"label\":\"TestLevel PIC9\",\"kind\":6,\"insertText\":\"TestLevel\"}]}}"
+        "message": "{\"jsonrpc\":\"2.0\",\"id\":\"35\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"Parag1\",\"kind\":18},{\"label\":\"Parag2\",\"kind\":18},{\"label\":\"Parag3\",\"kind\":18},{\"label\":\"Parag4\",\"kind\":18},{\"label\":\"Parag5\",\"kind\":18},{\"label\":\"Parag6\",\"kind\":18},{\"label\":\"Sec1\",\"kind\":18},{\"label\":\"Sec2\",\"kind\":18},{\"label\":\"TestLevel PIC 9\",\"kind\":6,\"insertText\":\"TestLevel\"},{\"label\":\"W-Numeric PIC 9(10)\",\"kind\":6,\"insertText\":\"W-Numeric\"}]}}"
     },
     {
         "category": 0,

@@ -41,69 +41,9 @@
 ---------------------------------------------------------------------------------
 [
   {
-    "label": "VAR4-SAY (Numeric) (VAR4-SAY)",
-    "kind": 6,
-    "insertText": "VAR4-SAY",
-    "data": {
-      "start": {
-        "line": 25,
-        "character": 24
-      },
-      "end": {
-        "line": 25,
-        "character": 27
-      }
-    }
-  },
-  {
-    "label": "SAY-INDEX (Numeric) (GROUP2::SAY-INDEX)",
-    "kind": 6,
-    "insertText": "GROUP2::SAY-INDEX",
-    "data": {
-      "start": {
-        "line": 25,
-        "character": 24
-      },
-      "end": {
-        "line": 25,
-        "character": 27
-      }
-    }
-  },
-  {
-    "label": "SAY-VAR1 (Alphanumeric) (SAY-VAR1)",
-    "kind": 6,
-    "insertText": "SAY-VAR1",
-    "data": {
-      "start": {
-        "line": 25,
-        "character": 24
-      },
-      "end": {
-        "line": 25,
-        "character": 27
-      }
-    }
-  },
-  {
     "label": "GROUP1-SAY (Alphanumeric) (GROUP1-SAY)",
     "kind": 6,
     "insertText": "GROUP1-SAY",
-    "data": {
-      "start": {
-        "line": 25,
-        "character": 24
-      },
-      "end": {
-        "line": 25,
-        "character": 27
-      }
-    }
-  },
-  {
-    "label": "VAR3-SAY-VAR3 (Alphanumeric) (VAR3-SAY-VAR3)",
-    "kind": 6,
-    "insertText": "VAR3-SAY-VAR3",
     "data": {
       "start": {
         "line": 25,
@@ -131,6 +71,21 @@
     }
   },
   {
+    "label": "SAY-INDEX (Numeric) (GROUP2::SAY-INDEX)",
+    "kind": 6,
+    "insertText": "GROUP2::SAY-INDEX",
+    "data": {
+      "start": {
+        "line": 25,
+        "character": 24
+      },
+      "end": {
+        "line": 25,
+        "character": 27
+      }
+    }
+  },
+  {
     "label": "SAY-POINTER (Alphanumeric) (SAY-POINTER)",
     "kind": 6,
     "insertText": "SAY-POINTER",
@@ -146,9 +101,54 @@
     }
   },
   {
+    "label": "SAY-VAR1 (Alphanumeric) (SAY-VAR1)",
+    "kind": 6,
+    "insertText": "SAY-VAR1",
+    "data": {
+      "start": {
+        "line": 25,
+        "character": 24
+      },
+      "end": {
+        "line": 25,
+        "character": 27
+      }
+    }
+  },
+  {
     "label": "VAR2-SAY (Alphabetic) (GROUP1-SAY::VAR2-SAY)",
     "kind": 6,
     "insertText": "GROUP1-SAY::VAR2-SAY",
+    "data": {
+      "start": {
+        "line": 25,
+        "character": 24
+      },
+      "end": {
+        "line": 25,
+        "character": 27
+      }
+    }
+  },
+  {
+    "label": "VAR3-SAY-VAR3 (Alphanumeric) (VAR3-SAY-VAR3)",
+    "kind": 6,
+    "insertText": "VAR3-SAY-VAR3",
+    "data": {
+      "start": {
+        "line": 25,
+        "character": 24
+      },
+      "end": {
+        "line": 25,
+        "character": 27
+      }
+    }
+  },
+  {
+    "label": "VAR4-SAY (Numeric) (VAR4-SAY)",
+    "kind": 6,
+    "insertText": "VAR4-SAY",
     "data": {
       "start": {
         "line": 25,
