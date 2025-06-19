@@ -65,6 +65,13 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
             {
                 throw new InvalidOperationException("Unable to locate DISPLAY insertion location.");
             }
+
+            // #2776: always consider EXEC nodes as a whole
+            if (_location is ExecText)
+            {
+                Debug.Assert(_location.Parent is Exec);
+                _location = _location.Parent;
+            }
         }
 
         public override (string Label, List<TextEdit> TextEdits) PerformRefactoring(CompilationUnit compilationUnit)
