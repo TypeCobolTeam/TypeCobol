@@ -66,9 +66,11 @@ namespace TypeCobol.LanguageServer
         {
             var result = new List<CompletionItem>();
             var proposalGroups = ComputeProposalGroups(compilationUnit, codeElement);
+
+            // Flatten proposal groups
             foreach (var proposalGroup in proposalGroups)
             {
-                foreach (var completionItem in proposalGroup.OrderBy(item => item.label))
+                foreach (var completionItem in proposalGroup.OrderBy(item => item.label)) // Order proposals alphabetically in each group
                 {
                     if (UserFilterToken != null)
                     {
