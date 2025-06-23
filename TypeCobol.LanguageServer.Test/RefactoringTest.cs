@@ -126,7 +126,7 @@ namespace TypeCobol.LanguageServer.Test
             path = Path.Combine(path, directoryName);
 
             var failedTests = new List<(string TestFile, Exception Exception)>();
-            foreach (var testFile in Directory.GetFiles(path, "*.*", SearchOption.AllDirectories))
+            foreach (var testFile in Directory.GetFiles(path, "*.cbl", SearchOption.AllDirectories))
             {
                 try
                 {
