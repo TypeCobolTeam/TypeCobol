@@ -64,7 +64,7 @@ namespace TypeCobol.LanguageServer.Test.RefactoringTests
             var options = new TypeCobolOptions();
             var format = DocumentFormat.RDZReferenceFormat;
             bool isCopy = !testData.OriginalSource.TrimStart().StartsWith("IDENTIFICATION", StringComparison.OrdinalIgnoreCase); // Simple but should be enough, does not support copys starting with IDENTIFICATION...
-            var target = ParserUtils.ParseCobolString(testData.OriginalSource, isCopy, options, format);
+            var target = ParserUtils.ParseCobolString(testData.OriginalSource, isCopy, options, format, Path.GetDirectoryName(testDataFilePath)); // Add directory containing the test itself as a copy library in order to find included COPYs
 
             // Identify processor to test
             var refactoringProcessor = _RefactoringProcessors[testData.ProcessorType];
