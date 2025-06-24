@@ -157,43 +157,83 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
         }
 
         private static TextEdit InsertBefore(ISearchableReadOnlyList<ICodeElementsLine> codeLines, Node node, string code)
+            => InsertBefore(codeLines, GetFirstToken(node), code);
+
+        private static TextEdit InsertAfter(ISearchableReadOnlyList<ICodeElementsLine> codeLines, Node node, string code)
+            => InsertAfter(codeLines, GetLastToken(node), code);
+
+        private static Token GetFirstToken(Node node)
         {
+            Debug.Assert(node != null);
             Debug.Assert(node.CodeElement != null);
-            int line = node.CodeElement.Line; // On same line and inserted text ends with a line break
+
+            if (node.CodeElement.IsInsideCopy())
+            {
+                // Go back up to including COPY directive and return its first token (the COPY token)
+                return node.CodeElement.FirstCopyDirective.COPYToken;
+            }
+
+            // First token of CodeElement
+            Debug.Assert(node.CodeElement.ConsumedTokens.Count > 0);
+            return node.CodeElement.ConsumedTokens[0];
+        }
+
+        private static Token GetLastToken(Node node)
+        {
+            // Do not insert inside statements having a body (statement with nested statements)
+            // -> Reposition at the end of the whole statement (i.e. on its matching END-xxx node).
+            if (node is StatementWithBody) node = node.GetLastNode();
+
+            Debug.Assert(node != null);
+            Debug.Assert(node.CodeElement != null);
+
+            if (node.CodeElement.IsInsideCopy())
+            {
+                // Go back up to including COPY directive and return its last token
+                var copyDirectiveTokens = node.CodeElement.FirstCopyDirective.ConsumedTokens.SelectedTokensOnSeveralLines;
+                Debug.Assert(copyDirectiveTokens.Length > 0);
+                Debug.Assert(copyDirectiveTokens[^1].Count > 0);
+                return copyDirectiveTokens[^1][^1];
+            }
+
+            // Last token of CodeElement
+            Debug.Assert(node.CodeElement.ConsumedTokens.Count > 0);
+            return node.CodeElement.ConsumedTokens[^1];
+        }
+
+        private static TextEdit InsertBefore(ISearchableReadOnlyList<ICodeElementsLine> codeLines, Token token, string code)
+        {
+            int line = token.Line; // On same line and inserted text ends with a line break
             string newText = code + Environment.NewLine;
             int character = 0; // At beginning of the line, except when CodeElement is not the first
 
-            var insertionToken = node.CodeElement.ConsumedTokens.FirstOrDefault();
-            if (insertionToken != null)
+            // Is the first token of the CodeElement also the first token on the line ?
+            var tokensLine = token.TokensLine;
+            if (token != tokensLine.SourceTokens.First())
             {
-                // Is the first token of the CodeElement also the first token on the line ?
-                var tokensLine = insertionToken.TokensLine;
-                if (insertionToken != tokensLine.SourceTokens.First())
+                // Insertion point is right before CodeElement
+                character = token.StartIndex;
+                // Start a new line and align text located beyond insertion point on its current column
+                newText = $"{Environment.NewLine}{newText}{BeginLine(tokensLine.IndicatorChar, character)}";
+            }
+            else
+            {
+                // Nothing before insertion point, check for comments preceding the insertion line
+                int lineIndex = line - 2; // Start with the index of the line before insertion line (line is 1-based whereas lineIndex is 0-based)
+                while (lineIndex >= 0)
                 {
-                    // Insertion point is right before CodeElement
-                    character = node.CodeElement.StartIndex;
-                    // Start a new line and align text located beyond insertion point on its current column
-                    newText = $"{Environment.NewLine}{newText}{BeginLine(tokensLine.IndicatorChar, character)}";
-                }
-                else
-                {
-                    // Nothing before insertion point, check for comments preceding the insertion line
-                    int lineIndex = line - 2; // Start with the index of the line before insertion line (line is 1-based whereas lineIndex is 0-based)
-                    while (lineIndex >= 0)
+                    var codeLine = codeLines[lineIndex];
+                    if (IsComment(codeLine) || codeLine.Type == CobolTextLineType.MultiFormalizedComment)
                     {
-                        var codeLine = codeLines[lineIndex];
-                        if (IsComment(codeLine) || codeLine.Type == CobolTextLineType.MultiFormalizedComment)
-                        {
-                            // Insert before this comment/debug line
-                            line = lineIndex + 1;
-                            character = 0;
-                            lineIndex--;
-                        }
-                        else
-                        {
-                            // Source line: keep current insertion position
-                            break;
-                        }
+                        // Insert before this comment/debug line
+                        line = lineIndex + 1;
+                        character = 0;
+                        lineIndex--;
+                    }
+                    else
+                    {
+                        // Source line: keep current insertion position
+                        break;
                     }
                 }
             }
@@ -201,46 +241,36 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
             return TextEdit.Insert(new Position() { line = line, character = character }, newText);
         }
 
-        private static TextEdit InsertAfter(ISearchableReadOnlyList<ICodeElementsLine> codeLines, Node node, string code)
+        private static TextEdit InsertAfter(ISearchableReadOnlyList<ICodeElementsLine> codeLines, Token token, string code)
         {
-            // Do not insert inside statements having a body (statement with nested statements)
-            // -> Reposition at the end of the whole statement (on its matching END-xxx node).
-            if (node is StatementWithBody) node = node.GetLastNode();
-
-            Debug.Assert(node != null);
-            Debug.Assert(node.CodeElement != null);
-            int line = node.CodeElement.LineEnd; // On same line and inserted text starts with a line break:
+            int line = token.Line; // On same line and inserted text starts with a line break:
             string newText = Environment.NewLine + code;
-            int character = node.CodeElement.StopIndex + 1; // At CodeElement end
+            int character = token.StopIndex + 1; // At CodeElement/CopyDirective end
 
-            var insertionToken = node.CodeElement.ConsumedTokens.LastOrDefault();
-            if (insertionToken != null)
+            // Is there anything after insertion point ?
+            var tokensLine = token.TokensLine;
+            if (tokensLine.Length > character)
             {
-                // Is there anything after insertion point ?
-                var tokensLine = insertionToken.TokensLine;
-                if (tokensLine.Length > character)
+                // Align text located beyond insertion point on its current column
+                newText += BeginLine(tokensLine.IndicatorChar, character);
+            }
+            else
+            {
+                // Nothing after insertion point, check for comments following the insertion line
+                int lineIndex = line; // Initialize with insertion line which is 1-based, thus we start here with the index of the line after insertion line
+                while (lineIndex < codeLines.Count)
                 {
-                    // Align text located beyond insertion point on its current column
-                    newText += BeginLine(tokensLine.IndicatorChar, character);
-                }
-                else
-                {
-                    // Nothing after insertion point, check for comments following the insertion line
-                    int lineIndex = line; // Initialize with insertion line which is 1-based, thus we start here with the index of the line after insertion line
-                    while (lineIndex < codeLines.Count)
+                    var codeLine = codeLines[lineIndex];
+                    if (IsComment(codeLine)) // Do not consider MultiFormalizedComment as they are attached to the code following them
                     {
-                        var codeLine = codeLines[lineIndex];
-                        if (IsComment(codeLine)) // Do not consider MultiFormalizedComment as they are attached to the code following them
-                        {
-                            // Insert after this comment/debug line
-                            line = ++lineIndex;
-                            character = codeLine.Length;
-                        }
-                        else
-                        {
-                            // Source line: keep current insertion position
-                            break;
-                        }
+                        // Insert after this comment/debug line
+                        line = ++lineIndex;
+                        character = codeLine.Length;
+                    }
+                    else
+                    {
+                        // Source line: keep current insertion position
+                        break;
                     }
                 }
             }
