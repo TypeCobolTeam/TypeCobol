@@ -53,13 +53,17 @@ namespace TypeCobol.Test.Utils
             return compiler.CompilationResultsForProgram;
         }
 
-        public static CompilationUnit ParseCobolString(string cobolString, bool asPartOfACopy, TypeCobolOptions options, DocumentFormat enclosingDocumentFormat)
+        public static CompilationUnit ParseCobolString(string cobolString, bool asPartOfACopy, TypeCobolOptions options, DocumentFormat enclosingDocumentFormat, params string[] copyLibraries)
         {
             // Load string into new document
             var textDocument = new ReadOnlyTextDocument("In-memory document", options.GetEncodingForAlphanumericLiterals(), enclosingDocumentFormat.ColumnsLayout, asPartOfACopy, string.Empty);
             textDocument.LoadChars(cobolString);
 
             var project = new CompilationProject("Empty project", ".", new[] { ".cbl", ".cpy" }, enclosingDocumentFormat, options, null);
+            foreach (var copyLibrary in copyLibraries)
+            {
+                project.SourceFileProvider.AddLocalDirectoryLibrary(copyLibrary, false, [".cpy"], enclosingDocumentFormat.Encoding, enclosingDocumentFormat.EndOfLineDelimiter, enclosingDocumentFormat.FixedLineLength);
+            }
 
             var compiler = new FileCompiler(textDocument, project.SourceFileProvider, project, options, project);
             compiler.CompileOnce();
