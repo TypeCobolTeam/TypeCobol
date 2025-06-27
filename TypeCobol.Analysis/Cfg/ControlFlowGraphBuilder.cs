@@ -1201,12 +1201,16 @@ namespace TypeCobol.Analysis.Cfg
                     group.RecursivityGroupSet = null;
                 }
 
-                //Extend groups according to the current building mode
+                //Extend groups according to the standard mode.
                 foreach (var group in groupOrder.Values)
                 {
-                    ExtendGroup(group);
+                    ExtendGroup(group, false);
                 }
-
+                if (this.ExtendPerformTargets)
+                {   //Transform the graph to create the Full Extended CFG
+                    CfgExtendedGraphTransfomer transfomer = new CfgExtendedGraphTransfomer(this);
+                    transfomer.Transform(this.CurrentProgramCfgBuilder.Cfg);
+                }
                 this.CurrentProgramCfgBuilder.PendingPERFORMProcedures = null;
             }
         }
@@ -1215,35 +1219,37 @@ namespace TypeCobol.Analysis.Cfg
         /// Extend the given group to be grafted or linked to the continuation graph.
         /// </summary>
         /// <param name="group">Target group.</param>
-        private void ExtendGroup(BasicBlockForNodeGroup group)
+        /// <param name="bExtendPerformTargets">true to create a fully extend groups, false for a standard grafting</param>
+        private void ExtendGroup(BasicBlockForNodeGroup group, bool bExtendPerformTargets)
         {
             // Assume PERFORM block group is not for a Multi Branch Context.
             System.Diagnostics.Debug.Assert(group.Context == null);
             //Now we must handle Iterative Perform Procedure.
             if (group.IsIterativeGroup)
             {
-                //Compute Terminal Edges of the basic Group.
-                ComputeBasicBlockGroupTerminalBlocks(group);
-
-                //Make the group as a successor and keep corresponding index.
-                group.EntryIndexInSuccessors = this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Count;
-                this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Add(group);
-
-                //Make all terminal blocks of the group have the group block as successor -> iterative loop.
-                foreach (var termBlock in group.TerminalBlocks)
+                if (!bExtendPerformTargets)
                 {
-                    if (!termBlock.SuccessorEdges.Contains(group.EntryIndexInSuccessors))
+                    //Compute Terminal Edges of the basic Group.
+                    ComputeBasicBlockGroupTerminalBlocks(group);
+
+                    //Make the group as a successor and keep corresponding index.
+                    group.EntryIndexInSuccessors = this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Count;
+                    this.CurrentProgramCfgBuilder.Cfg.SuccessorEdges.Add(group);
+
+                    //Make all terminal blocks of the group have the group block as successor -> iterative loop.
+                    foreach (var termBlock in group.TerminalBlocks)
                     {
-                        if (!termBlock.HasFlag(BasicBlock<Node, D>.Flags.Ending))
+                        if (!termBlock.SuccessorEdges.Contains(group.EntryIndexInSuccessors))
                         {
-                            termBlock.SuccessorEdges.Add(group.EntryIndexInSuccessors);
+                            if (!termBlock.HasFlag(BasicBlock<Node, D>.Flags.Ending))
+                            {
+                                termBlock.SuccessorEdges.Add(group.EntryIndexInSuccessors);
+                            }
                         }
                     }
-                }
-
-                //In Extended mode graft the group (handled by the dot generator)
-                if (this.ExtendPerformTargets)
-                {
+                }                
+                else
+                { //In Extended mode graft the group (handled by the dot generator)
                     group.SetFlag(BasicBlock<Node, D>.Flags.GroupGrafted, true);
                     
                     //also make the first block of the group if any the next block to create a real branch of the PERFORM instruction block.
@@ -1256,7 +1262,7 @@ namespace TypeCobol.Analysis.Cfg
                     }
                 }
             }
-            else if (this.ExtendPerformTargets)
+            else if (bExtendPerformTargets)
             {
                 //A Non Iterative Perform ==> Graft it directly in extended mode
                 ComputeBasicBlockGroupTerminalBlocks(group);

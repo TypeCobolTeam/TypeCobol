@@ -1,0 +1,272 @@
+﻿digraph Cfg {
+compound=true;
+node [
+shape = "record"
+]
+
+edge [
+arrowtail = "empty"
+]
+Block0 [
+label = "{START|}"
+]
+Block1 [
+label = "{PROC1. Block1|}"
+]
+Block2 [
+label = "{Block2|        PERFORM LABEL1 THRU E--LABEL1\l}"
+]
+subgraph cluster_1{
+color = blue;
+label = "LABEL1";
+Block24 [
+label = "{LABEL1. Block24|}"
+]
+Block25 [
+label = "{Block25|        PERFORM VARYING I FROM 1 BY 1 UNTIL I \> 2\l}"
+]
+Block26 [
+label = "{Block26|               display \"PGM LEAV9POW: I AM LABEL1 CALL N \" I\l}"
+]
+Block27 [
+label = "{Block27|               PERFORM LABEL2 THRU E--LABEL2\l}"
+]
+subgraph cluster_3{
+color = blue;
+label = "LABEL2";
+Block49 [
+label = "{LABEL2. Block49|              display \"PGM LEAV9POW: I AM LABEL2\"\l              display \"PGM LEAV9POW: I WILL LEAVE LABEL1\"\l              IF J = 1 THEN\l}"
+]
+Block50 [
+label = "{Block50|                     DISPLAY \"EXIT SECTION\"\l}"
+]
+Block51 [
+label = "{Block51|              CONTINUE\l}"
+]
+Block52 [
+label = "{E--LABEL2. Block52|        EXIT\l}"
+]
+
+}
+Block27 -> Block49 [style=dashed]
+
+Block28 [
+label = "{Block28|}"
+]
+Block29 [
+label = "{Block29|               PERFORM LABEL3 THRU E--LABEL3\l}"
+]
+subgraph cluster_4{
+color = blue;
+label = "LABEL3";
+Block53 [
+label = "{LABEL3. Block53|        display \"PGM LEAV9POW: I AM LABEL3\"\l        CONTINUE\l}"
+]
+Block54 [
+label = "{E--LABEL3. Block54|        EXIT\l}"
+]
+
+}
+Block29 -> Block53 [style=dashed]
+
+Block30 [
+label = "{Block30|}"
+]
+Block31 [
+label = "{Block31|        CONTINUE\l}"
+]
+Block32 [
+label = "{E--LABEL1. Block32|        DISPLAY \"EXIT SECTION\"\l}"
+]
+Block33 [
+label = "{LABEL2. Block33|              display \"PGM LEAV9POW: I AM LABEL2\"\l              display \"PGM LEAV9POW: I WILL LEAVE LABEL1\"\l              IF J = 1 THEN\l}"
+]
+Block34 [
+label = "{Block34|                     DISPLAY \"EXIT SECTION\"\l}"
+]
+Block35 [
+label = "{Block35|              CONTINUE\l}"
+]
+Block36 [
+label = "{E--LABEL2. Block36|        EXIT\l}"
+]
+Block37 [
+label = "{LABEL3. Block37|        display \"PGM LEAV9POW: I AM LABEL3\"\l        CONTINUE\l}"
+]
+Block38 [
+label = "{E--LABEL3. Block38|        EXIT\l}"
+]
+Block39 [
+label = "{LABEL4. Block39|        display \"PGM LEAV9POW: I AM LABEL4\"\l        CONTINUE\l}"
+]
+Block40 [
+label = "{E--LABEL4. Block40|        EXIT\l}"
+]
+
+}
+Block2 -> Block24 [style=dashed]
+
+Block3 [
+label = "{Block3|}"
+]
+Block4 [
+label = "{Block4|        PERFORM LABEL4 THRU E--LABEL4\l}"
+]
+subgraph cluster_2{
+color = blue;
+label = "LABEL4";
+Block41 [
+label = "{LABEL4. Block41|        display \"PGM LEAV9POW: I AM LABEL4\"\l        CONTINUE\l}"
+]
+Block42 [
+label = "{E--LABEL4. Block42|        EXIT\l}"
+]
+
+}
+Block4 -> Block41 [style=dashed]
+
+Block5 [
+label = "{Block5|        CONTINUE\l}"
+]
+Block6 [
+label = "{E--PROC1. Block6|        EXIT\l}"
+]
+Block7 [
+label = "{LABEL1. Block7|}"
+]
+Block8 [
+label = "{Block8|        PERFORM VARYING I FROM 1 BY 1 UNTIL I \> 2\l}"
+]
+Block9 [
+label = "{Block9|               display \"PGM LEAV9POW: I AM LABEL1 CALL N \" I\l}"
+]
+Block10 [
+label = "{Block10|               PERFORM LABEL2 THRU E--LABEL2\l}"
+]
+subgraph cluster_3{
+color = blue;
+label = "LABEL2";
+Block43 [
+label = "{LABEL2. Block43|              display \"PGM LEAV9POW: I AM LABEL2\"\l              display \"PGM LEAV9POW: I WILL LEAVE LABEL1\"\l              IF J = 1 THEN\l}"
+]
+Block44 [
+label = "{Block44|                     DISPLAY \"EXIT SECTION\"\l}"
+]
+Block45 [
+label = "{Block45|              CONTINUE\l}"
+]
+Block46 [
+label = "{E--LABEL2. Block46|        EXIT\l}"
+]
+
+}
+Block10 -> Block43 [style=dashed]
+
+Block11 [
+label = "{Block11|}"
+]
+Block12 [
+label = "{Block12|               PERFORM LABEL3 THRU E--LABEL3\l}"
+]
+subgraph cluster_4{
+color = blue;
+label = "LABEL3";
+Block47 [
+label = "{LABEL3. Block47|        display \"PGM LEAV9POW: I AM LABEL3\"\l        CONTINUE\l}"
+]
+Block48 [
+label = "{E--LABEL3. Block48|        EXIT\l}"
+]
+
+}
+Block12 -> Block47 [style=dashed]
+
+Block13 [
+label = "{Block13|}"
+]
+Block14 [
+label = "{Block14|        CONTINUE\l}"
+]
+Block15 [
+label = "{E--LABEL1. Block15|        DISPLAY \"EXIT SECTION\"\l}"
+]
+Block16 [
+label = "{LABEL2. Block16|              display \"PGM LEAV9POW: I AM LABEL2\"\l              display \"PGM LEAV9POW: I WILL LEAVE LABEL1\"\l              IF J = 1 THEN\l}"
+]
+Block17 [
+label = "{Block17|                     DISPLAY \"EXIT SECTION\"\l}"
+]
+Block18 [
+label = "{Block18|              CONTINUE\l}"
+]
+Block19 [
+label = "{E--LABEL2. Block19|        EXIT\l}"
+]
+Block20 [
+label = "{LABEL3. Block20|        display \"PGM LEAV9POW: I AM LABEL3\"\l        CONTINUE\l}"
+]
+Block21 [
+label = "{E--LABEL3. Block21|        EXIT\l}"
+]
+Block22 [
+label = "{LABEL4. Block22|        display \"PGM LEAV9POW: I AM LABEL4\"\l        CONTINUE\l}"
+]
+Block23 [
+label = "{E--LABEL4. Block23|        EXIT\l}"
+]
+Block0 -> Block1
+Block1 -> Block2
+Block24 -> Block25
+Block25 -> Block26
+Block25 -> Block31
+Block26 -> Block27
+Block49 -> Block50
+Block49 -> Block51
+Block50 -> Block51
+Block51 -> Block52
+Block27 -> Block28
+Block28 -> Block29
+Block53 -> Block54
+Block29 -> Block30
+Block30 -> Block25
+Block31 -> Block32
+Block32 -> Block33
+Block33 -> Block34
+Block33 -> Block35
+Block34 -> Block35
+Block35 -> Block36
+Block36 -> Block37
+Block37 -> Block38
+Block38 -> Block39
+Block39 -> Block40
+Block2 -> Block3
+Block3 -> Block4
+Block41 -> Block42
+Block4 -> Block5
+Block5 -> Block6
+Block6 -> Block7
+Block7 -> Block8
+Block8 -> Block9
+Block8 -> Block14
+Block9 -> Block10
+Block43 -> Block44
+Block43 -> Block45
+Block44 -> Block45
+Block45 -> Block46
+Block10 -> Block11
+Block11 -> Block12
+Block47 -> Block48
+Block12 -> Block13
+Block13 -> Block8
+Block14 -> Block15
+Block15 -> Block16
+Block16 -> Block17
+Block16 -> Block18
+Block17 -> Block18
+Block18 -> Block19
+Block19 -> Block20
+Block20 -> Block21
+Block21 -> Block22
+Block22 -> Block23
+
+}
