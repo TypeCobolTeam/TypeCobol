@@ -91,6 +91,15 @@ namespace TypeCobol.LanguageServer
             return result;
         }
 
+        /// <summary>
+        /// Compute proposals grouped by logical categories. Using groups allows to order proposals over two dimensions:
+        /// - First: order of computed groups is preserved allowing the implementors to prioritize certain kinds over some other
+        ///   (i.e. after PERFORM, paragraphs are more often used than sections or numeric variables)
+        /// - order of proposals within each group: we use alphabetical order to help user find data quickly
+        /// </summary>
+        /// <param name="compilationUnit">The current compilation unit being edited.</param>
+        /// <param name="codeElement">The code element on which completion has been requested.</param>
+        /// <returns>Non-null, potentially deferred, of groups of proposals.</returns>
         protected abstract IEnumerable<IEnumerable<CompletionItem>> ComputeProposalGroups(CompilationUnit compilationUnit, CodeElement codeElement);
     }
 }
