@@ -43,6 +43,81 @@
 ---------------------------------------------------------------------------------
 [
   {
+    "label": "GROUP2-SAY (Alphanumeric) (GROUP2-SAY)",
+    "kind": 6,
+    "insertText": "GROUP2-SAY",
+    "data": {
+      "start": {
+        "line": 27,
+        "character": 20
+      },
+      "end": {
+        "line": 27,
+        "character": 23
+      }
+    }
+  },
+  {
+    "label": "SAY-FUNCTION-POINTER (Alphanumeric) (SAY-FUNCTION-POINTER)",
+    "kind": 6,
+    "insertText": "SAY-FUNCTION-POINTER",
+    "data": {
+      "start": {
+        "line": 27,
+        "character": 20
+      },
+      "end": {
+        "line": 27,
+        "character": 23
+      }
+    }
+  },
+  {
+    "label": "SAY-INDEX (Numeric) (GROUP1::SAY-INDEX)",
+    "kind": 6,
+    "insertText": "GROUP1::SAY-INDEX",
+    "data": {
+      "start": {
+        "line": 27,
+        "character": 20
+      },
+      "end": {
+        "line": 27,
+        "character": 23
+      }
+    }
+  },
+  {
+    "label": "SAY-POINTER (Alphanumeric) (SAY-POINTER)",
+    "kind": 6,
+    "insertText": "SAY-POINTER",
+    "data": {
+      "start": {
+        "line": 27,
+        "character": 20
+      },
+      "end": {
+        "line": 27,
+        "character": 23
+      }
+    }
+  },
+  {
+    "label": "SAY-POINTER-32 (Alphanumeric) (SAY-POINTER-32)",
+    "kind": 6,
+    "insertText": "SAY-POINTER-32",
+    "data": {
+      "start": {
+        "line": 27,
+        "character": 20
+      },
+      "end": {
+        "line": 27,
+        "character": 23
+      }
+    }
+  },
+  {
     "label": "SAY-VAR1 (Numeric) (SAY-VAR1)",
     "kind": 6,
     "insertText": "SAY-VAR1",
@@ -88,36 +163,6 @@
     }
   },
   {
-    "label": "SAY-POINTER (Alphanumeric) (SAY-POINTER)",
-    "kind": 6,
-    "insertText": "SAY-POINTER",
-    "data": {
-      "start": {
-        "line": 27,
-        "character": 20
-      },
-      "end": {
-        "line": 27,
-        "character": 23
-      }
-    }
-  },
-  {
-    "label": "SAY-POINTER-32 (Alphanumeric) (SAY-POINTER-32)",
-    "kind": 6,
-    "insertText": "SAY-POINTER-32",
-    "data": {
-      "start": {
-        "line": 27,
-        "character": 20
-      },
-      "end": {
-        "line": 27,
-        "character": 23
-      }
-    }
-  },
-  {
     "label": "VAR4-SAY (Alphanumeric) (VAR4-SAY)",
     "kind": 6,
     "insertText": "VAR4-SAY",
@@ -133,54 +178,9 @@
     }
   },
   {
-    "label": "SAY-INDEX (Numeric) (GROUP1::SAY-INDEX)",
-    "kind": 6,
-    "insertText": "GROUP1::SAY-INDEX",
-    "data": {
-      "start": {
-        "line": 27,
-        "character": 20
-      },
-      "end": {
-        "line": 27,
-        "character": 23
-      }
-    }
-  },
-  {
-    "label": "SAY-FUNCTION-POINTER (Alphanumeric) (SAY-FUNCTION-POINTER)",
-    "kind": 6,
-    "insertText": "SAY-FUNCTION-POINTER",
-    "data": {
-      "start": {
-        "line": 27,
-        "character": 20
-      },
-      "end": {
-        "line": 27,
-        "character": 23
-      }
-    }
-  },
-  {
     "label": "VAR5-SAY (Alphanumeric) (VAR5-SAY)",
     "kind": 6,
     "insertText": "VAR5-SAY",
-    "data": {
-      "start": {
-        "line": 27,
-        "character": 20
-      },
-      "end": {
-        "line": 27,
-        "character": 23
-      }
-    }
-  },
-  {
-    "label": "GROUP2-SAY (Alphanumeric) (GROUP2-SAY)",
-    "kind": 6,
-    "insertText": "GROUP2-SAY",
     "data": {
       "start": {
         "line": 27,

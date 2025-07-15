@@ -52,13 +52,12 @@ namespace TypeCobol.LanguageServer
             _functionDeclarationSignatureDictionary = functionDeclarationSignatureDictionary;
         }
 
-        public override List<CompletionItem> ComputeProposals(CompilationUnit compilationUnit, CodeElement codeElement)
+        protected override IEnumerable<IEnumerable<CompletionItem>> ComputeProposalGroups(CompilationUnit compilationUnit, CodeElement codeElement)
         {
-            var completionItems = new List<CompletionItem>();
             var arrangedCodeElement = codeElement as CodeElementWrapper;
             var node = GetMatchingNode(compilationUnit, codeElement);
             if (node == null)
-                return completionItems;
+                yield break;
 
             //Get the token before MatchingToken 
             var userTokenToSeek =
@@ -178,8 +177,7 @@ namespace TypeCobol.LanguageServer
                 }
 
                 var variables = childrenCandidates.Select(v => new KeyValuePair<DataDefinitionPath, DataDefinition>(null, v));
-                var items = CompletionFactoryHelpers.CreateCompletionItemsForVariableSetAndDisambiguate(variables, compilationUnit.CompilerOptions, true);
-                completionItems.AddRange(items);
+                var variableItems = CompletionFactoryHelpers.CreateCompletionItemsForVariableSetAndDisambiguate(variables, compilationUnit.CompilerOptions, true);
 
                 if (firstSignificantToken != null)
                 {
@@ -189,13 +187,12 @@ namespace TypeCobol.LanguageServer
                         case TokenType.CALL:
                             {
                                 _functionDeclarationSignatureDictionary.Clear(); //Clear to avoid key collision
-                                                                                //On CALL get possible procedures and functions in the seeked program
+                                                                                 //On CALL get possible procedures and functions in the seeked program
                                 var program = node.SymbolTable.GetPrograms(matchesDeclaringProgram).FirstOrDefault();
                                 if (program != null)
                                 {
                                     var procedures = program.SymbolTable.GetFunctions(StartsWithUserFilter, SymbolTable.Scope.Program);
-                                    completionItems.AddRange(CompletionFactoryHelpers.CreateCompletionItemsForProcedures(procedures, node, _functionDeclarationSignatureDictionary, false));
-
+                                    yield return CompletionFactoryHelpers.CreateCompletionItemsForProcedures(procedures, node, _functionDeclarationSignatureDictionary, false);
                                 }
                                 break;
                             }
@@ -206,15 +203,15 @@ namespace TypeCobol.LanguageServer
                                 if (program != null)
                                 {
                                     var types = program.SymbolTable.GetTypes(StartsWithUserFilter, SymbolTable.Scope.Program);
-                                    completionItems.AddRange(CompletionFactoryHelpers.CreateCompletionItemsForType(types, node, false));
+                                    yield return CompletionFactoryHelpers.CreateCompletionItemsForType(types, node, false);
                                 }
                                 break;
                             }
                     }
                 }
-            }
 
-            return completionItems.Distinct().ToList();
+                yield return variableItems;
+            }
         }
     }
 }

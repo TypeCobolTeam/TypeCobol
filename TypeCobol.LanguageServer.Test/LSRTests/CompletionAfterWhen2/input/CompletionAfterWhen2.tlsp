@@ -31,7 +31,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"Var1 (Alphanumeric) (Var1)\",\"kind\":6,\"insertText\":\"Var1\"},{\"label\":\"Group1 (Alphanumeric) (Group1)\",\"kind\":6,\"insertText\":\"Group1\"},{\"label\":\"Group1-Var1 (Alphanumeric) (Group1::Group1-Var1)\",\"kind\":6,\"insertText\":\"Group1::Group1-Var1\"},{\"label\":\"Group1-Var2 (Alphanumeric) (Group1::Group1-Var2)\",\"kind\":6,\"insertText\":\"Group1::Group1-Var2\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"1\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"Group1 (Alphanumeric) (Group1)\",\"kind\":6,\"insertText\":\"Group1\"},{\"label\":\"Group1-Var1 (Alphanumeric) (Group1::Group1-Var1)\",\"kind\":6,\"insertText\":\"Group1::Group1-Var1\"},{\"label\":\"Group1-Var2 (Alphanumeric) (Group1::Group1-Var2)\",\"kind\":6,\"insertText\":\"Group1::Group1-Var2\"},{\"label\":\"Var1 (Alphanumeric) (Var1)\",\"kind\":6,\"insertText\":\"Var1\"}]}}"
     },
     {
       "category": 0,

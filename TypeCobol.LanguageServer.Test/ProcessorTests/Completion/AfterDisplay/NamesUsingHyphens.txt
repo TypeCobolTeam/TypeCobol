@@ -46,9 +46,9 @@
 ---------------------------------------------------------------------------------
 [
   {
-    "label": "SAY-VAR1 (Numeric) (SAY-VAR1)",
+    "label": "GROUP1-SAY (Alphanumeric) (GROUP1-SAY)",
     "kind": 6,
-    "insertText": "SAY-VAR1",
+    "insertText": "GROUP1-SAY",
     "data": {
       "start": {
         "line": 30,
@@ -76,9 +76,9 @@
     }
   },
   {
-    "label": "GROUP1-SAY (Alphanumeric) (GROUP1-SAY)",
+    "label": "SAY-POINTER (Alphanumeric) (SAY-POINTER)",
     "kind": 6,
-    "insertText": "GROUP1-SAY",
+    "insertText": "SAY-POINTER",
     "data": {
       "start": {
         "line": 30,
@@ -91,9 +91,9 @@
     }
   },
   {
-    "label": "VAR2-SAY (Alphanumeric) (GROUP1-SAY::VAR2-SAY)",
+    "label": "SAY-VAR1 (Numeric) (SAY-VAR1)",
     "kind": 6,
-    "insertText": "GROUP1-SAY::VAR2-SAY",
+    "insertText": "SAY-VAR1",
     "data": {
       "start": {
         "line": 30,
@@ -121,39 +121,39 @@
     }
   },
   {
-    "label": "VAR3-SAY-VAR3 (Numeric) (VAR3-SAY-VAR3)",
-    "kind": 6,
-    "insertText": "VAR3-SAY-VAR3",
-    "data": {
-      "start": {
-        "line": 30,
-        "character": 19
-      },
-      "end": {
-        "line": 30,
-        "character": 22
-      }
-    }
-  },
-  {
-    "label": "SAY-POINTER (Alphanumeric) (SAY-POINTER)",
-    "kind": 6,
-    "insertText": "SAY-POINTER",
-    "data": {
-      "start": {
-        "line": 30,
-        "character": 19
-      },
-      "end": {
-        "line": 30,
-        "character": 22
-      }
-    }
-  },
-  {
     "label": "SAY77 (Alphanumeric) (SAY77)",
     "kind": 6,
     "insertText": "SAY77",
+    "data": {
+      "start": {
+        "line": 30,
+        "character": 19
+      },
+      "end": {
+        "line": 30,
+        "character": 22
+      }
+    }
+  },
+  {
+    "label": "VAR2-SAY (Alphanumeric) (GROUP1-SAY::VAR2-SAY)",
+    "kind": 6,
+    "insertText": "GROUP1-SAY::VAR2-SAY",
+    "data": {
+      "start": {
+        "line": 30,
+        "character": 19
+      },
+      "end": {
+        "line": 30,
+        "character": 22
+      }
+    }
+  },
+  {
+    "label": "VAR3-SAY-VAR3 (Numeric) (VAR3-SAY-VAR3)",
+    "kind": 6,
+    "insertText": "VAR3-SAY-VAR3",
     "data": {
       "start": {
         "line": 30,

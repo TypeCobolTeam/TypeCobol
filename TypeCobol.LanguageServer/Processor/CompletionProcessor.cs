@@ -136,20 +136,6 @@ namespace TypeCobol.LanguageServer.Processor
                 }
             }
 
-            if (userFilterToken != null)
-            {
-                //Add the range object to let the client know the position of the user filter token
-                var range = VsCodeProtocol.Range.FromPositions(userFilterToken.Line - 1, userFilterToken.StartIndex, userFilterToken.Line - 1, userFilterToken.StopIndex + 1);
-                //-1 on line to 0 based / +1 on stop index to include the last character
-                items.ForEach(c =>
-                {
-                    if (c.data != null && c.data.GetType().IsArray)
-                        ((object[])c.data)[0] = range;
-                    else
-                        c.data = range;
-                });
-            }
-
             return items;
 
             // Check what is before cursor, also set userFilterToken when possible

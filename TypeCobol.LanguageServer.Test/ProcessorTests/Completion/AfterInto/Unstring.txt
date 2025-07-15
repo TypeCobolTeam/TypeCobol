@@ -38,9 +38,9 @@
 ---------------------------------------------------------------------------------
 [
   {
-    "label": "SAY_VAR1 (Alphanumeric) (SAY_VAR1)",
+    "label": "GROUP1_SAY (Alphanumeric) (GROUP1_SAY)",
     "kind": 6,
-    "insertText": "SAY_VAR1",
+    "insertText": "GROUP1_SAY",
     "data": {
       "start": {
         "line": 22,
@@ -53,9 +53,24 @@
     }
   },
   {
-    "label": "GROUP1_SAY (Alphanumeric) (GROUP1_SAY)",
+    "label": "SAY_FUNCTION-POINTER (Alphanumeric) (SAY_FUNCTION-POINTER)",
     "kind": 6,
-    "insertText": "GROUP1_SAY",
+    "insertText": "SAY_FUNCTION-POINTER",
+    "data": {
+      "start": {
+        "line": 22,
+        "character": 49
+      },
+      "end": {
+        "line": 22,
+        "character": 52
+      }
+    }
+  },
+  {
+    "label": "SAY_VAR1 (Alphanumeric) (SAY_VAR1)",
+    "kind": 6,
+    "insertText": "SAY_VAR1",
     "data": {
       "start": {
         "line": 22,
@@ -86,21 +101,6 @@
     "label": "VAR3_SAY_VAR3 (Alphabetic) (VAR3_SAY_VAR3)",
     "kind": 6,
     "insertText": "VAR3_SAY_VAR3",
-    "data": {
-      "start": {
-        "line": 22,
-        "character": 49
-      },
-      "end": {
-        "line": 22,
-        "character": 52
-      }
-    }
-  },
-  {
-    "label": "SAY_FUNCTION-POINTER (Alphanumeric) (SAY_FUNCTION-POINTER)",
-    "kind": 6,
-    "insertText": "SAY_FUNCTION-POINTER",
     "data": {
       "start": {
         "line": 22,

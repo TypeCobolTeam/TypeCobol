@@ -41,19 +41,6 @@
 ---------------------------------------------------------------------------------
 [
   {
-    "label": "proc1",
-    "kind": 3,
-    "insertText": "proc1",
-    "data": [
-      null,
-      {
-        "label": "TCOMFL06.proc1",
-        "parameters": []
-      },
-      null
-    ]
-  },
-  {
     "label": "another-proc1",
     "kind": 3,
     "insertText": "another-proc1",
@@ -80,16 +67,25 @@
     ]
   },
   {
+    "label": "proc1",
+    "kind": 3,
+    "insertText": "proc1",
+    "data": [
+      null,
+      {
+        "label": "TCOMFL06.proc1",
+        "parameters": []
+      },
+      null
+    ]
+  },
+  {
     "label": "VAR1",
     "kind": 6,
     "insertText": "VAR1"
   },
   {
-    "label": "TCOMFL06",
-    "kind": 9
-  },
-  {
-    "label": "ProcNested1",
+    "label": "AnotherNested",
     "kind": 9
   },
   {
@@ -97,7 +93,11 @@
     "kind": 9
   },
   {
-    "label": "AnotherNested",
+    "label": "ProcNested1",
+    "kind": 9
+  },
+  {
+    "label": "TCOMFL06",
     "kind": 9
   }
 ]

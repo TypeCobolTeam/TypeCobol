@@ -17,44 +17,32 @@ namespace TypeCobol.LanguageServer
             _functionDeclarationSignatureDictionary = functionDeclarationSignatureDictionary;
         }
 
-        public override List<CompletionItem> ComputeProposals(CompilationUnit compilationUnit, CodeElement codeElement)
+        protected override IEnumerable<IEnumerable<CompletionItem>> ComputeProposalGroups(CompilationUnit compilationUnit, CodeElement codeElement)
         {
-            IEnumerable<FunctionDeclaration> procedures = null;
-            IEnumerable<DataDefinition> variables;
-            var completionItems = new List<CompletionItem>();
             var node = GetMatchingNode(compilationUnit, codeElement);
-            if (node == null)
-                return completionItems;
+            if (node?.SymbolTable == null)
+                yield break;
 
-            if (node.SymbolTable != null)
-            {
-                procedures = node.SymbolTable.GetFunctions(StartsWithUserFilter, SymbolTable.Scope.Intrinsic);
+            var procedures = node.SymbolTable.GetFunctions(StartsWithUserFilter, SymbolTable.Scope.Intrinsic);
 #if EUROINFO_RULES
-                // No dynamic CALL => do not propose variables
-                variables = [];
+            // No dynamic CALL => do not propose variables
+            var variables = Enumerable.Empty<DataDefinition>();
 #else
-                variables = node.SymbolTable.GetVariables(da => MatchesWithUserFilter(da) && da.Picture != null && da.DataType == DataType.Alphanumeric, SymbolTable.Scope.Program);
+            var variables = node.SymbolTable.GetVariables(da => MatchesWithUserFilter(da) && da.Picture != null && da.DataType == DataType.Alphanumeric, SymbolTable.Scope.Program);
 #endif
-            }
-            else
-            {
-                variables = [];
-            }
 
-            completionItems.AddRange(CompletionFactoryHelpers.CreateCompletionItemsForProcedures(procedures, node, _functionDeclarationSignatureDictionary));
+            yield return CompletionFactoryHelpers.CreateCompletionItemsForProcedures(procedures, node, _functionDeclarationSignatureDictionary);
+            yield return variables.Select(ToCompletionItem);
 
-            foreach (var variable in variables)
+            static CompletionItem ToCompletionItem(DataDefinition variable)
             {
-                var completionItem = new CompletionItem
+                return new CompletionItem
                 {
                     label = variable.Name,
                     insertText = variable.Name,
                     kind = CompletionItemKind.Variable
                 };
-                completionItems.Add(completionItem);
             }
-
-            return completionItems;
         }
     }
 }

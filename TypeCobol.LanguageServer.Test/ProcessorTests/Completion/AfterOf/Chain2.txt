@@ -39,21 +39,6 @@
 ---------------------------------------------------------------------------------
 [
   {
-    "label": "SAY-MAIN-GROUP1 (Alphanumeric) (SAY-MAIN-GROUP1)",
-    "kind": 6,
-    "insertText": "SAY-MAIN-GROUP1",
-    "data": {
-      "start": {
-        "line": 31,
-        "character": 43
-      },
-      "end": {
-        "line": 31,
-        "character": 45
-      }
-    }
-  },
-  {
     "label": "SAY-GROUP2 (Alphanumeric) (SAY-GROUP2 OF SAY-MAIN-GROUP2)",
     "kind": 6,
     "insertText": "SAY-GROUP2 OF SAY-MAIN-GROUP2",
@@ -69,9 +54,9 @@
     }
   },
   {
-    "label": "SAY-MAIN-GROUP2 (Alphanumeric) (SAY-MAIN-GROUP2)",
+    "label": "SAY-GROUP3 (Alphanumeric) (SAY-GROUP3 OF NOT-MAIN-GLOUP)",
     "kind": 6,
-    "insertText": "SAY-MAIN-GROUP2",
+    "insertText": "SAY-GROUP3 OF NOT-MAIN-GLOUP",
     "data": {
       "start": {
         "line": 31,
@@ -84,9 +69,24 @@
     }
   },
   {
-    "label": "SAY-GROUP3 (Alphanumeric) (SAY-GROUP3 OF NOT-MAIN-GLOUP)",
+    "label": "SAY-MAIN-GROUP1 (Alphanumeric) (SAY-MAIN-GROUP1)",
     "kind": 6,
-    "insertText": "SAY-GROUP3 OF NOT-MAIN-GLOUP",
+    "insertText": "SAY-MAIN-GROUP1",
+    "data": {
+      "start": {
+        "line": 31,
+        "character": 43
+      },
+      "end": {
+        "line": 31,
+        "character": 45
+      }
+    }
+  },
+  {
+    "label": "SAY-MAIN-GROUP2 (Alphanumeric) (SAY-MAIN-GROUP2)",
+    "kind": 6,
+    "insertText": "SAY-MAIN-GROUP2",
     "data": {
       "start": {
         "line": 31,

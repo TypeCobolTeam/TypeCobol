@@ -15,14 +15,14 @@
 ---------------------------------------------------------------------------------
 [
   {
-    "label": "var1 (Alphanumeric) (var1)",
-    "kind": 6,
-    "insertText": "var1"
-  },
-  {
     "label": "other-data (Alphanumeric) (other-data)",
     "kind": 6,
     "insertText": "other-data"
+  },
+  {
+    "label": "var1 (Alphanumeric) (var1)",
+    "kind": 6,
+    "insertText": "var1"
   },
   {
     "label": "var2 (Numeric) (var2)",

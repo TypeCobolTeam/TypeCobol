@@ -22,29 +22,9 @@
 ---------------------------------------------------------------------------------
 [
   {
-    "label": "var1 (Alphanumeric) (var1)",
-    "kind": 6,
-    "insertText": "var1"
-  },
-  {
-    "label": "other-data (Alphanumeric) (other-data)",
-    "kind": 6,
-    "insertText": "other-data"
-  },
-  {
-    "label": "var2 (Numeric) (var2)",
-    "kind": 6,
-    "insertText": "var2"
-  },
-  {
     "label": "group1 (Alphanumeric) (group1)",
     "kind": 6,
     "insertText": "group1"
-  },
-  {
-    "label": "var3 (Alphanumeric) (group1::var3)",
-    "kind": 6,
-    "insertText": "group1::var3"
   },
   {
     "label": "group2 (Alphanumeric) (group1::group2)",
@@ -52,13 +32,33 @@
     "insertText": "group1::group2"
   },
   {
-    "label": "var4 (Numeric) (group1::group2::var4)",
-    "kind": 6,
-    "insertText": "group1::group2::var4"
-  },
-  {
     "label": "not-suggested (Alphanumeric) (not-suggested)",
     "kind": 6,
     "insertText": "not-suggested"
+  },
+  {
+    "label": "other-data (Alphanumeric) (other-data)",
+    "kind": 6,
+    "insertText": "other-data"
+  },
+  {
+    "label": "var1 (Alphanumeric) (var1)",
+    "kind": 6,
+    "insertText": "var1"
+  },
+  {
+    "label": "var2 (Numeric) (var2)",
+    "kind": 6,
+    "insertText": "var2"
+  },
+  {
+    "label": "var3 (Alphanumeric) (group1::var3)",
+    "kind": 6,
+    "insertText": "group1::var3"
+  },
+  {
+    "label": "var4 (Numeric) (group1::group2::var4)",
+    "kind": 6,
+    "insertText": "group1::group2::var4"
   }
 ]

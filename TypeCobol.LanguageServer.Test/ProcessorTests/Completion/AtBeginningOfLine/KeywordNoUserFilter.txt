@@ -183,11 +183,11 @@
     "kind": 14
   },
   {
-    "label": "GOBACK ",
+    "label": "GO ",
     "kind": 14
   },
   {
-    "label": "GO ",
+    "label": "GOBACK ",
     "kind": 14
   },
   {

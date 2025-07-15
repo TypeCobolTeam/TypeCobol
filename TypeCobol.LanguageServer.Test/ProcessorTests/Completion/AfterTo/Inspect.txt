@@ -42,6 +42,21 @@
 ---------------------------------------------------------------------------------
 [
   {
+    "label": "SAY_INDEX (Numeric) (GROUP2::SAY_INDEX)",
+    "kind": 6,
+    "insertText": "GROUP2::SAY_INDEX",
+    "data": {
+      "start": {
+        "line": 26,
+        "character": 49
+      },
+      "end": {
+        "line": 26,
+        "character": 52
+      }
+    }
+  },
+  {
     "label": "SAY_VAR1 (Numeric) (SAY_VAR1)",
     "kind": 6,
     "insertText": "SAY_VAR1",
@@ -75,21 +90,6 @@
     "label": "VAR3_SAY_VAR3 (Numeric) (VAR3_SAY_VAR3)",
     "kind": 6,
     "insertText": "VAR3_SAY_VAR3",
-    "data": {
-      "start": {
-        "line": 26,
-        "character": 49
-      },
-      "end": {
-        "line": 26,
-        "character": 52
-      }
-    }
-  },
-  {
-    "label": "SAY_INDEX (Numeric) (GROUP2::SAY_INDEX)",
-    "kind": 6,
-    "insertText": "GROUP2::SAY_INDEX",
     "data": {
       "start": {
         "line": 26,
