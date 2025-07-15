@@ -76,6 +76,36 @@
     }
   },
   {
+    "label": "SAY66 (?) (GROUP1_SAY::SAY66)",
+    "kind": 6,
+    "insertText": "GROUP1_SAY::SAY66",
+    "data": {
+      "start": {
+        "line": 30,
+        "character": 16
+      },
+      "end": {
+        "line": 30,
+        "character": 19
+      }
+    }
+  },
+  {
+    "label": "SAY77 (Alphanumeric) (SAY77)",
+    "kind": 6,
+    "insertText": "SAY77",
+    "data": {
+      "start": {
+        "line": 30,
+        "character": 16
+      },
+      "end": {
+        "line": 30,
+        "character": 19
+      }
+    }
+  },
+  {
     "label": "SAY_FUNCTION-POINTER (Alphanumeric) (SAY_FUNCTION-POINTER)",
     "kind": 6,
     "insertText": "SAY_FUNCTION-POINTER",
@@ -139,36 +169,6 @@
     "label": "SAY_VAR1 (Numeric) (SAY_VAR1)",
     "kind": 6,
     "insertText": "SAY_VAR1",
-    "data": {
-      "start": {
-        "line": 30,
-        "character": 16
-      },
-      "end": {
-        "line": 30,
-        "character": 19
-      }
-    }
-  },
-  {
-    "label": "SAY66 (?) (GROUP1_SAY::SAY66)",
-    "kind": 6,
-    "insertText": "GROUP1_SAY::SAY66",
-    "data": {
-      "start": {
-        "line": 30,
-        "character": 16
-      },
-      "end": {
-        "line": 30,
-        "character": 19
-      }
-    }
-  },
-  {
-    "label": "SAY77 (Alphanumeric) (SAY77)",
-    "kind": 6,
-    "insertText": "SAY77",
     "data": {
       "start": {
         "line": 30,

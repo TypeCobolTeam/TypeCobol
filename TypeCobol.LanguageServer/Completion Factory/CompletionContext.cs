@@ -70,7 +70,10 @@ namespace TypeCobol.LanguageServer
             // Flatten proposal groups
             foreach (var proposalGroup in proposalGroups)
             {
-                foreach (var completionItem in proposalGroup.OrderBy(item => item.label)) // Order proposals alphabetically in each group
+                // Order proposals alphabetically in each group
+                // Use ordinal for performance and also convenience when testing on environments having different cultures
+                // (or same culture but different implementation when it depends on the OS itself for example...)
+                foreach (var completionItem in proposalGroup.OrderBy(item => item.label, StringComparer.OrdinalIgnoreCase))
                 {
                     if (UserFilterToken != null)
                     {
