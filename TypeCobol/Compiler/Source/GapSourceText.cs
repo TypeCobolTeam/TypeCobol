@@ -563,7 +563,7 @@ namespace TypeCobol.Compiler.Source
         /// <summary>
         /// Set it to true if the gap must be showned.
         /// </summary>
-        static bool dump_show_gap = false;
+        static readonly bool dump_show_gap = false;
         /// <summary>
         /// Dump the The Gar Source text informations and content.
         /// <param name="allChars">Tru eif even non printable chars must be dumped, false otherwise</param>

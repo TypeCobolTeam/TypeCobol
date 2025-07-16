@@ -124,12 +124,12 @@ namespace TypeCobol.Compiler.Scanner
         /// </summary>
         public virtual TokenFamily TokenFamily { get; private set; }
 
-        public static int CHANNEL_SourceTokens = 0;    
-        public static int CHANNEL_WhitespaceAndComments = 1;
-        public static int CHANNEL_ContinuationTokens = 2;
-        public static int CHANNEL_CompilerDirectives = 3;
-        public static int CHANNEL_InternalTokenGroups = 4;
-        public static int CHANNEL_InvalidTokens = 5;
+        public static readonly int CHANNEL_SourceTokens = 0;
+        public static readonly int CHANNEL_WhitespaceAndComments = 1;
+        public static readonly int CHANNEL_ContinuationTokens = 2;
+        public static readonly int CHANNEL_CompilerDirectives = 3;
+        public static readonly int CHANNEL_InternalTokenGroups = 4;
+        public static readonly int CHANNEL_InvalidTokens = 5;
 
         /// <summary>
         /// Token readers can "tune" to different channels

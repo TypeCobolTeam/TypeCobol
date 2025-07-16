@@ -11,7 +11,7 @@ namespace TypeCobol.Compiler.Diagnostics
 {
     class ReadOnlyPropertiesChecker
     {
-        private static string[] READONLY_DATATYPES = {"DATE",};
+        private static readonly string[] READONLY_DATATYPES = { "DATE" };
 
         public static void OnNode([NotNull] VariableWriter variableWriter, Node node)
         {

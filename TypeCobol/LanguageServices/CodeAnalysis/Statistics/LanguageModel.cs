@@ -15,48 +15,29 @@ namespace TypeCobol.LanguageServices.CodeAnalysis.Statistics
     /// </summary>
     public class LanguageModel
     {
-        private static LanguageModel _defaultModelForProgram;
+        private static readonly Lazy<LanguageModel> _defaultModelForProgram =
+            new(() => LoadModel("TypeCobol.LanguageServices.CodeAnalysis.Statistics.LanguageModel.Program.txt"), LazyThreadSafetyMode.ExecutionAndPublication);
 
         /// <summary>
-        /// Default language model for a Cobol program (trained on a set of traditional banking applications) 
+        /// Default language model for a Cobol program (trained on a set of traditional banking applications)
         /// </summary>
-        public static LanguageModel DefaultModelForProgram
-        {
-            get
-            {
-                if(_defaultModelForProgram == null)
-                {
-                    Stream embeddedFileStream = Assembly.GetExecutingAssembly().GetManifestResourceStream("TypeCobol.LanguageServices.CodeAnalysis.Statistics.LanguageModel.Program.txt");
-                    if (embeddedFileStream != null)
-                        using (StreamReader textStreamReader = new StreamReader(embeddedFileStream))
-                        {
-                            _defaultModelForProgram = new LanguageModel(textStreamReader);
-                        }
-                }
-                return _defaultModelForProgram;
-            }
-        }
+        public static LanguageModel DefaultModelForProgram => _defaultModelForProgram.Value;
 
-        private static LanguageModel _defaultModelForCopy;
+        private static readonly Lazy<LanguageModel> _defaultModelForCopy =
+            new(() => LoadModel("TypeCobol.LanguageServices.CodeAnalysis.Statistics.LanguageModel.Copy.txt"), LazyThreadSafetyMode.ExecutionAndPublication);
 
         /// <summary>
-        /// Default language model for a Cobol copy (trained on a set of traditional banking applications) 
+        /// Default language model for a Cobol copy (trained on a set of traditional banking applications)
         /// </summary>
-        public static LanguageModel DefaultModelForCopy
+        public static LanguageModel DefaultModelForCopy => _defaultModelForCopy.Value;
+
+        private static LanguageModel LoadModel(string modelResourceName)
         {
-            get
-            {
-                if (_defaultModelForCopy == null)
-                {
-                    Stream embeddedFileStream = Assembly.GetExecutingAssembly().GetManifestResourceStream("TypeCobol.LanguageServices.CodeAnalysis.Statistics.LanguageModel.Copy.txt");
-                    if (embeddedFileStream != null)
-                        using (StreamReader textStreamReader = new StreamReader(embeddedFileStream))
-                        {
-                            _defaultModelForCopy = new LanguageModel(textStreamReader);
-                        }
-                }
-                return _defaultModelForCopy;
-            }
+            Stream embeddedFileStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(modelResourceName);
+            if (embeddedFileStream == null) return null;
+
+            using StreamReader textStreamReader = new StreamReader(embeddedFileStream);
+            return new LanguageModel(textStreamReader);
         }
 
         /// <summary>

@@ -30,7 +30,8 @@ namespace TypeCobol.Compiler.Nodes {
             }
         }
 
-        private static Dictionary<string,Attribute> attributes;
+        private static readonly Dictionary<string,Attribute> attributes;
+
         static Attributes() {
             attributes = new Dictionary<string,Attribute>();
             attributes["name"]  = new NameAttribute();
@@ -63,7 +64,8 @@ namespace TypeCobol.Compiler.Nodes {
             attributes["programname8"] = new ProgramName8Attribute();
             attributes["imports"] = new ProgramImportsAttribute();
         }
-        private static ContainerAttribute DEFAULT = new ContainerAttribute();
+
+        private static readonly ContainerAttribute DEFAULT = new ContainerAttribute();
     }
 
     internal class ContainerAttribute: Attribute
