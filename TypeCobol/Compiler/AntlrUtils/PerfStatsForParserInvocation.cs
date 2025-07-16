@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
 namespace TypeCobol.Compiler.AntlrUtils
 {
@@ -12,43 +11,51 @@ namespace TypeCobol.Compiler.AntlrUtils
 
         /// <summary>
         /// Set to true to activate very detailed Anltr profiling statistics, which can then be accessed 
-        /// through XxxParserStep.AntlrPerformanceProfiler static properties
+        /// through DetailedAntlrProfiling property of this instance
         /// </summary>
-        public bool ActivateDetailedAntlrPofiling { get; private set; }
+        public bool ActivateDetailedAntlrPofiling { get; }
 
-        public int ParsingTime { get; set; }
+        public AntlrPerformanceProfiler DetailedAntlrProfiling { get; internal set; }
+
+        public int ParsingTime { get; private set; }
 
         // Details of Antlr parsing time
         // Non zero only when Antlr performance profiling is activated
         public int DecisionTimeMs;
         public int RuleInvocationsCount;
 
-        public int TreeBuildingTime { get; set; }
+        public int TreeBuildingTime { get; private set; }
 
-        private Stopwatch stopWatch = new Stopwatch();
+        private readonly Stopwatch _stopWatch = new Stopwatch();
 
         public void OnStartParsing()
         {
-            stopWatch.Restart();
+            _stopWatch.Restart();
         }
 
-        public void OnStopParsing(int decisionTimeMs, int ruleInvocationsCount)
+        public void OnStopParsing()
         {
-            stopWatch.Stop();
-            ParsingTime += (int)stopWatch.ElapsedMilliseconds;
+            int decisionTimeMs = DetailedAntlrProfiling != null
+                ? (int)DetailedAntlrProfiling.CurrentFileInfo.DecisionTimeMs
+                : 0;
+            int ruleInvocationsCount = DetailedAntlrProfiling != null
+                ? DetailedAntlrProfiling.CurrentFileInfo.RuleInvocations.Sum()
+                : 0;
+            _stopWatch.Stop();
+            ParsingTime += (int)_stopWatch.ElapsedMilliseconds;
             DecisionTimeMs += decisionTimeMs;
             RuleInvocationsCount += ruleInvocationsCount;
         }
 
         public void OnStartTreeBuilding()
         {
-            stopWatch.Restart();
+            _stopWatch.Restart();
         }
 
         public void OnStopTreeBuilding()
         {
-            stopWatch.Stop();
-            TreeBuildingTime += (int)stopWatch.ElapsedMilliseconds;
+            _stopWatch.Stop();
+            TreeBuildingTime += (int)_stopWatch.ElapsedMilliseconds;
         }
 
         internal void Add(PerfStatsForParserInvocation perfStats)

@@ -1,4 +1,5 @@
 ﻿using Antlr4.Runtime;
+using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.Parser.Generated;
 
 namespace TypeCobol.Compiler.Parser
@@ -8,14 +9,18 @@ namespace TypeCobol.Compiler.Parser
     /// </summary>
     internal class CodeElementsTracingParser : CodeElementsParser
     {
-        public CodeElementsTracingParser(ITokenStream input) : base(input)
+        private readonly AntlrPerformanceProfiler _profiler;
+
+        public CodeElementsTracingParser(ITokenStream input, AntlrPerformanceProfiler profiler)
+            : base(input)
         {
             Profile = true;
+            _profiler = profiler;
         }
 
         public override void EnterRule(ParserRuleContext localctx, int state, int ruleIndex)
         {
-            CodeElementsParserStep.AntlrPerformanceProfiler.EnterParserRule(localctx, ruleIndex);
+            _profiler.EnterParserRule(localctx, ruleIndex);
             base.EnterRule(localctx, state, ruleIndex);
         }
     }

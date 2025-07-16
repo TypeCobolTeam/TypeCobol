@@ -104,7 +104,7 @@ namespace TypeCobol.Compiler.Parser
                 var code = Diagnostics.MessageCode.ImplementationError;
                 programClassBuilderError = new ParserDiagnostic(ex.ToString(), Diagnostic.Position.Default, null, code, ex);
             }
-            perfStatsForParserInvocation.OnStopParsing(0, 0);
+            perfStatsForParserInvocation.OnStopParsing();
 
 
 #if DEBUG_ANTRL_CUP_TIME
