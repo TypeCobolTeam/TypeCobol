@@ -218,5 +218,8 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
 
         [TestMethod]
         public void AtBeginningOfLine_KeywordUserFilter3() => ExecuteTest();
+
+        [TestMethod]
+        public void CompletionOnComments() => ExecuteTest();
     }
 }
