@@ -64,6 +64,10 @@ namespace TypeCobol.Compiler.AntlrUtils
             DecisionTimeMs += perfStats.DecisionTimeMs;
             RuleInvocationsCount += perfStats.RuleInvocationsCount;
             TreeBuildingTime += TreeBuildingTime;
+
+            // Adding detailed stats for ANTLR is not defined. DetailedAntlrProfiling is available only
+            // for a single parser invocation. So nothing available on PerfStatsForParsingStep.TotalParsingTime.
+            DetailedAntlrProfiling = null;
         }
     }
 }
