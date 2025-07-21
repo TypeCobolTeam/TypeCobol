@@ -30,6 +30,8 @@ namespace TypeCobol.LanguageServer
             { TokenType.INTO, false },
             { TokenType.DISPLAY, false },
             { TokenType.IN, false },
+            { TokenType.SEARCH, false },
+            { TokenType.SORT, false },
         };
 
         /// <summary>

@@ -1,0 +1,88 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TCOBCOMP.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+
+      * should suggest: matching variables
+       01 SAY-VAR1 OCCURS 10           PIC 9.
+       01 GROUP1 OCCURS 10.
+          05 SAY-VAR2                  PIC 9.
+       01 GROUP2 OCCURS 10.
+          05 GROUP21 OCCURS 10.
+             10 SAY-VAR21              PIC 9.
+             10 SAY-VAR22 OCCURS 10    PIC 9.
+      * should not suggest: index
+       01 GROUP3 OCCURS 10 INDEXED BY SAY-INDEX.
+          05 VAR3                      PIC 9.
+
+       PROCEDURE DIVISION.
+       MAIN.
+           DISPLAY SAY
+           GOBACK
+           .
+       END PROGRAM TCOBCOMP.
+---------------------------------------------------------------------------------
+{"line":19,"character":22}
+---------------------------------------------------------------------------------
+[
+  {
+    "label": "SAY-VAR1 (Numeric) (SAY-VAR1()",
+    "kind": 6,
+    "insertText": "SAY-VAR1(",
+    "data": {
+      "start": {
+        "line": 19,
+        "character": 19
+      },
+      "end": {
+        "line": 19,
+        "character": 22
+      }
+    }
+  },
+  {
+    "label": "SAY-VAR2 (Numeric) (GROUP1::SAY-VAR2()",
+    "kind": 6,
+    "insertText": "GROUP1::SAY-VAR2(",
+    "data": {
+      "start": {
+        "line": 19,
+        "character": 19
+      },
+      "end": {
+        "line": 19,
+        "character": 22
+      }
+    }
+  },
+  {
+    "label": "SAY-VAR21 (Numeric) (GROUP2::GROUP21::SAY-VAR21(, ))",
+    "kind": 6,
+    "insertText": "GROUP2::GROUP21::SAY-VAR21(, )",
+    "data": {
+      "start": {
+        "line": 19,
+        "character": 19
+      },
+      "end": {
+        "line": 19,
+        "character": 22
+      }
+    }
+  },
+  {
+    "label": "SAY-VAR22 (Numeric) (GROUP2::GROUP21::SAY-VAR22(, , ))",
+    "kind": 6,
+    "insertText": "GROUP2::GROUP21::SAY-VAR22(, , )",
+    "data": {
+      "start": {
+        "line": 19,
+        "character": 19
+      },
+      "end": {
+        "line": 19,
+        "character": 22
+      }
+    }
+  }
+]

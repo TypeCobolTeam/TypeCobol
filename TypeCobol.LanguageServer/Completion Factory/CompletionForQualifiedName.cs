@@ -177,7 +177,7 @@ namespace TypeCobol.LanguageServer
                 }
 
                 var variables = childrenCandidates.Select(v => new KeyValuePair<DataDefinitionPath, DataDefinition>(null, v));
-                var variableItems = CompletionFactoryHelpers.CreateCompletionItemsForVariableSetAndDisambiguate(variables, compilationUnit.CompilerOptions, true);
+                var variableItems = CompletionFactoryHelpers.CreateCompletionItemsForVariableSetAndDisambiguate(variables, true, compilationUnit.CompilerOptions, true);
 
                 if (firstSignificantToken != null)
                 {

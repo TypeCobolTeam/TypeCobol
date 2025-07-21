@@ -49,7 +49,7 @@ namespace TypeCobol.LanguageServer
                     }
                     else if (matching && MatchesWithUserFilter(parentDataDefinition))
                     {
-                        completionItems.Add(CompletionFactoryHelpers.CreateCompletionItemForSingleVariable(null, parentDataDefinition, options, true, _lastSignificantTokenType));
+                        completionItems.Add(CompletionFactoryHelpers.CreateCompletionItemForSingleVariable(null, parentDataDefinition, true, options, true, _lastSignificantTokenType));
                     }
 
                     parentNode = parentDataDefinition.Parent;
@@ -142,7 +142,7 @@ namespace TypeCobol.LanguageServer
             }
 
             var variables = potentialVariables.Select(v => new KeyValuePair<DataDefinitionPath, DataDefinition>(null, v));
-            return CompletionFactoryHelpers.CreateCompletionItemsForVariableSetAndDisambiguate(variables, options);
+            return CompletionFactoryHelpers.CreateCompletionItemsForVariableSetAndDisambiguate(variables, true, options);
 
             bool IsRootDataItem(DataDefinition dataDef)
             {

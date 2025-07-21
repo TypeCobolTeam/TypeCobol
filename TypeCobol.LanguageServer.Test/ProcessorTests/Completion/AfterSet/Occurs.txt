@@ -1,0 +1,164 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TCOBCOMP.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+
+       01 MAIN-GROUP OCCURS 10.
+      * should suggest: matching variables + numeric and valid usage
+          05 SAY_POINTER USAGE POINTER.
+          05 SAY_POINTER-32 USAGE POINTER-32.
+          05 SAY_VAR1              PIC 9.
+          05 GROUP1.
+             10 VAR2_SAY           PIC 99.
+          05 VAR3_SAY_VAR3         PIC 9(2).
+          05 GROUP2.
+             10 VAR4               PIC 9.
+                88 SAY88-YES              VALUE 1.
+                88 SAY88-NO               VALUE 0.
+          05 GROUP3 OCCURS 10 INDEXED BY SAY_INDEX
+                                PIC X.
+      * should not suggest: not matching, not numeric, invalid usage
+          05 VAR5                  PIC 9.
+          05 NOT_SAY_ALPHA         PIC X.
+          05 NOT_SAY_FUNCTION_POINTER USAGE FUNCTION-POINTER.
+
+       PROCEDURE DIVISION.
+       MAIN.
+           SET SAY
+           GOBACK
+           .
+      * should not suggest: paragraph
+       P_SAY_HELLO.
+           DISPLAY "Hello"
+           .
+      * should not suggest: section
+       S_SAY_CONTINUE SECTION.
+           CONTINUE
+           .
+
+       END PROGRAM TCOBCOMP.
+---------------------------------------------------------------------------------
+{"line":26,"character":18}
+---------------------------------------------------------------------------------
+[
+  {
+    "label": "SAY88-NO (Level88) (MAIN-GROUP::GROUP2::VAR4::SAY88-NO()",
+    "kind": 6,
+    "insertText": "MAIN-GROUP::GROUP2::VAR4::SAY88-NO(",
+    "data": {
+      "start": {
+        "line": 26,
+        "character": 15
+      },
+      "end": {
+        "line": 26,
+        "character": 18
+      }
+    }
+  },
+  {
+    "label": "SAY88-YES (Level88) (MAIN-GROUP::GROUP2::VAR4::SAY88-YES()",
+    "kind": 6,
+    "insertText": "MAIN-GROUP::GROUP2::VAR4::SAY88-YES(",
+    "data": {
+      "start": {
+        "line": 26,
+        "character": 15
+      },
+      "end": {
+        "line": 26,
+        "character": 18
+      }
+    }
+  },
+  {
+    "label": "SAY_INDEX (Numeric) (MAIN-GROUP::GROUP3::SAY_INDEX)",
+    "kind": 6,
+    "insertText": "MAIN-GROUP::GROUP3::SAY_INDEX",
+    "data": {
+      "start": {
+        "line": 26,
+        "character": 15
+      },
+      "end": {
+        "line": 26,
+        "character": 18
+      }
+    }
+  },
+  {
+    "label": "SAY_POINTER (Alphanumeric) (MAIN-GROUP::SAY_POINTER()",
+    "kind": 6,
+    "insertText": "MAIN-GROUP::SAY_POINTER(",
+    "data": {
+      "start": {
+        "line": 26,
+        "character": 15
+      },
+      "end": {
+        "line": 26,
+        "character": 18
+      }
+    }
+  },
+  {
+    "label": "SAY_POINTER-32 (Alphanumeric) (MAIN-GROUP::SAY_POINTER-32()",
+    "kind": 6,
+    "insertText": "MAIN-GROUP::SAY_POINTER-32(",
+    "data": {
+      "start": {
+        "line": 26,
+        "character": 15
+      },
+      "end": {
+        "line": 26,
+        "character": 18
+      }
+    }
+  },
+  {
+    "label": "SAY_VAR1 (Numeric) (MAIN-GROUP::SAY_VAR1()",
+    "kind": 6,
+    "insertText": "MAIN-GROUP::SAY_VAR1(",
+    "data": {
+      "start": {
+        "line": 26,
+        "character": 15
+      },
+      "end": {
+        "line": 26,
+        "character": 18
+      }
+    }
+  },
+  {
+    "label": "VAR2_SAY (Numeric) (MAIN-GROUP::GROUP1::VAR2_SAY()",
+    "kind": 6,
+    "insertText": "MAIN-GROUP::GROUP1::VAR2_SAY(",
+    "data": {
+      "start": {
+        "line": 26,
+        "character": 15
+      },
+      "end": {
+        "line": 26,
+        "character": 18
+      }
+    }
+  },
+  {
+    "label": "VAR3_SAY_VAR3 (Numeric) (MAIN-GROUP::VAR3_SAY_VAR3()",
+    "kind": 6,
+    "insertText": "MAIN-GROUP::VAR3_SAY_VAR3(",
+    "data": {
+      "start": {
+        "line": 26,
+        "character": 15
+      },
+      "end": {
+        "line": 26,
+        "character": 18
+      }
+    }
+  }
+]

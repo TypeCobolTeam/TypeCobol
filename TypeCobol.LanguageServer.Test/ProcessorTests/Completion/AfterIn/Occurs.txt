@@ -1,0 +1,39 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TCOBCOMP.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+
+      * should suggest: matching group
+      *  (subscript is missing while it is required)
+       01 SAY-GROUP.
+          05 GROUP1.
+             10 VAR-OCC OCCURS 10         PIC 9.
+          05 GROUP2.
+             10 VAR-OCC OCCURS 10         PIC 9.
+
+       PROCEDURE DIVISION.
+       MAIN.
+           MOVE VAR-OCC IN GROUP1 IN SAY
+           GOBACK
+           .
+       END PROGRAM TCOBCOMP.
+---------------------------------------------------------------------------------
+{"line":15,"character":40}
+---------------------------------------------------------------------------------
+[
+  {
+    "label": "SAY-GROUP (Alphanumeric) (SAY-GROUP)",
+    "kind": 6,
+    "insertText": "SAY-GROUP",
+    "data": {
+      "start": {
+        "line": 15,
+        "character": 37
+      },
+      "end": {
+        "line": 15,
+        "character": 40
+      }
+    }
+  }
+]

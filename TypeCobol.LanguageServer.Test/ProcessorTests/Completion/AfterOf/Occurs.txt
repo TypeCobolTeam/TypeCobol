@@ -1,0 +1,54 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TCOBCOMP.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+
+       01 MAIN-GROUP.
+          05 GROUP11.
+      * should suggest: matching variables
+             10 SAY-OCC OCCURS 10         PIC 9.
+          05 GROUP12.
+      * should suggest: matching variables
+             10 SAY-OCC OCCURS 10         PIC 9.
+
+       PROCEDURE DIVISION.
+       MAIN.
+           MOVE SAY
+           GOBACK
+           .
+       END PROGRAM TCOBCOMP.
+---------------------------------------------------------------------------------
+{"line":15,"character":19}
+---------------------------------------------------------------------------------
+[
+  {
+    "label": "SAY-OCC (Numeric) (MAIN-GROUP::GROUP11::SAY-OCC()",
+    "kind": 6,
+    "insertText": "MAIN-GROUP::GROUP11::SAY-OCC(",
+    "data": {
+      "start": {
+        "line": 15,
+        "character": 16
+      },
+      "end": {
+        "line": 15,
+        "character": 19
+      }
+    }
+  },
+  {
+    "label": "SAY-OCC (Numeric) (MAIN-GROUP::GROUP12::SAY-OCC()",
+    "kind": 6,
+    "insertText": "MAIN-GROUP::GROUP12::SAY-OCC(",
+    "data": {
+      "start": {
+        "line": 15,
+        "character": 16
+      },
+      "end": {
+        "line": 15,
+        "character": 19
+      }
+    }
+  }
+]
