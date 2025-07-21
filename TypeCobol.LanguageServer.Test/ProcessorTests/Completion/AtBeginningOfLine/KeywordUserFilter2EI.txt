@@ -41,5 +41,33 @@
         "character": 13
       }
     }
+  },
+  {
+    "label": "END-START",
+    "kind": 14,
+    "data": {
+      "start": {
+        "line": 8,
+        "character": 11
+      },
+      "end": {
+        "line": 8,
+        "character": 13
+      }
+    }
+  },
+  {
+    "label": "END-STRING",
+    "kind": 14,
+    "data": {
+      "start": {
+        "line": 8,
+        "character": 11
+      },
+      "end": {
+        "line": 8,
+        "character": 13
+      }
+    }
   }
 ]

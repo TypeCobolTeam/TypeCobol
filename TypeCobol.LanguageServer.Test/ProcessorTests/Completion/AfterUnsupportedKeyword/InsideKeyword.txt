@@ -34,5 +34,19 @@
         "character": 17
       }
     }
+  },
+  {
+    "label": "END-STRING",
+    "kind": 14,
+    "data": {
+      "start": {
+        "line": 15,
+        "character": 11
+      },
+      "end": {
+        "line": 15,
+        "character": 17
+      }
+    }
   }
 ]
