@@ -16,11 +16,11 @@ namespace TypeCobol.Tools.APIHelpers
 {
     public static class Helpers
     {
-        private static string[] _DependenciesExtensions = { ".tcbl", ".cbl", ".cpy" };
+        private static readonly string[] _DependenciesExtensions = { ".tcbl", ".cbl", ".cpy" };
 
         //Default extensions used for parsing
-        public static string[] DEFAULT_EXTENSIONS = { ".cbl", ".cpy", ".copy"};
-        public static string[] DEFAULT_COPY_EXTENSIONS = {".cpy", ".copy"};
+        public static readonly string[] DEFAULT_EXTENSIONS = { ".cbl", ".cpy", ".copy"};
+        public static readonly string[] DEFAULT_COPY_EXTENSIONS = {".cpy", ".copy"};
 
         public static SymbolTable LoadIntrinsic(List<string> paths, DocumentFormat intrinsicDocumentFormat, EventHandler<DiagnosticsErrorEvent> diagEvent, bool optimizeWhitespaceScanning = true)
         {

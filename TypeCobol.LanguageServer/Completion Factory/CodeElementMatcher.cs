@@ -14,7 +14,7 @@ namespace TypeCobol.LanguageServer
         ///        ^
         /// that is to say if the cursor is just after the M that no completion should occurs.
         /// </summary>
-        private static Dictionary<TokenType, bool> _ElligibleCompletionTokens = new()
+        private static readonly Dictionary<TokenType, bool> _ElligibleCompletionTokens = new()
         {
             { TokenType.PERFORM, false },
             { TokenType.CALL, false },

@@ -7,9 +7,9 @@ namespace TypeCobol.Compiler.Text
     /// </summary>
     public static class CobolChar
     {
-        private static bool[] isCobolWordChar = new bool[256];
-        private static bool[] isCobolWordSeparator = new bool[256];
-        private static bool[] isAdditionalCharAllowedInPseudoText = new bool[256];
+        private static readonly bool[] isCobolWordChar = new bool[256];
+        private static readonly bool[] isCobolWordSeparator = new bool[256];
+        private static readonly bool[] isAdditionalCharAllowedInPseudoText = new bool[256];
 
         /// <summary>
         /// True if the current char can be found inside a Cobol word

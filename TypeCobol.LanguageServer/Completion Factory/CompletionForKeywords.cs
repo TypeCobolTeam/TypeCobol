@@ -15,7 +15,7 @@ namespace TypeCobol.LanguageServer
         /// of this keyword when it may be followed by other keywords. If the keyword is meant to
         /// be used alone, the variation array is null.
         /// </summary>
-        private static Dictionary<string, string[]> _KeywordSuggestions;
+        private static readonly Dictionary<string, string[]> _KeywordSuggestions;
 
         static CompletionForKeywords()
         {

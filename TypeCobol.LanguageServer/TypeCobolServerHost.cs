@@ -139,7 +139,7 @@ namespace TypeCobol.LanguageServer
         /// <summary>
         /// Custom extensions Dll Paths
         /// </summary>
-        public static List<string> Extensions = new List<string>();
+        public static readonly List<string> Extensions = new List<string>();
 
         /// <summary>
         /// Try launch the Lsr Process

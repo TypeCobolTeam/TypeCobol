@@ -1001,16 +1001,17 @@ namespace TypeCobol.Compiler.Nodes {
         private string _Name;
         private readonly DataType _DataType;
 
-        public static GeneratedDefinition NumericGeneratedDefinition =       new GeneratedDefinition("Numeric", DataType.Numeric);
-        public static GeneratedDefinition AlphanumericGeneratedDefinition =  new GeneratedDefinition("Alphanumeric", DataType.Alphanumeric);
-        public static GeneratedDefinition AlphabeticGeneratedDefinition =    new GeneratedDefinition("Alphabetic", DataType.Alphabetic);
-        public static GeneratedDefinition BooleanGeneratedDefinition =       new GeneratedDefinition("Boolean", DataType.Boolean);
-        public static GeneratedDefinition DBCSGeneratedDefinition =          new GeneratedDefinition("DBCS", DataType.DBCS);
-        public static GeneratedDefinition DateGeneratedDefinition =          new GeneratedDefinition("Date", DataType.Date);
-        public static GeneratedDefinition CurrencyGeneratedDefinition =      new GeneratedDefinition("Currency", DataType.Currency);
-        public static GeneratedDefinition FloatingPointGeneratedDefinition = new GeneratedDefinition("FloatingPoint", DataType.FloatingPoint);
-        public static GeneratedDefinition OccursGeneratedDefinition =        new GeneratedDefinition("Occurs", DataType.Occurs);
-        public static GeneratedDefinition StringGeneratedDefinition =        new GeneratedDefinition("String", DataType.String);
+        public static readonly GeneratedDefinition NumericGeneratedDefinition =       new GeneratedDefinition("Numeric", DataType.Numeric);
+        public static readonly GeneratedDefinition AlphanumericGeneratedDefinition =  new GeneratedDefinition("Alphanumeric", DataType.Alphanumeric);
+        public static readonly GeneratedDefinition AlphabeticGeneratedDefinition =    new GeneratedDefinition("Alphabetic", DataType.Alphabetic);
+        public static readonly GeneratedDefinition BooleanGeneratedDefinition =       new GeneratedDefinition("Boolean", DataType.Boolean);
+        public static readonly GeneratedDefinition DBCSGeneratedDefinition =          new GeneratedDefinition("DBCS", DataType.DBCS);
+        public static readonly GeneratedDefinition DateGeneratedDefinition =          new GeneratedDefinition("Date", DataType.Date);
+        public static readonly GeneratedDefinition CurrencyGeneratedDefinition =      new GeneratedDefinition("Currency", DataType.Currency);
+        public static readonly GeneratedDefinition FloatingPointGeneratedDefinition = new GeneratedDefinition("FloatingPoint", DataType.FloatingPoint);
+        public static readonly GeneratedDefinition OccursGeneratedDefinition =        new GeneratedDefinition("Occurs", DataType.Occurs);
+        public static readonly GeneratedDefinition StringGeneratedDefinition =        new GeneratedDefinition("String", DataType.String);
+
         public GeneratedDefinition(string name, DataType dataType) : base(null)
         {
             _Name = name;
