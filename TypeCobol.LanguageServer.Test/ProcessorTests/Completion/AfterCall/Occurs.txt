@@ -50,11 +50,11 @@
     "data": [
       {
         "start": {
-          "line": 15,
+          "line": 16,
           "character": 16
         },
         "end": {
-          "line": 15,
+          "line": 16,
           "character": 20
         }
       },
@@ -71,11 +71,11 @@
     "insertText": "VAR-PROCESS(, )",
     "data": {
       "start": {
-        "line": 15,
+        "line": 16,
         "character": 16
       },
       "end": {
-        "line": 15,
+        "line": 16,
         "character": 20
       }
     }
@@ -85,11 +85,11 @@
     "kind": 9,
     "data": {
       "start": {
-        "line": 15,
+        "line": 16,
         "character": 16
       },
       "end": {
-        "line": 15,
+        "line": 16,
         "character": 20
       }
     }
