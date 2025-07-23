@@ -2,26 +2,27 @@
        PROGRAM-ID. TCOBCOMP.
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-       01 MAIN-GROUP OCCURS 10.
+       01 ROOT-GROUP.
+          05 MAIN-GROUP OCCURS 10.
       * should suggest: matching variables and sender type
-          05 SAY_VAR1              PIC 9.
-          05 GROUP1.
-             10 VAR2_SAY           PIC 99.
-          05 VAR3_SAY_VAR3         PIC 9(2).
-          05 GROUP2 OCCURS 10 INDEXED BY SAY_INDEX
+             10 SAY_VAR1              PIC 9.
+             10 GROUP1.
+                15 VAR2_SAY           PIC 99.
+             10 VAR3_SAY_VAR3         PIC 9(2).
+             10 GROUP2 OCCURS 10 INDEXED BY SAY_INDEX
                                    PIC X.
       * should not suggest: not matching variables, 88, not sender type
-          05 VAR5                  PIC 9.
-          05 VAR6SAY               PIC 9.
-          05 GROUP3.
-             10 VAR7               PIC 9.
-                88 SAY88-YES              VALUE 1.
-                88 SAY88-NO               VALUE 0.
-          05 SAY_POINTER USAGE POINTER.
-          05 SAY_POINTER-32 USAGE POINTER-32.
-          05 VAR4_SAY              PIC X.
-          05 SAY_FUNCTION-POINTER USAGE FUNCTION-POINTER.
-          05 SAY_SENDER            PIC 9.
+             10 VAR5                  PIC 9.
+             10 VAR6SAY               PIC 9.
+             10 GROUP3.
+                15 VAR7               PIC 9.
+                   88 SAY88-YES              VALUE 1.
+                   88 SAY88-NO               VALUE 0.
+             10 SAY_POINTER USAGE POINTER.
+             10 SAY_POINTER-32 USAGE POINTER-32.
+             10 VAR4_SAY              PIC X.
+             10 SAY_FUNCTION-POINTER USAGE FUNCTION-POINTER.
+             10 SAY_SENDER            PIC 9.
 
        PROCEDURE DIVISION.
        MAIN.
@@ -39,65 +40,65 @@
 
        END PROGRAM TCOBCOMP.
 ---------------------------------------------------------------------------------
-{"line":27,"character":52}
+{"line":28,"character":52}
 ---------------------------------------------------------------------------------
 [
   {
-    "label": "SAY_INDEX (Numeric) (MAIN-GROUP::GROUP2::SAY_INDEX)",
+    "label": "SAY_INDEX (Numeric) (ROOT-GROUP::MAIN-GROUP::GROUP2::SAY_INDEX)",
     "kind": 6,
-    "insertText": "MAIN-GROUP::GROUP2::SAY_INDEX",
+    "insertText": "ROOT-GROUP::MAIN-GROUP::GROUP2::SAY_INDEX",
     "data": {
       "start": {
-        "line": 27,
+        "line": 28,
         "character": 49
       },
       "end": {
-        "line": 27,
+        "line": 28,
         "character": 52
       }
     }
   },
   {
-    "label": "SAY_VAR1 (Numeric) (MAIN-GROUP::SAY_VAR1()",
+    "label": "SAY_VAR1 (Numeric) (ROOT-GROUP::MAIN-GROUP::SAY_VAR1()",
     "kind": 6,
-    "insertText": "MAIN-GROUP::SAY_VAR1(",
+    "insertText": "ROOT-GROUP::MAIN-GROUP::SAY_VAR1(",
     "data": {
       "start": {
-        "line": 27,
+        "line": 28,
         "character": 49
       },
       "end": {
-        "line": 27,
+        "line": 28,
         "character": 52
       }
     }
   },
   {
-    "label": "VAR2_SAY (Numeric) (MAIN-GROUP::GROUP1::VAR2_SAY()",
+    "label": "VAR2_SAY (Numeric) (ROOT-GROUP::MAIN-GROUP::GROUP1::VAR2_SAY()",
     "kind": 6,
-    "insertText": "MAIN-GROUP::GROUP1::VAR2_SAY(",
+    "insertText": "ROOT-GROUP::MAIN-GROUP::GROUP1::VAR2_SAY(",
     "data": {
       "start": {
-        "line": 27,
+        "line": 28,
         "character": 49
       },
       "end": {
-        "line": 27,
+        "line": 28,
         "character": 52
       }
     }
   },
   {
-    "label": "VAR3_SAY_VAR3 (Numeric) (MAIN-GROUP::VAR3_SAY_VAR3()",
+    "label": "VAR3_SAY_VAR3 (Numeric) (ROOT-GROUP::MAIN-GROUP::VAR3_SAY_VAR3()",
     "kind": 6,
-    "insertText": "MAIN-GROUP::VAR3_SAY_VAR3(",
+    "insertText": "ROOT-GROUP::MAIN-GROUP::VAR3_SAY_VAR3(",
     "data": {
       "start": {
-        "line": 27,
+        "line": 28,
         "character": 49
       },
       "end": {
-        "line": 27,
+        "line": 28,
         "character": 52
       }
     }

@@ -3,18 +3,20 @@
        DATA DIVISION.
        WORKING-STORAGE SECTION.
       * should suggest: matching alpha variables
-       01 SAY-VAR1              PIC X.
-       01 GROUP1-SAY OCCURS 10.
-          05 VAR2-SAY           PIC BX.
-          05 VAR3-SAY OCCURS 5  PIC X.
+       01 SAY-VAR1                 PIC X.
+       01 GROUP1.
+          05 GROUP11 OCCURS 10.
+             10 VAR2-SAY           PIC BX.
+             10 VAR3-SAY OCCURS 5  PIC X.
        01 SAY-FUNCTION-POINTER USAGE FUNCTION-POINTER.
       * should not suggest: not matching, not alpha
-       01 VAR4                  PIC X.
-       01 VAR5-SAY              PIC 9.
-       01 GROUP2 OCCURS 10 INDEXED BY SAY-INDEX
-                                PIC X.
+       01 VAR4                     PIC X.
+       01 VAR5-SAY                 PIC 9.
+       01 GROUP2.
+          05 GROUP21 OCCURS 10 INDEXED BY SAY-INDEX
+                                   PIC X.
        01 GROUP3.
-          05 VAR6               PIC X.
+          05 VAR6                  PIC X.
              88 SAY88-YES              VALUE 'Y'.
              88 SAY88-NO               VALUE 'N'.
 
@@ -34,7 +36,7 @@
 
        END PROGRAM TCOBCOMP.
 ---------------------------------------------------------------------------------
-{"line":22,"character":50}
+{"line":24,"character":50}
 ---------------------------------------------------------------------------------
 [
   {
@@ -43,11 +45,11 @@
     "insertText": "SAY-FUNCTION-POINTER",
     "data": {
       "start": {
-        "line": 22,
+        "line": 24,
         "character": 47
       },
       "end": {
-        "line": 22,
+        "line": 24,
         "character": 50
       }
     }
@@ -58,41 +60,41 @@
     "insertText": "SAY-VAR1",
     "data": {
       "start": {
-        "line": 22,
+        "line": 24,
         "character": 47
       },
       "end": {
-        "line": 22,
+        "line": 24,
         "character": 50
       }
     }
   },
   {
-    "label": "VAR2-SAY (AlphanumericEdited) (GROUP1-SAY::VAR2-SAY()",
+    "label": "VAR2-SAY (AlphanumericEdited) (GROUP1::GROUP11::VAR2-SAY()",
     "kind": 6,
-    "insertText": "GROUP1-SAY::VAR2-SAY(",
+    "insertText": "GROUP1::GROUP11::VAR2-SAY(",
     "data": {
       "start": {
-        "line": 22,
+        "line": 24,
         "character": 47
       },
       "end": {
-        "line": 22,
+        "line": 24,
         "character": 50
       }
     }
   },
   {
-    "label": "VAR3-SAY (Alphanumeric) (GROUP1-SAY::VAR3-SAY(, ))",
+    "label": "VAR3-SAY (Alphanumeric) (GROUP1::GROUP11::VAR3-SAY(, ))",
     "kind": 6,
-    "insertText": "GROUP1-SAY::VAR3-SAY(, )",
+    "insertText": "GROUP1::GROUP11::VAR3-SAY(, )",
     "data": {
       "start": {
-        "line": 22,
+        "line": 24,
         "character": 47
       },
       "end": {
-        "line": 22,
+        "line": 24,
         "character": 50
       }
     }

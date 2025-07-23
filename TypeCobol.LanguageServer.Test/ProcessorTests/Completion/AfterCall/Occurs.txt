@@ -5,10 +5,11 @@
       * should not suggest: no picture
        01 GROUP-PROCESS.
           05 VAR1            PIC X.
-       01 GROUP1 OCCURS 10.
+       01 GROUP1.
           05 VAR2            PIC X.
+          05 GROUP11 OCCURS 10.
       * should suggest: alphanumeric picture
-          05 VAR-PROCESS OCCURS 10    PIC X.
+             10 VAR-PROCESS OCCURS 10    PIC X.
       * should not suggest: not alphanumeric picture
           05 NOT-VAR-PROCESS PIC 9.
        PROCEDURE DIVISION.
@@ -39,7 +40,7 @@
        
        END PROGRAM TCOMFL06.
 ---------------------------------------------------------------------------------
-{"line":15,"character":20}
+{"line":16,"character":20}
 ---------------------------------------------------------------------------------
 [
   {
