@@ -4,7 +4,7 @@
        WORKING-STORAGE SECTION.
 
       * should suggest: matching group
-      *  (subscript is missing while it is required)
+      *  (subscript is missing while it is required see issue #2794)
        01 SAY-GROUP.
           05 GROUP1.
              10 VAR-OCC OCCURS 10         PIC 9.
