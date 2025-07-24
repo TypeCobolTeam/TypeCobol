@@ -91,6 +91,10 @@ namespace TypeCobol.LanguageServer
             if (linesCount != 0 && lineIndex < linesCount)
             {
                 cursorLine = compilationUnit.ProgramClassDocumentSnapshot.PreviousStepSnapshot.Lines[lineIndex];
+
+                // Avoid suggesting anything when completion is requested directly inside a comment line
+                if (cursorLine.Type == CobolTextLineType.Comment) return null;
+
                 while (codeElements.Count == 0 && lineIndex >= 0)
                 {
                     var codeElementsLine = compilationUnit.ProgramClassDocumentSnapshot.PreviousStepSnapshot.Lines[lineIndex];

@@ -22,7 +22,7 @@ namespace TypeCobol.LanguageServer.Processor
 
             var wrappedCodeElements = TypeCobolServer.CodeElementFinder(compilationUnit, position, out var cursorLine);
             if (wrappedCodeElements == null)
-                return null;
+                return new List<CompletionItem>();
 
             //Try to get a significant token for completion and return the codeelement containing the matching token.
             CodeElement matchingCodeElement = CodeElementMatcher.MatchCompletionCodeElement(position,
