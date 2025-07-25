@@ -159,7 +159,7 @@ namespace TypeCobol.LanguageServer
             return completionItems;
         }
 
-        public static List<CompletionItem> CreateCompletionItemsForVariableSetAndDisambiguate(IEnumerable<KeyValuePair<DataDefinitionPath, DataDefinition>> variables, TypeCobolOptions options, bool forceUnqualifiedName = false)
+        public static List<CompletionItem> CreateCompletionItemsForVariableSetAndDisambiguate(IEnumerable<KeyValuePair<DataDefinitionPath, DataDefinition>> variables, bool addSubscript, TypeCobolOptions options, bool forceUnqualifiedName = false)
         {
             var results = new List<CompletionItem>();
 
@@ -174,7 +174,7 @@ namespace TypeCobol.LanguageServer
                     //Ambiguity: use qualified name for completion items (except if forceUnqualifiedName is set, in that case it may lead to ambiguities in completion list...)
                     foreach (var pair in variableGroup)
                     {
-                        var completionItem = CreateCompletionItemForSingleVariable(pair.Key?.CurrentDataDefinition, pair.Value, options, !forceUnqualifiedName);
+                        var completionItem = CreateCompletionItemForSingleVariable(pair.Key?.CurrentDataDefinition, pair.Value, addSubscript, options, !forceUnqualifiedName);
                         results.Add(completionItem);
                     }
                 }
@@ -183,7 +183,7 @@ namespace TypeCobol.LanguageServer
                     //Non ambiguous name, remove qualifier for pure Cobol 
                     var pair = variableGroup[0];
                     bool qualify = !options.IsCobolLanguage && !forceUnqualifiedName;
-                    var completionItem = CreateCompletionItemForSingleVariable(pair.Key?.CurrentDataDefinition, pair.Value, options, qualify);
+                    var completionItem = CreateCompletionItemForSingleVariable(pair.Key?.CurrentDataDefinition, pair.Value, addSubscript, options, qualify);
                     results.Add(completionItem);
                 }
             }
@@ -191,7 +191,7 @@ namespace TypeCobol.LanguageServer
             return results;
         }
 
-        public static CompletionItem CreateCompletionItemForSingleVariable(DataDefinition parent, DataDefinition variable, TypeCobolOptions options, bool qualify, TokenType qualificationTokenType = TokenType.OF)
+        public static CompletionItem CreateCompletionItemForSingleVariable(DataDefinition parent, DataDefinition variable, bool addSubscript, TypeCobolOptions options, bool qualify, TokenType qualificationTokenType = TokenType.OF)
         {
             string name = variable.Name;
             string type = variable.DataType.Name;
@@ -243,8 +243,36 @@ namespace TypeCobol.LanguageServer
                 insertText = name;
             }
 
+            if (addSubscript)
+            {
+                insertText += GetSubscript(variable);
+            }
+
             string label = $"{name} ({type}) ({insertText})";
             return new CompletionItem() { label = label, insertText = insertText, kind = CompletionItemKind.Variable };
+        }
+
+        /// <summary>
+        /// Get the possible subscript for a variable.
+        /// A subscript is returned when the variable is an OCCURS or at least one of its parent is an OCCURS.
+        /// It is built by default with only one opening parenthesis.
+        /// When OCCURS dimension is greather than one, separators and closing parenthesis are added.
+        /// Example: '(, )' for a variable with 2 OCCURS dimension'
+        /// </summary>
+        /// <param name="variable">The variable to be subscripted</param>
+        /// <returns>The subscript depending on the OCCURS dimension or an empty string</returns>
+        public static string GetSubscript(DataDefinition variable)
+        {
+            if (variable.IsTableIndex) return string.Empty;
+
+            var parentTableDefinitions = variable.GetParentTableDefinitions();
+            int occursDimension = parentTableDefinitions == null ? 0 : parentTableDefinitions.Count;
+            return occursDimension switch
+            {
+                0 => string.Empty,
+                1 => "(",
+                _ => $"({string.Concat(Enumerable.Repeat(", ", occursDimension - 1))})"
+            };
         }
 
         private static Case GetTextCase(Token token)

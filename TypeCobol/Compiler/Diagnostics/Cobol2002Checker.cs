@@ -211,7 +211,7 @@ namespace TypeCobol.Compiler.Diagnostics
     class TypedDeclarationChecker
     {
 
-        private static List<Node> browsedTypes = new List<Node>();
+        private static readonly List<Node> browsedTypes = new List<Node>();
 
         public static void OnNode(DataDefinition dataDefinition)
         {

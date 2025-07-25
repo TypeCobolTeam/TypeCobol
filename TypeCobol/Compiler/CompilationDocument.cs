@@ -125,7 +125,7 @@ namespace TypeCobol.Compiler
 
             /// <summary>
             /// Set to true to activate very detailed Anltr profiling statistics, which can then be accessed 
-            /// through XxxParserStep.AntlrPerformanceProfiler static properties
+            /// through XxxParsingTime.DetailedAntlrProfiling properties
             /// </summary>
             public bool ActivateDetailedAntlrPofiling { get; set; }
 

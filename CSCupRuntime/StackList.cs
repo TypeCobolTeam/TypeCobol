@@ -41,7 +41,7 @@ namespace CSCupRuntime
         private Object _syncRoot;
 
         private const int _defaultCapacity = 4;
-        static T[] _emptyArray = new T[0];
+        static readonly T[] _emptyArray = new T[0];
 
         /// <include file='doc\Stack.uex' path='docs/doc[@for="Stack.Stack"]/*' />
         public StackList()

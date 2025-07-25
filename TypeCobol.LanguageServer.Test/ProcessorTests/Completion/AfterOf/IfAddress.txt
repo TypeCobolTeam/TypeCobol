@@ -50,9 +50,9 @@
 ---------------------------------------------------------------------------------
 [
   {
-    "label": "WS-SAY-VAR1 (Numeric) (WS-SAY-VAR1)",
+    "label": "LK-SAY-VAR1 (Numeric) (LK-SAY-VAR1)",
     "kind": 6,
-    "insertText": "WS-SAY-VAR1",
+    "insertText": "LK-SAY-VAR1",
     "data": {
       "start": {
         "line": 34,
@@ -65,9 +65,9 @@
     }
   },
   {
-    "label": "WS-SAY-VAR2 (Numeric) (WS-SAY-VAR2)",
+    "label": "LK-SAY-VAR2 (Numeric) (LK-SAY-VAR2)",
     "kind": 6,
-    "insertText": "WS-SAY-VAR2",
+    "insertText": "LK-SAY-VAR2",
     "data": {
       "start": {
         "line": 34,
@@ -110,9 +110,9 @@
     }
   },
   {
-    "label": "LK-SAY-VAR1 (Numeric) (LK-SAY-VAR1)",
+    "label": "WS-SAY-VAR1 (Numeric) (WS-SAY-VAR1)",
     "kind": 6,
-    "insertText": "LK-SAY-VAR1",
+    "insertText": "WS-SAY-VAR1",
     "data": {
       "start": {
         "line": 34,
@@ -125,9 +125,9 @@
     }
   },
   {
-    "label": "LK-SAY-VAR2 (Numeric) (LK-SAY-VAR2)",
+    "label": "WS-SAY-VAR2 (Numeric) (WS-SAY-VAR2)",
     "kind": 6,
-    "insertText": "LK-SAY-VAR2",
+    "insertText": "WS-SAY-VAR2",
     "data": {
       "start": {
         "line": 34,

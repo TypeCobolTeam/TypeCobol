@@ -26,13 +26,13 @@
 ---------------------------------------------------------------------------------
 [
   {
-    "label": "GROUP-WITH-FILLER (Alphanumeric) (GROUP-WITH-FILLER)",
-    "kind": 6,
-    "insertText": "GROUP-WITH-FILLER"
-  },
-  {
     "label": "GROUP-WITH-ANONYMOUS (Alphanumeric) (GROUP-WITH-ANONYMOUS)",
     "kind": 6,
     "insertText": "GROUP-WITH-ANONYMOUS"
+  },
+  {
+    "label": "GROUP-WITH-FILLER (Alphanumeric) (GROUP-WITH-FILLER)",
+    "kind": 6,
+    "insertText": "GROUP-WITH-FILLER"
   }
 ]

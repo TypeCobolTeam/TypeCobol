@@ -1,0 +1,16 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TCOMFL06.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 var1 PIC X.
+       01 other-data PIC X.
+       01 var2 PIC 9.
+       PROCEDURE DIVISION.
+      *  Parser won't suggest anything if cursor is on comment
+           GOBACK
+           .
+       END PROGRAM TCOMFL06.
+---------------------------------------------------------------------------------
+{"line":8,"character":8}
+---------------------------------------------------------------------------------
+[]

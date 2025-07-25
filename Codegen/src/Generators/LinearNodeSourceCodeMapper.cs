@@ -77,7 +77,7 @@ namespace TypeCobol.Codegen.Generators
         /// <summary>
         /// Inteernal position 0
         /// </summary>
-        private static Position Pos0 = new Position(0);
+        private static readonly Position Pos0 = new Position(0);
 
         /// <summary>
         /// The Bit Array of line that must be commented

@@ -1,0 +1,106 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TCOBCOMP.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 ROOT-GROUP.
+          05 MAIN-GROUP OCCURS 10.
+      * should suggest: matching variables and sender type
+             10 SAY_VAR1              PIC 9.
+             10 GROUP1 OCCURS 5.
+                15 VAR2_SAY OCCURS 5  PIC 99.
+             10 VAR3_SAY_VAR3         PIC 9(2).
+             10 GROUP2 OCCURS 10 INDEXED BY SAY_INDEX
+                                   PIC X.
+      * should not suggest: not matching variables, 88, not sender type
+             10 VAR5                  PIC 9.
+             10 VAR6SAY               PIC 9.
+             10 GROUP3.
+                15 VAR7               PIC 9.
+                   88 SAY88-YES              VALUE 1.
+                   88 SAY88-NO               VALUE 0.
+             10 SAY_POINTER USAGE POINTER.
+             10 SAY_POINTER-32 USAGE POINTER-32.
+             10 VAR4_SAY              PIC X.
+             10 SAY_FUNCTION-POINTER USAGE FUNCTION-POINTER.
+             10 SAY_SENDER            PIC 9.
+
+       PROCEDURE DIVISION.
+       MAIN.
+           SET SAY_SENDER TO SAY
+           GOBACK
+           .
+      * should not suggest: paragraph
+       P_SAY_HELLO.
+           DISPLAY "Hello"
+           .
+      * should not suggest: section
+       S_SAY_CONTINUE SECTION.
+           CONTINUE
+           .
+
+       END PROGRAM TCOBCOMP.
+---------------------------------------------------------------------------------
+{"line":28,"character":32}
+---------------------------------------------------------------------------------
+[
+  {
+    "label": "SAY_INDEX (Numeric) (ROOT-GROUP::MAIN-GROUP::GROUP2::SAY_INDEX)",
+    "kind": 6,
+    "insertText": "ROOT-GROUP::MAIN-GROUP::GROUP2::SAY_INDEX",
+    "data": {
+      "start": {
+        "line": 28,
+        "character": 29
+      },
+      "end": {
+        "line": 28,
+        "character": 32
+      }
+    }
+  },
+  {
+    "label": "SAY_VAR1 (Numeric) (ROOT-GROUP::MAIN-GROUP::SAY_VAR1()",
+    "kind": 6,
+    "insertText": "ROOT-GROUP::MAIN-GROUP::SAY_VAR1(",
+    "data": {
+      "start": {
+        "line": 28,
+        "character": 29
+      },
+      "end": {
+        "line": 28,
+        "character": 32
+      }
+    }
+  },
+  {
+    "label": "VAR2_SAY (Numeric) (ROOT-GROUP::MAIN-GROUP::GROUP1::VAR2_SAY(, , ))",
+    "kind": 6,
+    "insertText": "ROOT-GROUP::MAIN-GROUP::GROUP1::VAR2_SAY(, , )",
+    "data": {
+      "start": {
+        "line": 28,
+        "character": 29
+      },
+      "end": {
+        "line": 28,
+        "character": 32
+      }
+    }
+  },
+  {
+    "label": "VAR3_SAY_VAR3 (Numeric) (ROOT-GROUP::MAIN-GROUP::VAR3_SAY_VAR3()",
+    "kind": 6,
+    "insertText": "ROOT-GROUP::MAIN-GROUP::VAR3_SAY_VAR3(",
+    "data": {
+      "start": {
+        "line": 28,
+        "character": 29
+      },
+      "end": {
+        "line": 28,
+        "character": 32
+      }
+    }
+  }
+]

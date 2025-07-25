@@ -163,7 +163,7 @@ namespace TypeCobol.LanguageServer.Commands
     /// </summary>
     internal class AutoSelection : Selection
     {
-        public static AutoSelection Instance = new();
+        public static readonly AutoSelection Instance = new();
 
         private AutoSelection()
             : base(NodeVisitMode.Automatic)

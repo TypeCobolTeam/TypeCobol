@@ -27,5 +27,19 @@
         "character": 14
       }
     }
+  },
+  {
+    "label": "END-STRING",
+    "kind": 14,
+    "data": {
+      "start": {
+        "line": 8,
+        "character": 11
+      },
+      "end": {
+        "line": 8,
+        "character": 14
+      }
+    }
   }
 ]

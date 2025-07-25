@@ -1,8 +1,5 @@
 ﻿using Antlr4.Runtime;
 using Antlr4.Runtime.Tree;
-using System;
-using System.Linq;
-using System.Collections.Generic;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Concurrency;
@@ -50,9 +47,6 @@ namespace TypeCobol.Compiler.Parser
             public int StopLineIndex { get; set; }
             public Token StopToken { get; set; }
         }
-
-        // When not null, optionnaly used to gather Antlr performance profiling information
-        public static AntlrPerformanceProfiler AntlrPerformanceProfiler;
 
         /// <summary>
         /// Incremental parsing of a set of processed tokens lines changes
@@ -134,19 +128,20 @@ namespace TypeCobol.Compiler.Parser
             // REVERT TO STD PARSER ==> TracingCobolParser cobolParser = new TracingCobolParser(tokenStream);
 
             // Optionnaly activate Antlr Parser performance profiling
-            // WARNING : use this in a single-treaded context only (uses static field)     
+            AntlrPerformanceProfiler antlrPerformanceProfiler = null;
             if (perfStatsForParserInvocation.ActivateDetailedAntlrPofiling)
-                AntlrPerformanceProfiler = new AntlrPerformanceProfiler(cobolParser);
-            else
-                AntlrPerformanceProfiler = null;
+            {
+                antlrPerformanceProfiler = new AntlrPerformanceProfiler(cobolParser);
+                perfStatsForParserInvocation.DetailedAntlrProfiling = antlrPerformanceProfiler;
+            }
 
-            if (AntlrPerformanceProfiler != null)
+            if (antlrPerformanceProfiler != null)
             {
                 // Replace the generated parser by a subclass which traces all rules invocations
-                cobolParser = new CodeElementsTracingParser(tokenStream);
+                cobolParser = new CodeElementsTracingParser(tokenStream, antlrPerformanceProfiler);
 
                 var tokensCountIterator = processedTokensDocument.GetProcessedTokensIterator();
-                AntlrPerformanceProfiler.BeginParsingFile(processedTokensDocument.TextSourceInfo, tokensCountIterator);
+                antlrPerformanceProfiler.BeginParsingFile(processedTokensDocument.TextSourceInfo, tokensCountIterator);
             }
 
             // Customize error recovery strategy
@@ -218,17 +213,10 @@ namespace TypeCobol.Compiler.Parser
             try
             {
                 perfStatsForParserInvocation.OnStartParsing();
-                if (AntlrPerformanceProfiler != null) AntlrPerformanceProfiler.BeginParsingSection();
+                antlrPerformanceProfiler?.BeginParsingSection();
                 codeElementsParseTree = cobolParser.cobolCodeElements();
-                if (AntlrPerformanceProfiler != null)
-                    AntlrPerformanceProfiler.EndParsingSection(codeElementsParseTree.ChildCount);
-                perfStatsForParserInvocation.OnStopParsing(
-                    AntlrPerformanceProfiler != null
-                        ? (int) AntlrPerformanceProfiler.CurrentFileInfo.DecisionTimeMs
-                        : 0,
-                    AntlrPerformanceProfiler != null
-                        ? AntlrPerformanceProfiler.CurrentFileInfo.RuleInvocations.Sum()
-                        : 0);
+                antlrPerformanceProfiler?.EndParsingSection(codeElementsParseTree.ChildCount);
+                perfStatsForParserInvocation.OnStopParsing();
             }
             catch (Exception e)
             {
@@ -435,8 +423,7 @@ namespace TypeCobol.Compiler.Parser
                 }
             }
 
-            if (AntlrPerformanceProfiler != null)
-                AntlrPerformanceProfiler.EndParsingFile(cobolParser.ParseInfo.DecisionInfo, (int)(cobolParser.ParseInfo.GetTotalTimeInPrediction() / 1000000));
+            antlrPerformanceProfiler?.EndParsingFile(cobolParser.ParseInfo.DecisionInfo, (int)(cobolParser.ParseInfo.GetTotalTimeInPrediction() / 1000000));
 
             return codeElementsLinesChanges;
         }

@@ -14,14 +14,14 @@ namespace TypeCobol.LanguageServer
 
         }
 
-        public override List<CompletionItem> ComputeProposals(CompilationUnit compilationUnit, CodeElement codeElement)
+        protected override IEnumerable<IEnumerable<CompletionItem>> ComputeProposalGroups(CompilationUnit compilationUnit, CodeElement codeElement)
         {
             var node = GetMatchingNode(compilationUnit, codeElement);
             if (node?.SymbolTable == null)
-                return new List<CompletionItem>();
+                return [];
 
             var types = node.SymbolTable.GetTypes(StartsWithUserFilter, SymbolTable.Scope.Intrinsic);
-            return CompletionFactoryHelpers.CreateCompletionItemsForType(types, node);
+            return [ CompletionFactoryHelpers.CreateCompletionItemsForType(types, node) ];
         }
     }
 }
