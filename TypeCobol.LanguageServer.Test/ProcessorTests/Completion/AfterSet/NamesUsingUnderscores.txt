@@ -40,9 +40,9 @@
 ---------------------------------------------------------------------------------
 [
   {
-    "label": "SAY_VAR1 (Numeric) (SAY_VAR1)",
+    "label": "SAY88-NO (Level88) (GROUP2::VAR4::SAY88-NO)",
     "kind": 6,
-    "insertText": "SAY_VAR1",
+    "insertText": "GROUP2::VAR4::SAY88-NO",
     "data": {
       "start": {
         "line": 24,
@@ -55,9 +55,9 @@
     }
   },
   {
-    "label": "VAR2_SAY (Numeric) (GROUP1::VAR2_SAY)",
+    "label": "SAY88-YES (Level88) (GROUP2::VAR4::SAY88-YES)",
     "kind": 6,
-    "insertText": "GROUP1::VAR2_SAY",
+    "insertText": "GROUP2::VAR4::SAY88-YES",
     "data": {
       "start": {
         "line": 24,
@@ -70,9 +70,9 @@
     }
   },
   {
-    "label": "VAR3_SAY_VAR3 (Numeric) (VAR3_SAY_VAR3)",
+    "label": "SAY_INDEX (Numeric) (GROUP2::SAY_INDEX)",
     "kind": 6,
-    "insertText": "VAR3_SAY_VAR3",
+    "insertText": "GROUP2::SAY_INDEX",
     "data": {
       "start": {
         "line": 24,
@@ -115,9 +115,9 @@
     }
   },
   {
-    "label": "SAY88-YES (Level88) (GROUP2::VAR4::SAY88-YES)",
+    "label": "SAY_VAR1 (Numeric) (SAY_VAR1)",
     "kind": 6,
-    "insertText": "GROUP2::VAR4::SAY88-YES",
+    "insertText": "SAY_VAR1",
     "data": {
       "start": {
         "line": 24,
@@ -130,9 +130,9 @@
     }
   },
   {
-    "label": "SAY88-NO (Level88) (GROUP2::VAR4::SAY88-NO)",
+    "label": "VAR2_SAY (Numeric) (GROUP1::VAR2_SAY)",
     "kind": 6,
-    "insertText": "GROUP2::VAR4::SAY88-NO",
+    "insertText": "GROUP1::VAR2_SAY",
     "data": {
       "start": {
         "line": 24,
@@ -145,9 +145,9 @@
     }
   },
   {
-    "label": "SAY_INDEX (Numeric) (GROUP2::SAY_INDEX)",
+    "label": "VAR3_SAY_VAR3 (Numeric) (VAR3_SAY_VAR3)",
     "kind": 6,
-    "insertText": "GROUP2::SAY_INDEX",
+    "insertText": "VAR3_SAY_VAR3",
     "data": {
       "start": {
         "line": 24,

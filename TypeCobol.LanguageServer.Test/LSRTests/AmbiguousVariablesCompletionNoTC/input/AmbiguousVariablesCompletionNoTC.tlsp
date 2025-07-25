@@ -43,7 +43,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"Group1 (Alphanumeric) (Group1)\",\"kind\":6,\"insertText\":\"Group1\"},{\"label\":\"Level1 (Alphanumeric) (Level1)\",\"kind\":6,\"insertText\":\"Level1\"},{\"label\":\"ambiguous (Alphanumeric) (ambiguous OF Level1 OF Group1)\",\"kind\":6,\"insertText\":\"ambiguous OF Level1 OF Group1\"},{\"label\":\"ambiguous (Alphanumeric) (ambiguous OF Level2 OF Group1)\",\"kind\":6,\"insertText\":\"ambiguous OF Level2 OF Group1\"},{\"label\":\"non-ambiguous-1 (Alphanumeric) (non-ambiguous-1)\",\"kind\":6,\"insertText\":\"non-ambiguous-1\"},{\"label\":\"Level2 (Alphanumeric) (Level2)\",\"kind\":6,\"insertText\":\"Level2\"},{\"label\":\"non-ambiguous-2 (Alphanumeric) (non-ambiguous-2)\",\"kind\":6,\"insertText\":\"non-ambiguous-2\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"ambiguous (Alphanumeric) (ambiguous OF Level1 OF Group1)\",\"kind\":6,\"insertText\":\"ambiguous OF Level1 OF Group1\"},{\"label\":\"ambiguous (Alphanumeric) (ambiguous OF Level2 OF Group1)\",\"kind\":6,\"insertText\":\"ambiguous OF Level2 OF Group1\"},{\"label\":\"Group1 (Alphanumeric) (Group1)\",\"kind\":6,\"insertText\":\"Group1\"},{\"label\":\"Level1 (Alphanumeric) (Level1)\",\"kind\":6,\"insertText\":\"Level1\"},{\"label\":\"Level2 (Alphanumeric) (Level2)\",\"kind\":6,\"insertText\":\"Level2\"},{\"label\":\"non-ambiguous-1 (Alphanumeric) (non-ambiguous-1)\",\"kind\":6,\"insertText\":\"non-ambiguous-1\"},{\"label\":\"non-ambiguous-2 (Alphanumeric) (non-ambiguous-2)\",\"kind\":6,\"insertText\":\"non-ambiguous-2\"}]}}"
     },
     {
       "category": 0,

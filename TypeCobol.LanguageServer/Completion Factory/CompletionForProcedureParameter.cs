@@ -36,17 +36,16 @@ namespace TypeCobol.LanguageServer
             _procedureSignatureContext = procedureSignatureContext;
         }
 
-        public override List<CompletionItem> ComputeProposals(CompilationUnit compilationUnit, CodeElement codeElement)
+        protected override IEnumerable<IEnumerable<CompletionItem>> ComputeProposalGroups(CompilationUnit compilationUnit, CodeElement codeElement)
         {
-            var completionItems = new List<CompletionItem>();
             var arrangedCodeElement = codeElement as CodeElementWrapper;
             var node = GetMatchingNode(compilationUnit, codeElement);
             if (node == null)
-                return completionItems;
+                return [];
 
             //Get procedure name or qualified name
             string procedureName = CompletionFactoryHelpers.GetProcedureNameFromTokens(arrangedCodeElement?.ArrangedConsumedTokens);
-            IEnumerable<FunctionDeclaration> calledProcedures = null;
+            IEnumerable<FunctionDeclaration> calledProcedures;
 
             if (_procedureSignatureContext == null ||
                 !(_procedureSignatureContext.QualifiedName.ToString().Equals(procedureName, StringComparison.OrdinalIgnoreCase)
@@ -84,7 +83,6 @@ namespace TypeCobol.LanguageServer
                         alreadyGivenParametersCount++;
                     previousTokenType = givenToken.TokenType;
                 }
-
 
             ISet<DataDefinition> potentialVariablesForCompletion = null;
             int maxInput = -1;
@@ -161,15 +159,14 @@ namespace TypeCobol.LanguageServer
 
             }
 
-            if (potentialVariablesForCompletion == null) return completionItems;
+            if (potentialVariablesForCompletion == null) return [];
 
             //Convert potential variables into actual CompletionItems
             var variables = potentialVariablesForCompletion
                 .Where(MatchesWithUserFilter) //Filter on user text
                 .Distinct()
                 .SelectMany(d => node.SymbolTable.GetVariablesExplicitWithQualifiedName(new URI(d.Name)));
-            var items = CompletionFactoryHelpers.CreateCompletionItemsForVariableSetAndDisambiguate(variables, compilationUnit.CompilerOptions);
-            completionItems.AddRange(items);
+            var completionItems = CompletionFactoryHelpers.CreateCompletionItemsForVariableSetAndDisambiguate(variables, true, compilationUnit.CompilerOptions);
 
             Token callToken = codeElement.ConsumedTokens.First(t => t.TokenType == TokenType.CALL);
             Dictionary<ParameterDescription.PassingTypes, string> paramWithCase = CompletionFactoryHelpers.GetParamsUsingMatchingCase(callToken);
@@ -230,7 +227,7 @@ namespace TypeCobol.LanguageServer
                 }
             }
 
-            return completionItems;
+            return [ completionItems ];
         }
     }
 }

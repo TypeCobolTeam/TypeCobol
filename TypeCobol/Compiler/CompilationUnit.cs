@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Diagnostics;
+using System.Text;
 using TypeCobol.Analysis;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Concurrency;
@@ -173,10 +174,13 @@ namespace TypeCobol.Compiler
             {
                 StringBuilder builder = new StringBuilder();
 
-                if (CodeElementsParserStep.AntlrPerformanceProfiler != null && PerfStatsForCodeElementsParser.ActivateDetailedAntlrPofiling)
+                if (PerfStatsForCodeElementsParser.ActivateDetailedAntlrPofiling && PerfStatsForCodeElementsParser.LastParsingTime != null)
                 {
+                    Debug.Assert(PerfStatsForCodeElementsParser.LastParsingTime.ActivateDetailedAntlrPofiling);
+                    Debug.Assert(PerfStatsForCodeElementsParser.LastParsingTime.DetailedAntlrProfiling != null);
+                    var detailedAntlrProfiling = PerfStatsForCodeElementsParser.LastParsingTime.DetailedAntlrProfiling;
                     builder.Append("---CODE ELEMENT PARSER STEP---\n");
-                    builder.Append(CodeElementsParserStep.AntlrPerformanceProfiler.WriteInfoToString());
+                    builder.Append(detailedAntlrProfiling.WriteInfoToString());
                 }
 
                 return builder.ToString();

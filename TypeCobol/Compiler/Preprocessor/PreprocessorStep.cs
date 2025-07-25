@@ -156,7 +156,7 @@ namespace TypeCobol.Compiler.Preprocessor
                         directiveBuilder.ResetCompilerDirective();
                         directivesParser.Builder = directiveBuilder;
                         TUVienna.CS_CUP.Runtime.Symbol ppSymbol = directivesParser.parse();
-                        perfStatsForParserInvocation.OnStopParsing(0, 0);
+                        perfStatsForParserInvocation.OnStopParsing();
 
                         perfStatsForParserInvocation.OnStartTreeBuilding();
                         // 4. Visit the parse tree to build a first class object representing the compiler directive

@@ -18,15 +18,15 @@ namespace TypeCobol.LanguageServer
             _lastSignificantToken = lastSignificantToken;
         }
 
-        public override List<CompletionItem> ComputeProposals(CompilationUnit compilationUnit, CodeElement codeElement)
+        protected override IEnumerable<IEnumerable<CompletionItem>> ComputeProposalGroups(CompilationUnit compilationUnit, CodeElement codeElement)
         {
             var compatibleDataTypes = new HashSet<DataType>();
             var arrangedCodeElement = codeElement as CodeElementWrapper;
             if (arrangedCodeElement == null)
-                return new List<CompletionItem>();
+                return [];
             var node = GetMatchingNode(compilationUnit, codeElement);
             if (node == null)
-                return new List<CompletionItem>();
+                return [];
 
             Func<DataDefinition, bool> variablePredicate =
                 da =>
@@ -186,7 +186,7 @@ namespace TypeCobol.LanguageServer
                 //don't do this if there is no need to qualify or let method CreateCompletionItemsForVariableSetAndDisambiguate call this if necessary
                 .SelectMany(v => node.SymbolTable.GetVariablesExplicitWithQualifiedName(new URI(v.Name)));
 
-            return CompletionFactoryHelpers.CreateCompletionItemsForVariableSetAndDisambiguate(variables, compilationUnit.CompilerOptions);
+            return [ CompletionFactoryHelpers.CreateCompletionItemsForVariableSetAndDisambiguate(variables, true, compilationUnit.CompilerOptions) ];
         }
     }
 }

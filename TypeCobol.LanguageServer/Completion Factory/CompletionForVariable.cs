@@ -10,26 +10,26 @@ namespace TypeCobol.LanguageServer
     internal class CompletionForVariable : CompletionContext
     {
         private readonly Predicate<DataDefinition> _dataDefinitionFilter;
+        private readonly bool _addSubscript;
 
-        public CompletionForVariable(Token userFilterToken, Predicate<DataDefinition> additionalDataDefinitionFilter)
+        public CompletionForVariable(Token userFilterToken, Predicate<DataDefinition> additionalDataDefinitionFilter, bool addSubscript = true)
             : base(userFilterToken)
         {
             _dataDefinitionFilter = additionalDataDefinitionFilter;
+            _addSubscript = addSubscript;
         }
 
-        public override List<CompletionItem> ComputeProposals(CompilationUnit compilationUnit, CodeElement codeElement)
+        protected override IEnumerable<IEnumerable<CompletionItem>> ComputeProposalGroups(CompilationUnit compilationUnit, CodeElement codeElement)
         {
-            var completionItems = new List<CompletionItem>();
             var node = GetMatchingNode(compilationUnit, codeElement);
             if (node == null)
-                return completionItems;
+                return [];
 
             var variables = node.SymbolTable
                 .GetVariables(d => MatchesWithUserFilter(d) && _dataDefinitionFilter(d), SymbolTable.Scope.Program)
                 .Select(v => new KeyValuePair<DataDefinitionPath, DataDefinition>(null, v));
-            completionItems.AddRange(CompletionFactoryHelpers.CreateCompletionItemsForVariableSetAndDisambiguate(variables, compilationUnit.CompilerOptions));
 
-            return completionItems;
+            return [ CompletionFactoryHelpers.CreateCompletionItemsForVariableSetAndDisambiguate(variables, _addSubscript, compilationUnit.CompilerOptions) ];
         }
     }
 }

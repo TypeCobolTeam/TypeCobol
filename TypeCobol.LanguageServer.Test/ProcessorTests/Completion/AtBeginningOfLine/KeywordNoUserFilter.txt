@@ -67,87 +67,87 @@
     "kind": 14
   },
   {
-    "label": "END-ADD ",
+    "label": "END-ADD",
     "kind": 14
   },
   {
-    "label": "END-CALL ",
+    "label": "END-CALL",
     "kind": 14
   },
   {
-    "label": "END-COMPUTE ",
+    "label": "END-COMPUTE",
     "kind": 14
   },
   {
-    "label": "END-DELETE ",
+    "label": "END-DELETE",
     "kind": 14
   },
   {
-    "label": "END-DIVIDE ",
+    "label": "END-DIVIDE",
     "kind": 14
   },
   {
-    "label": "END-EVALUATE ",
+    "label": "END-EVALUATE",
     "kind": 14
   },
   {
-    "label": "END-IF ",
+    "label": "END-IF",
     "kind": 14
   },
   {
-    "label": "END-INVOKE ",
+    "label": "END-INVOKE",
     "kind": 14
   },
   {
-    "label": "END-JSON ",
+    "label": "END-JSON",
     "kind": 14
   },
   {
-    "label": "END-MULTIPLY ",
+    "label": "END-MULTIPLY",
     "kind": 14
   },
   {
-    "label": "END-PERFORM ",
+    "label": "END-PERFORM",
     "kind": 14
   },
   {
-    "label": "END-READ ",
+    "label": "END-READ",
     "kind": 14
   },
   {
-    "label": "END-RETURN ",
+    "label": "END-RETURN",
     "kind": 14
   },
   {
-    "label": "END-REWRITE ",
+    "label": "END-REWRITE",
     "kind": 14
   },
   {
-    "label": "END-SEARCH ",
+    "label": "END-SEARCH",
     "kind": 14
   },
   {
-    "label": "END-START ",
+    "label": "END-START",
     "kind": 14
   },
   {
-    "label": "END-STRING ",
+    "label": "END-STRING",
     "kind": 14
   },
   {
-    "label": "END-SUBTRACT ",
+    "label": "END-SUBTRACT",
     "kind": 14
   },
   {
-    "label": "END-UNSTRING ",
+    "label": "END-UNSTRING",
     "kind": 14
   },
   {
-    "label": "END-WRITE ",
+    "label": "END-WRITE",
     "kind": 14
   },
   {
-    "label": "END-XML ",
+    "label": "END-XML",
     "kind": 14
   },
   {
@@ -183,11 +183,11 @@
     "kind": 14
   },
   {
-    "label": "GOBACK ",
+    "label": "GO ",
     "kind": 14
   },
   {
-    "label": "GO ",
+    "label": "GOBACK ",
     "kind": 14
   },
   {

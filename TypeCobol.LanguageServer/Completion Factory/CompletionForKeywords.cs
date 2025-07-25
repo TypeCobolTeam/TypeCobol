@@ -15,7 +15,7 @@ namespace TypeCobol.LanguageServer
         /// of this keyword when it may be followed by other keywords. If the keyword is meant to
         /// be used alone, the variation array is null.
         /// </summary>
-        private static Dictionary<string, string[]> _KeywordSuggestions;
+        private static readonly Dictionary<string, string[]> _KeywordSuggestions;
 
         static CompletionForKeywords()
         {
@@ -119,7 +119,9 @@ namespace TypeCobol.LanguageServer
                     TokenType.EXIT => [$"{keyword} ", $"{keyword} PARAGRAPH ", $"{keyword} PERFORM ", $"{keyword} PROGRAM ", $"{keyword} SECTION "],
                     TokenType.JSON => [$"{keyword} GENERATE ", $"{keyword} PARSE "],
                     TokenType.XML => [$"{keyword} GENERATE ", $"{keyword} PARSE "],
-                    _ => [$"{keyword} "] // Add a trailing space so it will be included in insertText
+                    // Add a trailing space so it will be included in insertText, except for END-xxx keywords
+                    _ when keyword.StartsWith("END-") => [keyword],
+                    _ => [$"{keyword} "]
                 };
 
                 _KeywordSuggestions.Add(keyword, variants);
@@ -132,13 +134,33 @@ namespace TypeCobol.LanguageServer
 
         }
 
-        public override List<CompletionItem> ComputeProposals(CompilationUnit compilationUnit, CodeElement codeElement)
+        protected override IEnumerable<IEnumerable<CompletionItem>> ComputeProposalGroups(CompilationUnit compilationUnit, CodeElement codeElement)
         {
-            return _KeywordSuggestions
-                .Where(suggestion => suggestion.Key.StartsWith(UserFilterText, StringComparison.OrdinalIgnoreCase))
-                .SelectMany(suggestion => suggestion.Value)
-                .Select(suggestionText => new CompletionItem() { label = suggestionText, kind = CompletionItemKind.Keyword })
-                .ToList();
+            // Group suggestions: first group for keywords starting with user text, last group for keywords containing
+            // user text preceded by '-'. Second group is actually made of END-xxx keywords.
+
+            List<CompletionItem> suggestionsStartingWithUserText = [];
+            List<CompletionItem> suggestionsContainingUserText = [];
+            foreach (var keywordSuggestion in _KeywordSuggestions)
+            {
+                string keyword = keywordSuggestion.Key;
+                string[] suggestions = keywordSuggestion.Value;
+                if (keyword.StartsWith(UserFilterText, StringComparison.OrdinalIgnoreCase))
+                {
+                    AddSuggestionsTo(suggestionsStartingWithUserText);
+                }
+                else if (keyword.Contains($"-{UserFilterText}", StringComparison.OrdinalIgnoreCase))
+                {
+                    AddSuggestionsTo(suggestionsContainingUserText);
+                }
+                // else not a suitable keyword for given user text
+
+                void AddSuggestionsTo(List<CompletionItem> completionItems) =>
+                    completionItems.AddRange(suggestions.Select(suggestion => new CompletionItem() { label = suggestion, kind = CompletionItemKind.Keyword }));
+            }
+
+            yield return suggestionsStartingWithUserText;
+            yield return suggestionsContainingUserText;
         }
     }
 }

@@ -49,7 +49,7 @@ namespace TypeCobol.LanguageServer
                     }
                     else if (matching && MatchesWithUserFilter(parentDataDefinition))
                     {
-                        completionItems.Add(CompletionFactoryHelpers.CreateCompletionItemForSingleVariable(null, parentDataDefinition, options, true, _lastSignificantTokenType));
+                        completionItems.Add(CompletionFactoryHelpers.CreateCompletionItemForSingleVariable(null, parentDataDefinition, true, options, true, _lastSignificantTokenType));
                     }
 
                     parentNode = parentDataDefinition.Parent;
@@ -69,13 +69,12 @@ namespace TypeCobol.LanguageServer
             _lastSignificantTokenType = lastSignificantTokenType;
         }
 
-        public override List<CompletionItem> ComputeProposals(CompilationUnit compilationUnit, CodeElement codeElement)
+        protected override IEnumerable<IEnumerable<CompletionItem>> ComputeProposalGroups(CompilationUnit compilationUnit, CodeElement codeElement)
         {
-            var completionItems = new List<CompletionItem>();
             var arrangedCodeElement = codeElement as CodeElementWrapper;
             var node = GetMatchingNode(compilationUnit, codeElement);
             if (node == null)
-                return completionItems;
+                return [];
 
             var tokensUntilCursor = arrangedCodeElement?.ArrangedConsumedTokens
                 .Except(new List<Token>() { UserFilterToken })
@@ -89,25 +88,24 @@ namespace TypeCobol.LanguageServer
             switch (tokenBefore?.TokenType) // In the future, this will allow to switch between different token declared before IN/OF
             {
                 case TokenType.UserDefinedWord:
-                    {
-                        // IN/OF is used to qualify a variable => retrieve the first variable in the IN/OF chain
-                        var tokenFirstVariable = tokensUntilCursor.TakeWhile(t => t.TokenType is TokenType.UserDefinedWord or TokenType.IN or TokenType.OF).LastOrDefault();
-                        completionItems = GetCompletionForParent(node, tokenBefore, tokenFirstVariable, compilationUnit.CompilerOptions);
-                        break;
-                    }
+                {
+                    // IN/OF is used to qualify a variable => retrieve the first variable in the IN/OF chain
+                    var tokenFirstVariable = tokensUntilCursor.TakeWhile(t => t.TokenType is TokenType.UserDefinedWord or TokenType.IN or TokenType.OF).LastOrDefault();
+                    return [ GetCompletionForParent(node, tokenBefore, tokenFirstVariable, compilationUnit.CompilerOptions) ];
+                }
                 case TokenType.ADDRESS:
+                {
+                    if (_lastSignificantTokenType == TokenType.OF)
                     {
-                        if (_lastSignificantTokenType == TokenType.OF)
-                        {
-                            // Manage specifically ADDRESS OF
-                            var contextToken = tokensUntilCursor.Skip(2).FirstOrDefault(); // Try to get the token that may define the completion context
-                            completionItems = GetCompletionForAddressOf(node, contextToken, compilationUnit.CompilerOptions);
-                        }
-                        break;
+                        // Manage specifically ADDRESS OF
+                        var contextToken = tokensUntilCursor.Skip(2).FirstOrDefault(); // Try to get the token that may define the completion context
+                        return [ GetCompletionForAddressOf(node, contextToken, compilationUnit.CompilerOptions) ];
                     }
+                    break;
+                }
             }
 
-            return completionItems;
+            return [];
         }
 
         /// <summary>
@@ -117,7 +115,6 @@ namespace TypeCobol.LanguageServer
         /// </summary>
         /// <param name="node">Node found on cursor position</param>
         /// <param name="contextToken">ContextToken to select if it's a SET or something else</param>
-        /// <param name="userFilterText">Variable Name Filter</param>
         /// <param name="options">Current TypeCobolOptions</param>
         private List<CompletionItem> GetCompletionForAddressOf(Node node, Token contextToken, TypeCobolOptions options)
         {
@@ -145,7 +142,7 @@ namespace TypeCobol.LanguageServer
             }
 
             var variables = potentialVariables.Select(v => new KeyValuePair<DataDefinitionPath, DataDefinition>(null, v));
-            return CompletionFactoryHelpers.CreateCompletionItemsForVariableSetAndDisambiguate(variables, options);
+            return CompletionFactoryHelpers.CreateCompletionItemsForVariableSetAndDisambiguate(variables, true, options);
 
             bool IsRootDataItem(DataDefinition dataDef)
             {

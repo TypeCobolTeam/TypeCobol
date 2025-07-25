@@ -31,107 +31,107 @@ namespace TypeCobol.Compiler.File
         // Basic COBOL character set
 
         // Special characters 
-        public static byte Space = 64;
-        public static byte PlusSign = 78;
-        public static byte MinusSignOrHyphen = 96;
-        public static byte Asterisk = 92;
-        public static byte ForwardSlashOrSolidus = 97;
-        public static byte EqualSign = 126;
-        public static byte CurrencySign = 91; // The currency sign is the character with the value X'5B', regardless of the code page in effect. The assigned graphic character can be the dollar sign or a local currency sign.
-        public static byte Comma = 107;
-        public static byte Semicolon = 94;
-        public static byte DecimalPointOrPeriod = 75;
-        public static byte QuotationMark = 127; // The quotation mark is the character with the value X'7F'
-        public static byte Apostrophe = 125;
-        public static byte LeftParenthesis = 77;
-        public static byte RightParenthesis = 93;
-        public static byte GreaterThan = 110;
-        public static byte LessThan = 76;
-        public static byte Colon = 122;
-        public static byte Underscore = 109;
+        public static readonly byte Space = 64;
+        public static readonly byte PlusSign = 78;
+        public static readonly byte MinusSignOrHyphen = 96;
+        public static readonly byte Asterisk = 92;
+        public static readonly byte ForwardSlashOrSolidus = 97;
+        public static readonly byte EqualSign = 126;
+        public static readonly byte CurrencySign = 91; // The currency sign is the character with the value X'5B', regardless of the code page in effect. The assigned graphic character can be the dollar sign or a local currency sign.
+        public static readonly byte Comma = 107;
+        public static readonly byte Semicolon = 94;
+        public static readonly byte DecimalPointOrPeriod = 75;
+        public static readonly byte QuotationMark = 127; // The quotation mark is the character with the value X'7F'
+        public static readonly byte Apostrophe = 125;
+        public static readonly byte LeftParenthesis = 77;
+        public static readonly byte RightParenthesis = 93;
+        public static readonly byte GreaterThan = 110;
+        public static readonly byte LessThan = 76;
+        public static readonly byte Colon = 122;
+        public static readonly byte Underscore = 109;
 
         // A - Z Alphabet (uppercase)
-        public static byte A = 193;
-        public static byte B = 194;
-        public static byte C = 195;
-        public static byte D = 196;
-        public static byte E = 197;
-        public static byte F = 198;
-        public static byte G = 199;
-        public static byte H = 200;
-        public static byte I = 201;
-        public static byte J = 209;
-        public static byte K = 210;
-        public static byte L = 211;
-        public static byte M = 212;
-        public static byte N = 213;
-        public static byte O = 214;
-        public static byte P = 215;
-        public static byte Q = 216;
-        public static byte R = 217;
-        public static byte S = 226;
-        public static byte T = 227;
-        public static byte U = 228;
-        public static byte V = 229;
-        public static byte W = 230;
-        public static byte X = 231;
-        public static byte Y = 232;
-        public static byte Z = 233;
+        public static readonly byte A = 193;
+        public static readonly byte B = 194;
+        public static readonly byte C = 195;
+        public static readonly byte D = 196;
+        public static readonly byte E = 197;
+        public static readonly byte F = 198;
+        public static readonly byte G = 199;
+        public static readonly byte H = 200;
+        public static readonly byte I = 201;
+        public static readonly byte J = 209;
+        public static readonly byte K = 210;
+        public static readonly byte L = 211;
+        public static readonly byte M = 212;
+        public static readonly byte N = 213;
+        public static readonly byte O = 214;
+        public static readonly byte P = 215;
+        public static readonly byte Q = 216;
+        public static readonly byte R = 217;
+        public static readonly byte S = 226;
+        public static readonly byte T = 227;
+        public static readonly byte U = 228;
+        public static readonly byte V = 229;
+        public static readonly byte W = 230;
+        public static readonly byte X = 231;
+        public static readonly byte Y = 232;
+        public static readonly byte Z = 233;
 
         // a - z Alphabet (lowercase)
-        public static byte a = 129;
-        public static byte b = 130;
-        public static byte c = 131;
-        public static byte d = 132;
-        public static byte e = 133;
-        public static byte f = 134;
-        public static byte g = 135;
-        public static byte h = 136;
-        public static byte i = 137;
-        public static byte j = 145;
-        public static byte k = 146;
-        public static byte l = 147;
-        public static byte m = 148;
-        public static byte n = 149;
-        public static byte o = 150;
-        public static byte p = 151;
-        public static byte q = 152;
-        public static byte r = 153;
-        public static byte s = 162;
-        public static byte t = 163;
-        public static byte u = 164;
-        public static byte v = 165;
-        public static byte w = 166;
-        public static byte x = 167;
-        public static byte y = 168;
-        public static byte z = 169;
+        public static readonly byte a = 129;
+        public static readonly byte b = 130;
+        public static readonly byte c = 131;
+        public static readonly byte d = 132;
+        public static readonly byte e = 133;
+        public static readonly byte f = 134;
+        public static readonly byte g = 135;
+        public static readonly byte h = 136;
+        public static readonly byte i = 137;
+        public static readonly byte j = 145;
+        public static readonly byte k = 146;
+        public static readonly byte l = 147;
+        public static readonly byte m = 148;
+        public static readonly byte n = 149;
+        public static readonly byte o = 150;
+        public static readonly byte p = 151;
+        public static readonly byte q = 152;
+        public static readonly byte r = 153;
+        public static readonly byte s = 162;
+        public static readonly byte t = 163;
+        public static readonly byte u = 164;
+        public static readonly byte v = 165;
+        public static readonly byte w = 166;
+        public static readonly byte x = 167;
+        public static readonly byte y = 168;
+        public static readonly byte z = 169;
 
         // 0 - 9 Numeric characters
-        public static byte _0 = 240;
-        public static byte _1 = 241;
-        public static byte _2 = 242;
-        public static byte _3 = 243;
-        public static byte _4 = 244;
-        public static byte _5 = 245;
-        public static byte _6 = 246;
-        public static byte _7 = 247;
-        public static byte _8 = 248;
-        public static byte _9 = 249;
+        public static readonly byte _0 = 240;
+        public static readonly byte _1 = 241;
+        public static readonly byte _2 = 242;
+        public static readonly byte _3 = 243;
+        public static readonly byte _4 = 244;
+        public static readonly byte _5 = 245;
+        public static readonly byte _6 = 246;
+        public static readonly byte _7 = 247;
+        public static readonly byte _8 = 248;
+        public static readonly byte _9 = 249;
 
         // ---
         // New lines
 
-        public static byte CR = 13;
-        public static byte NL = 21;
-        public static byte LF = 37;
+        public static readonly byte CR = 13;
+        public static readonly byte NL = 21;
+        public static readonly byte LF = 37;
 
         // DBCS ShiftOut / ShiftIn
-        public static byte DBCSShiftOut = 14;
-        public static byte DBCSShiftIn = 15;
+        public static readonly byte DBCSShiftOut = 14;
+        public static readonly byte DBCSShiftIn = 15;
 
         //---
         // Character types
-        public static CharacterType[] CharacterType = new CharacterType[256];
+        public static readonly CharacterType[] CharacterType = new CharacterType[256];
 
         static EBCDICCharacterCodes()
         {
@@ -211,90 +211,90 @@ namespace TypeCobol.Compiler.File
         // Basic COBOL character set
 
         // Special characters 
-        public static byte Space = 32;
-        public static byte PlusSign = 43;
-        public static byte MinusSignOrHyphen = 45;
-        public static byte Asterisk = 42;
-        public static byte ForwardSlashOrSolidus = 47;
-        public static byte EqualSign = 61;
-        public static byte CurrencySign = 36;
-        public static byte Comma = 44;
-        public static byte Semicolon = 59;
-        public static byte DecimalPointOrPeriod = 46;
-        public static byte QuotationMark = 34;
-        public static byte Apostrophe = 39;
-        public static byte LeftParenthesis = 40;
-        public static byte RightParenthesis = 41;
-        public static byte GreaterThan = 62;
-        public static byte LessThan = 60;
-        public static byte Colon = 58;
-        public static byte Underscore = 95;
+        public static readonly byte Space = 32;
+        public static readonly byte PlusSign = 43;
+        public static readonly byte MinusSignOrHyphen = 45;
+        public static readonly byte Asterisk = 42;
+        public static readonly byte ForwardSlashOrSolidus = 47;
+        public static readonly byte EqualSign = 61;
+        public static readonly byte CurrencySign = 36;
+        public static readonly byte Comma = 44;
+        public static readonly byte Semicolon = 59;
+        public static readonly byte DecimalPointOrPeriod = 46;
+        public static readonly byte QuotationMark = 34;
+        public static readonly byte Apostrophe = 39;
+        public static readonly byte LeftParenthesis = 40;
+        public static readonly byte RightParenthesis = 41;
+        public static readonly byte GreaterThan = 62;
+        public static readonly byte LessThan = 60;
+        public static readonly byte Colon = 58;
+        public static readonly byte Underscore = 95;
 
         // A - Z Alphabet (uppercase)
-        public static byte A = 65;
-        public static byte B = 66;
-        public static byte C = 67;
-        public static byte D = 68;
-        public static byte E = 69;
-        public static byte F = 70;
-        public static byte G = 71;
-        public static byte H = 72;
-        public static byte I = 73;
-        public static byte J = 74;
-        public static byte K = 75;
-        public static byte L = 76;
-        public static byte M = 77;
-        public static byte N = 78;
-        public static byte O = 79;
-        public static byte P = 80;
-        public static byte Q = 81;
-        public static byte R = 82;
-        public static byte S = 83;
-        public static byte T = 84;
-        public static byte U = 85;
-        public static byte V = 86;
-        public static byte W = 87;
-        public static byte X = 88;
-        public static byte Y = 89;
-        public static byte Z = 90;
+        public static readonly byte A = 65;
+        public static readonly byte B = 66;
+        public static readonly byte C = 67;
+        public static readonly byte D = 68;
+        public static readonly byte E = 69;
+        public static readonly byte F = 70;
+        public static readonly byte G = 71;
+        public static readonly byte H = 72;
+        public static readonly byte I = 73;
+        public static readonly byte J = 74;
+        public static readonly byte K = 75;
+        public static readonly byte L = 76;
+        public static readonly byte M = 77;
+        public static readonly byte N = 78;
+        public static readonly byte O = 79;
+        public static readonly byte P = 80;
+        public static readonly byte Q = 81;
+        public static readonly byte R = 82;
+        public static readonly byte S = 83;
+        public static readonly byte T = 84;
+        public static readonly byte U = 85;
+        public static readonly byte V = 86;
+        public static readonly byte W = 87;
+        public static readonly byte X = 88;
+        public static readonly byte Y = 89;
+        public static readonly byte Z = 90;
 
         // a - z Alphabet (lowercase)
-        public static byte a = 97;
-        public static byte b = 98;
-        public static byte c = 99;
-        public static byte d = 100;
-        public static byte e = 101;
-        public static byte f = 102;
-        public static byte g = 103;
-        public static byte h = 104;
-        public static byte i = 105;
-        public static byte j = 106;
-        public static byte k = 107;
-        public static byte l = 108;
-        public static byte m = 109;
-        public static byte n = 110;
-        public static byte o = 111;
-        public static byte p = 112;
-        public static byte q = 113;
-        public static byte r = 114;
-        public static byte s = 115;
-        public static byte t = 116;
-        public static byte u = 117;
-        public static byte v = 118;
-        public static byte w = 119;
-        public static byte x = 120;
-        public static byte y = 121;
-        public static byte z = 122;
+        public static readonly byte a = 97;
+        public static readonly byte b = 98;
+        public static readonly byte c = 99;
+        public static readonly byte d = 100;
+        public static readonly byte e = 101;
+        public static readonly byte f = 102;
+        public static readonly byte g = 103;
+        public static readonly byte h = 104;
+        public static readonly byte i = 105;
+        public static readonly byte j = 106;
+        public static readonly byte k = 107;
+        public static readonly byte l = 108;
+        public static readonly byte m = 109;
+        public static readonly byte n = 110;
+        public static readonly byte o = 111;
+        public static readonly byte p = 112;
+        public static readonly byte q = 113;
+        public static readonly byte r = 114;
+        public static readonly byte s = 115;
+        public static readonly byte t = 116;
+        public static readonly byte u = 117;
+        public static readonly byte v = 118;
+        public static readonly byte w = 119;
+        public static readonly byte x = 120;
+        public static readonly byte y = 121;
+        public static readonly byte z = 122;
         
         // ---
         // New lines
 
-        public static byte CR = 13;
-        public static byte LF = 10;
+        public static readonly byte CR = 13;
+        public static readonly byte LF = 10;
 
         //---
         // Character types
-        public static CharacterType[] CharacterType = new CharacterType[256];
+        public static readonly CharacterType[] CharacterType = new CharacterType[256];
 
         static ASCIICharacterCodes()
         {

@@ -1,0 +1,98 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TCOBCOMP.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+
+       01 GROUP-TABLE.
+      * should suggest: matching tables
+          05 TABLE1 OCCURS 10 INDEXED BY VAR-INDEX1.
+             10 VAR-KEY1 PIC X(5).
+             10 TABLE11 OCCURS 10 INDEXED BY VAR-INDEX11.
+                15 VAR-KEY11 PIC X(5).
+                15 TABLE111 OCCURS 5
+                    ASCENDING KEY IS KEY111
+                    INDEXED BY VAR-INDEX111.
+                    20 VAR-KEY111 PIC X(5).
+                    20 VAR-KEY112 PIC X(10).
+          05 TABLE2 OCCURS 10 INDEXED BY VAR-INDEX2.
+             10 VAR-KEY2 PIC X(5).
+
+       01 GROUP-NOT-TABLE.
+      * should not suggest: not OCCURS
+          05 VAR-TABLE-NOT-OCC PIC X.
+      * should not suggest: not table
+          05 VAR-TABLE-OCC OCCURS 10 PIC X.
+
+       PROCEDURE DIVISION.
+       MAIN.
+           SEARCH TABL
+           AT END
+
+           GOBACK
+           .
+       END PROGRAM TCOBCOMP.
+---------------------------------------------------------------------------------
+{"line":27,"character":22}
+---------------------------------------------------------------------------------
+[
+  {
+    "label": "TABLE1 (Array) (GROUP-TABLE::TABLE1)",
+    "kind": 6,
+    "insertText": "GROUP-TABLE::TABLE1",
+    "data": {
+      "start": {
+        "line": 27,
+        "character": 18
+      },
+      "end": {
+        "line": 27,
+        "character": 22
+      }
+    }
+  },
+  {
+    "label": "TABLE11 (Array) (GROUP-TABLE::TABLE1::TABLE11)",
+    "kind": 6,
+    "insertText": "GROUP-TABLE::TABLE1::TABLE11",
+    "data": {
+      "start": {
+        "line": 27,
+        "character": 18
+      },
+      "end": {
+        "line": 27,
+        "character": 22
+      }
+    }
+  },
+  {
+    "label": "TABLE111 (Array) (GROUP-TABLE::TABLE1::TABLE11::TABLE111)",
+    "kind": 6,
+    "insertText": "GROUP-TABLE::TABLE1::TABLE11::TABLE111",
+    "data": {
+      "start": {
+        "line": 27,
+        "character": 18
+      },
+      "end": {
+        "line": 27,
+        "character": 22
+      }
+    }
+  },
+  {
+    "label": "TABLE2 (Array) (GROUP-TABLE::TABLE2)",
+    "kind": 6,
+    "insertText": "GROUP-TABLE::TABLE2",
+    "data": {
+      "start": {
+        "line": 27,
+        "character": 18
+      },
+      "end": {
+        "line": 27,
+        "character": 22
+      }
+    }
+  }
+]

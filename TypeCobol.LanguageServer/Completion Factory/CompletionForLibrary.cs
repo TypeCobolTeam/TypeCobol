@@ -14,16 +14,16 @@ namespace TypeCobol.LanguageServer
 
         }
 
-        public override List<CompletionItem> ComputeProposals(CompilationUnit compilationUnit, CodeElement codeElement)
+        protected override IEnumerable<IEnumerable<CompletionItem>> ComputeProposalGroups(CompilationUnit compilationUnit, CodeElement codeElement)
         {
             var callNode = GetMatchingNode(compilationUnit, codeElement);
             if (callNode?.SymbolTable == null)
             {
-                return new List<CompletionItem>();
+                return [];
             }
 
             IEnumerable<Program> programs = callNode.SymbolTable.GetPrograms(StartsWithUserFilter);
-            return programs.Select(prog => new CompletionItem() { label = prog.Name, kind = CompletionItemKind.Module }).ToList();
+            return [ programs.Select(prog => new CompletionItem() { label = prog.Name, kind = CompletionItemKind.Module }) ];
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using TypeCobol.Compiler;
+﻿using System.Diagnostics;
+using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Nodes;
@@ -15,13 +16,12 @@ namespace TypeCobol.LanguageServer
 
         }
 
-        public override List<CompletionItem> ComputeProposals(CompilationUnit compilationUnit, CodeElement codeElement)
+        protected override IEnumerable<IEnumerable<CompletionItem>> ComputeProposalGroups(CompilationUnit compilationUnit, CodeElement codeElement)
         {
             var performNode = GetMatchingNode(compilationUnit, codeElement);
             IEnumerable<Paragraph> paragraphs = null;
             IEnumerable<Section> sections = null;
             IEnumerable<DataDefinition> variables = null;
-            var completionItems = new List<CompletionItem>();
 
             if (performNode?.SymbolTable != null)
             {
@@ -32,29 +32,29 @@ namespace TypeCobol.LanguageServer
 
             if (paragraphs != null)
             {
-                completionItems.AddRange(paragraphs.Select(para => new CompletionItem() { label = para.Name, kind = CompletionItemKind.Reference }));
+                yield return paragraphs.Select(para => new CompletionItem() { label = para.Name, kind = CompletionItemKind.Reference });
             }
 
             if (sections != null)
             {
-                completionItems.AddRange(sections.Select(s => new CompletionItem() { label = s.Name, kind = CompletionItemKind.Reference }));
+                yield return sections.Select(s => new CompletionItem() { label = s.Name, kind = CompletionItemKind.Reference });
             }
 
             if (variables != null)
             {
-                foreach (var variable in variables)
-                {
-                    var completionItem = new CompletionItem
-                    {
-                        label = $"{variable.Name} PIC{variable.Picture.NormalizedValue}",
-                        insertText = variable.Name,
-                        kind = CompletionItemKind.Variable
-                    };
-                    completionItems.Add(completionItem);
-                }
+                yield return variables.Select(ToCompletionItem);
             }
 
-            return completionItems;
+            static CompletionItem ToCompletionItem(DataDefinition numericVariable)
+            {
+                Debug.Assert(numericVariable.Picture != null);
+                return new CompletionItem
+                {
+                    label = $"{numericVariable.Name} PIC {numericVariable.Picture.NormalizedValue}",
+                    insertText = numericVariable.Name + CompletionFactoryHelpers.GetSubscript(numericVariable),
+                    kind = CompletionItemKind.Variable
+                };
+            }
         }
     }
 }

@@ -39,21 +39,6 @@
 ---------------------------------------------------------------------------------
 [
   {
-    "label": "SAY-GROUP1 (Alphanumeric) (SAY-GROUP1)",
-    "kind": 6,
-    "insertText": "SAY-GROUP1",
-    "data": {
-      "start": {
-        "line": 23,
-        "character": 27
-      },
-      "end": {
-        "line": 23,
-        "character": 30
-      }
-    }
-  },
-  {
     "label": "GROUP2-SAY (Alphanumeric) (GROUP2-SAY)",
     "kind": 6,
     "insertText": "GROUP2-SAY",
@@ -102,6 +87,21 @@
     "label": "SAY-GROUP-QUALIF (Alphanumeric) (SAY-GROUP-QUALIF OF GROUP-QUALIF-2)",
     "kind": 6,
     "insertText": "SAY-GROUP-QUALIF OF GROUP-QUALIF-2",
+    "data": {
+      "start": {
+        "line": 23,
+        "character": 27
+      },
+      "end": {
+        "line": 23,
+        "character": 30
+      }
+    }
+  },
+  {
+    "label": "SAY-GROUP1 (Alphanumeric) (SAY-GROUP1)",
+    "kind": 6,
+    "insertText": "SAY-GROUP1",
     "data": {
       "start": {
         "line": 23,

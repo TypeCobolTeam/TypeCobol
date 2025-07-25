@@ -71,7 +71,7 @@ namespace TypeCobol.Compiler.Concurrency
             return Math.Sign(unchecked(this.id - o.id));
         }
         
-        private static DocumentChange<T>[] NO_CHANGES = new DocumentChange<T>[] { };
+        private static readonly DocumentChange<T>[] NO_CHANGES = new DocumentChange<T>[] { };
 
         /// <summary>
         /// Gets the changes from this checkpoint to the other checkpoint.

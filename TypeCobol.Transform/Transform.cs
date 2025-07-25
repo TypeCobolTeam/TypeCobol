@@ -14,11 +14,11 @@ namespace TypeCobol.Transform
         /// <summary>
         /// Help Option String.
         /// </summary>
-        static String HELP_OPTION = "-help";
-        static String CONCATENATE_OPTION = "-tcmc";
-        static String DECODE_OPTION = "-c2tc";
+        static readonly string HELP_OPTION = "-help";
+        static readonly string CONCATENATE_OPTION = "-tcmc";
+        static readonly string DECODE_OPTION = "-c2tc";
 
-        private static string PROGNAME = System.AppDomain.CurrentDomain.FriendlyName;
+        private static readonly string PROGNAME = System.AppDomain.CurrentDomain.FriendlyName;
 
         /// <summary>
         /// Main

@@ -85,8 +85,8 @@ namespace TypeCobol.Compiler.File
 
         // --- Internal mapping table between IBM code pages and Microsoft .Net Encodings ---
 
-        private static IDictionary<int, CodePageEquivalence> DotNetCodePageFromIBMCCSID = new Dictionary<int, CodePageEquivalence>();
-        private static IDictionary<int, CodePageEquivalence> IBMCCSIDFromDotNetCodePage = new Dictionary<int, CodePageEquivalence>();
+        private static readonly IDictionary<int, CodePageEquivalence> DotNetCodePageFromIBMCCSID = new Dictionary<int, CodePageEquivalence>();
+        private static readonly IDictionary<int, CodePageEquivalence> IBMCCSIDFromDotNetCodePage = new Dictionary<int, CodePageEquivalence>();
 
         static IBMCodePages()
         {

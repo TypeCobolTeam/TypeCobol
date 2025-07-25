@@ -1,0 +1,102 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TCOBCOMP.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+
+      * should suggest: matching variables
+       01 SAY-VAR1                     PIC 9.
+       01 GROUP1.
+          05 GROUP11 OCCURS 10 INDEXED BY SAY-INDEX.
+             10 SAY-VAR2               PIC 9.
+       01 GROUP2.
+          05 GROUP21 OCCURS 10.
+             10 GROUP21 OCCURS 10.
+                15 SAY-VAR21           PIC 9.
+                15 SAY-VAR22 OCCURS 5  PIC 9.
+
+       PROCEDURE DIVISION.
+       MAIN.
+           MOVE SAY
+           GOBACK
+           .
+       END PROGRAM TCOBCOMP.
+---------------------------------------------------------------------------------
+{"line":18,"character":19}
+---------------------------------------------------------------------------------
+[
+  {
+    "label": "SAY-INDEX (Numeric) (GROUP1::GROUP11::SAY-INDEX)",
+    "kind": 6,
+    "insertText": "GROUP1::GROUP11::SAY-INDEX",
+    "data": {
+      "start": {
+        "line": 18,
+        "character": 16
+      },
+      "end": {
+        "line": 18,
+        "character": 19
+      }
+    }
+  },
+  {
+    "label": "SAY-VAR1 (Numeric) (SAY-VAR1)",
+    "kind": 6,
+    "insertText": "SAY-VAR1",
+    "data": {
+      "start": {
+        "line": 18,
+        "character": 16
+      },
+      "end": {
+        "line": 18,
+        "character": 19
+      }
+    }
+  },
+  {
+    "label": "SAY-VAR2 (Numeric) (GROUP1::GROUP11::SAY-VAR2()",
+    "kind": 6,
+    "insertText": "GROUP1::GROUP11::SAY-VAR2(",
+    "data": {
+      "start": {
+        "line": 18,
+        "character": 16
+      },
+      "end": {
+        "line": 18,
+        "character": 19
+      }
+    }
+  },
+  {
+    "label": "SAY-VAR21 (Numeric) (GROUP2::GROUP21::GROUP21::SAY-VAR21(, ))",
+    "kind": 6,
+    "insertText": "GROUP2::GROUP21::GROUP21::SAY-VAR21(, )",
+    "data": {
+      "start": {
+        "line": 18,
+        "character": 16
+      },
+      "end": {
+        "line": 18,
+        "character": 19
+      }
+    }
+  },
+  {
+    "label": "SAY-VAR22 (Numeric) (GROUP2::GROUP21::GROUP21::SAY-VAR22(, , ))",
+    "kind": 6,
+    "insertText": "GROUP2::GROUP21::GROUP21::SAY-VAR22(, , )",
+    "data": {
+      "start": {
+        "line": 18,
+        "character": 16
+      },
+      "end": {
+        "line": 18,
+        "character": 19
+      }
+    }
+  }
+]
