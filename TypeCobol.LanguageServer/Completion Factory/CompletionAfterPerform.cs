@@ -51,7 +51,7 @@ namespace TypeCobol.LanguageServer
                 return new CompletionItem
                 {
                     label = $"{numericVariable.Name} PIC {numericVariable.Picture.NormalizedValue}",
-                    insertText = numericVariable.Name,
+                    insertText = numericVariable.Name + CompletionFactoryHelpers.GetSubscript(numericVariable),
                     kind = CompletionItemKind.Variable
                 };
             }

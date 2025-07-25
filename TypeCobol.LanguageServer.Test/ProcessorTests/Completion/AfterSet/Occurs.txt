@@ -1,0 +1,165 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TCOBCOMP.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+
+       01 ROOT-GROUP.
+          05 MAIN-GROUP OCCURS 10.
+      * should suggest: matching variables + numeric and valid usage
+             10 SAY_POINTER USAGE POINTER.
+             10 SAY_POINTER-32 USAGE POINTER-32.
+             10 SAY_VAR1              PIC 9.
+             10 GROUP1.
+                15 VAR2_SAY           PIC 99.
+             10 VAR3_SAY_VAR3         PIC 9(2).
+             10 GROUP2.
+                15 VAR4               PIC 9.
+                   88 SAY88-YES              VALUE 1.
+                   88 SAY88-NO               VALUE 0.
+             10 GROUP3 OCCURS 10 INDEXED BY SAY_INDEX
+                                PIC X.
+      * should not suggest: not matching, not numeric, invalid usage
+             10 VAR5                  PIC 9.
+             10 NOT_SAY_ALPHA         PIC X.
+             10 NOT_SAY_FUNCTION_POINTER USAGE FUNCTION-POINTER.
+
+       PROCEDURE DIVISION.
+       MAIN.
+           SET SAY
+           GOBACK
+           .
+      * should not suggest: paragraph
+       P_SAY_HELLO.
+           DISPLAY "Hello"
+           .
+      * should not suggest: section
+       S_SAY_CONTINUE SECTION.
+           CONTINUE
+           .
+
+       END PROGRAM TCOBCOMP.
+---------------------------------------------------------------------------------
+{"line":27,"character":18}
+---------------------------------------------------------------------------------
+[
+  {
+    "label": "SAY88-NO (Level88) (ROOT-GROUP::MAIN-GROUP::GROUP2::VAR4::SAY88-NO()",
+    "kind": 6,
+    "insertText": "ROOT-GROUP::MAIN-GROUP::GROUP2::VAR4::SAY88-NO(",
+    "data": {
+      "start": {
+        "line": 27,
+        "character": 15
+      },
+      "end": {
+        "line": 27,
+        "character": 18
+      }
+    }
+  },
+  {
+    "label": "SAY88-YES (Level88) (ROOT-GROUP::MAIN-GROUP::GROUP2::VAR4::SAY88-YES()",
+    "kind": 6,
+    "insertText": "ROOT-GROUP::MAIN-GROUP::GROUP2::VAR4::SAY88-YES(",
+    "data": {
+      "start": {
+        "line": 27,
+        "character": 15
+      },
+      "end": {
+        "line": 27,
+        "character": 18
+      }
+    }
+  },
+  {
+    "label": "SAY_INDEX (Numeric) (ROOT-GROUP::MAIN-GROUP::GROUP3::SAY_INDEX)",
+    "kind": 6,
+    "insertText": "ROOT-GROUP::MAIN-GROUP::GROUP3::SAY_INDEX",
+    "data": {
+      "start": {
+        "line": 27,
+        "character": 15
+      },
+      "end": {
+        "line": 27,
+        "character": 18
+      }
+    }
+  },
+  {
+    "label": "SAY_POINTER (Alphanumeric) (ROOT-GROUP::MAIN-GROUP::SAY_POINTER()",
+    "kind": 6,
+    "insertText": "ROOT-GROUP::MAIN-GROUP::SAY_POINTER(",
+    "data": {
+      "start": {
+        "line": 27,
+        "character": 15
+      },
+      "end": {
+        "line": 27,
+        "character": 18
+      }
+    }
+  },
+  {
+    "label": "SAY_POINTER-32 (Alphanumeric) (ROOT-GROUP::MAIN-GROUP::SAY_POINTER-32()",
+    "kind": 6,
+    "insertText": "ROOT-GROUP::MAIN-GROUP::SAY_POINTER-32(",
+    "data": {
+      "start": {
+        "line": 27,
+        "character": 15
+      },
+      "end": {
+        "line": 27,
+        "character": 18
+      }
+    }
+  },
+  {
+    "label": "SAY_VAR1 (Numeric) (ROOT-GROUP::MAIN-GROUP::SAY_VAR1()",
+    "kind": 6,
+    "insertText": "ROOT-GROUP::MAIN-GROUP::SAY_VAR1(",
+    "data": {
+      "start": {
+        "line": 27,
+        "character": 15
+      },
+      "end": {
+        "line": 27,
+        "character": 18
+      }
+    }
+  },
+  {
+    "label": "VAR2_SAY (Numeric) (ROOT-GROUP::MAIN-GROUP::GROUP1::VAR2_SAY()",
+    "kind": 6,
+    "insertText": "ROOT-GROUP::MAIN-GROUP::GROUP1::VAR2_SAY(",
+    "data": {
+      "start": {
+        "line": 27,
+        "character": 15
+      },
+      "end": {
+        "line": 27,
+        "character": 18
+      }
+    }
+  },
+  {
+    "label": "VAR3_SAY_VAR3 (Numeric) (ROOT-GROUP::MAIN-GROUP::VAR3_SAY_VAR3()",
+    "kind": 6,
+    "insertText": "ROOT-GROUP::MAIN-GROUP::VAR3_SAY_VAR3(",
+    "data": {
+      "start": {
+        "line": 27,
+        "character": 15
+      },
+      "end": {
+        "line": 27,
+        "character": 18
+      }
+    }
+  }
+]

@@ -98,6 +98,12 @@ namespace TypeCobol.LanguageServer.Processor
                     case TokenType.IN or TokenType.OF:
                         items = new CompletionForInOrOf(userFilterToken, position, lastSignificantToken.TokenType).ComputeProposals(compilationUnit, matchingCodeElement);
                         break;
+                    case TokenType.SEARCH or TokenType.SORT:
+                        // Filtering on OCCURS: use DataType.Occurs instead of IsTableOccurence because the 1st one is more restrictive.
+                        // Only tables (i.e.OCCURS without Picture) will be suggested
+                        Predicate<DataDefinition> occursVariables = dataDefinition => dataDefinition.DataType == DataType.Occurs;
+                        items = new CompletionForVariable(userFilterToken, occursVariables, false).ComputeProposals(compilationUnit, matchingCodeElement);
+                        break;
                     default:
                         // Unable to suggest anything
                         items = new List<CompletionItem>();
