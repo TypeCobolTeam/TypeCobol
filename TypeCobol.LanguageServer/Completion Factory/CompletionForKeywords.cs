@@ -12,15 +12,20 @@ namespace TypeCobol.LanguageServer
         /// Hard-coded statement-starting keywords. The list is adapted for EI context
         /// as some statements are discouraged in EI environment.
         /// Keys of the dictionary are keyword strings, each associated with an array of variations
-        /// of this keyword when it may be followed by other keywords. If the keyword is meant to
-        /// be used alone, the variation array is null.
+        /// of this keyword when it may be followed by other keywords.
         /// </summary>
-        private static readonly Dictionary<string, string[]> _KeywordSuggestions;
+        private static readonly Dictionary<string, string[]> _StartingKeywordSuggestions;
+
+        /// <summary>
+        /// Hard-coded statement-ending keywords.
+        /// </summary>
+        private static readonly List<string> _EndingKeywordSuggestions;
 
         static CompletionForKeywords()
         {
-            _KeywordSuggestions = new Dictionary<string, string[]>();
-            TokenType[] statementStartingKeywords = new[]
+            _StartingKeywordSuggestions = new Dictionary<string, string[]>();
+            _EndingKeywordSuggestions = new List<string>();
+            TokenType[] statementKeywords = new[]
             {
                 TokenType.ACCEPT,
                 TokenType.ADD,
@@ -109,22 +114,30 @@ namespace TypeCobol.LanguageServer
                 TokenType.XML
             };
 
-            foreach (var keywordType in statementStartingKeywords)
+            foreach (var keywordType in statementKeywords)
             {
                 string keyword = TokenUtils.GetTokenStringFromTokenType(keywordType);
                 Debug.Assert(keyword != null);
 
-                string[] variants = keywordType switch
+                if (keyword.StartsWith("END-"))
                 {
-                    TokenType.EXIT => [$"{keyword} ", $"{keyword} PARAGRAPH ", $"{keyword} PERFORM ", $"{keyword} PROGRAM ", $"{keyword} SECTION "],
-                    TokenType.JSON => [$"{keyword} GENERATE ", $"{keyword} PARSE "],
-                    TokenType.XML => [$"{keyword} GENERATE ", $"{keyword} PARSE "],
-                    // Add a trailing space so it will be included in insertText, except for END-xxx keywords
-                    _ when keyword.StartsWith("END-") => [keyword],
-                    _ => [$"{keyword} "]
-                };
+                    // Add token string as is, no space after an END-xxx keyword
+                    _EndingKeywordSuggestions.Add(keyword);
+                }
+                else
+                {
+                    // Create variants
+                    string[] variants = keywordType switch
+                    {
+                        TokenType.EXIT => [$"{keyword} ", $"{keyword} PARAGRAPH ", $"{keyword} PERFORM ", $"{keyword} PROGRAM ", $"{keyword} SECTION "],
+                        TokenType.JSON => [$"{keyword} GENERATE ", $"{keyword} PARSE "],
+                        TokenType.XML => [$"{keyword} GENERATE ", $"{keyword} PARSE "],
+                        // Add a trailing space so it will be included in insertText
+                        _ => [$"{keyword} "]
+                    };
 
-                _KeywordSuggestions.Add(keyword, variants);
+                    _StartingKeywordSuggestions.Add(keyword, variants);
+                }
             }
         }
 
@@ -136,31 +149,36 @@ namespace TypeCobol.LanguageServer
 
         protected override IEnumerable<IEnumerable<CompletionItem>> ComputeProposalGroups(CompilationUnit compilationUnit, CodeElement codeElement)
         {
-            // Group suggestions: first group for keywords starting with user text, last group for keywords containing
-            // user text preceded by '-'. Second group is actually made of END-xxx keywords.
+            // Group suggestions: first group is for starting keywords and second is for ending keywords.
 
-            List<CompletionItem> suggestionsStartingWithUserText = [];
-            List<CompletionItem> suggestionsContainingUserText = [];
-            foreach (var keywordSuggestion in _KeywordSuggestions)
+            List<CompletionItem> filteredStartingKeywordSuggestions = [];
+            foreach (var startingKeywordSuggestion in _StartingKeywordSuggestions)
             {
-                string keyword = keywordSuggestion.Key;
-                string[] suggestions = keywordSuggestion.Value;
-                if (keyword.StartsWith(UserFilterText, StringComparison.OrdinalIgnoreCase))
+                // Using the regex filter here: only keywords starting with the user filter will match for now.
+                // In the event a new keyword containing a dash is introduced it may also match even without starting
+                // with the user filter but containing '-<UserFilter>'.
+                if (MatchesWithUserFilter(startingKeywordSuggestion.Key))
                 {
-                    AddSuggestionsTo(suggestionsStartingWithUserText);
+                    filteredStartingKeywordSuggestions.AddRange(startingKeywordSuggestion.Value.Select(ToCompletionItem));
                 }
-                else if (keyword.Contains($"-{UserFilterText}", StringComparison.OrdinalIgnoreCase))
-                {
-                    AddSuggestionsTo(suggestionsContainingUserText);
-                }
-                // else not a suitable keyword for given user text
-
-                void AddSuggestionsTo(List<CompletionItem> completionItems) =>
-                    completionItems.AddRange(suggestions.Select(suggestion => new CompletionItem() { label = suggestion, kind = CompletionItemKind.Keyword }));
             }
 
-            yield return suggestionsStartingWithUserText;
-            yield return suggestionsContainingUserText;
+            yield return filteredStartingKeywordSuggestions;
+
+            List<CompletionItem> filteredEndingKeywordSuggestions = [];
+            foreach (var endingKeywordSuggestion in _EndingKeywordSuggestions)
+            {
+                // Using the regex filter: when the user starts typing an opening keyword, we will match the associated
+                // ending keyword (if any) here.
+                if (MatchesWithUserFilter(endingKeywordSuggestion))
+                {
+                    filteredEndingKeywordSuggestions.Add(ToCompletionItem(endingKeywordSuggestion));
+                }
+            }
+
+            yield return filteredEndingKeywordSuggestions;
+
+            static CompletionItem ToCompletionItem(string suggestion) => new CompletionItem() { label = suggestion, kind = CompletionItemKind.Keyword };
         }
     }
 }
