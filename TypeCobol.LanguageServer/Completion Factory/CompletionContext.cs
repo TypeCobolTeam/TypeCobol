@@ -39,14 +39,16 @@ namespace TypeCobol.LanguageServer
         {
             string symbolName = symbol?.Name;
             string userFilterText = UserFilterText;
+            // Allow matching on full name for TC procedures/functions
             return !string.IsNullOrEmpty(symbolName)
                    &&
                    (symbolName.StartsWith(userFilterText, StringComparison.OrdinalIgnoreCase) || symbol.VisualQualifiedName.ToString().StartsWith(userFilterText, StringComparison.OrdinalIgnoreCase));
         }
 
-        protected bool MatchesWithUserFilter(Node symbol)
+        protected bool MatchesWithUserFilter(Node symbol) => MatchesWithUserFilter(symbol?.Name);
+
+        protected bool MatchesWithUserFilter(string symbolName)
         {
-            string symbolName = symbol?.Name;
             if (string.IsNullOrEmpty(symbolName))
             {
                 return false;

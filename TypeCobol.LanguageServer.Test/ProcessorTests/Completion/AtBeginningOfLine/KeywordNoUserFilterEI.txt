@@ -55,86 +55,6 @@
     "kind": 14
   },
   {
-    "label": "END-ADD",
-    "kind": 14
-  },
-  {
-    "label": "END-CALL",
-    "kind": 14
-  },
-  {
-    "label": "END-COMPUTE",
-    "kind": 14
-  },
-  {
-    "label": "END-DELETE",
-    "kind": 14
-  },
-  {
-    "label": "END-DIVIDE",
-    "kind": 14
-  },
-  {
-    "label": "END-EVALUATE",
-    "kind": 14
-  },
-  {
-    "label": "END-IF",
-    "kind": 14
-  },
-  {
-    "label": "END-JSON",
-    "kind": 14
-  },
-  {
-    "label": "END-MULTIPLY",
-    "kind": 14
-  },
-  {
-    "label": "END-PERFORM",
-    "kind": 14
-  },
-  {
-    "label": "END-READ",
-    "kind": 14
-  },
-  {
-    "label": "END-RETURN",
-    "kind": 14
-  },
-  {
-    "label": "END-REWRITE",
-    "kind": 14
-  },
-  {
-    "label": "END-SEARCH",
-    "kind": 14
-  },
-  {
-    "label": "END-START",
-    "kind": 14
-  },
-  {
-    "label": "END-STRING",
-    "kind": 14
-  },
-  {
-    "label": "END-SUBTRACT",
-    "kind": 14
-  },
-  {
-    "label": "END-UNSTRING",
-    "kind": 14
-  },
-  {
-    "label": "END-WRITE",
-    "kind": 14
-  },
-  {
-    "label": "END-XML",
-    "kind": 14
-  },
-  {
     "label": "EVALUATE ",
     "kind": 14
   },
@@ -252,6 +172,86 @@
   },
   {
     "label": "XML PARSE ",
+    "kind": 14
+  },
+  {
+    "label": "END-ADD",
+    "kind": 14
+  },
+  {
+    "label": "END-CALL",
+    "kind": 14
+  },
+  {
+    "label": "END-COMPUTE",
+    "kind": 14
+  },
+  {
+    "label": "END-DELETE",
+    "kind": 14
+  },
+  {
+    "label": "END-DIVIDE",
+    "kind": 14
+  },
+  {
+    "label": "END-EVALUATE",
+    "kind": 14
+  },
+  {
+    "label": "END-IF",
+    "kind": 14
+  },
+  {
+    "label": "END-JSON",
+    "kind": 14
+  },
+  {
+    "label": "END-MULTIPLY",
+    "kind": 14
+  },
+  {
+    "label": "END-PERFORM",
+    "kind": 14
+  },
+  {
+    "label": "END-READ",
+    "kind": 14
+  },
+  {
+    "label": "END-RETURN",
+    "kind": 14
+  },
+  {
+    "label": "END-REWRITE",
+    "kind": 14
+  },
+  {
+    "label": "END-SEARCH",
+    "kind": 14
+  },
+  {
+    "label": "END-START",
+    "kind": 14
+  },
+  {
+    "label": "END-STRING",
+    "kind": 14
+  },
+  {
+    "label": "END-SUBTRACT",
+    "kind": 14
+  },
+  {
+    "label": "END-UNSTRING",
+    "kind": 14
+  },
+  {
+    "label": "END-WRITE",
+    "kind": 14
+  },
+  {
+    "label": "END-XML",
     "kind": 14
   }
 ]
