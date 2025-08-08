@@ -310,26 +310,6 @@ namespace TypeCobol.LanguageServer
         }
 
         /// <summary>
-        /// Try to get the DocumentContext instance by name
-        /// </summary>
-        /// <param name="name">The document's name</param>
-        /// <param name="openedDocumentContext"></param>
-        /// <returns>true if the DocumentContext has been found, false otherwise</returns>
-        private bool TryGetOpenedDocumentByName(string name, out DocumentContext openedDocumentContext)
-        {
-            openedDocumentContext = null;
-            foreach (var entry in this._allOpenedDocuments)
-            {
-                if (entry.Key.LocalPath.Contains(name))
-                {
-                    openedDocumentContext = entry.Value;
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        /// <summary>
         /// Update the text contents of the file
         /// </summary>
         public void UpdateSourceFile(Uri fileUri, RangeUpdate[] updates)
@@ -924,44 +904,42 @@ namespace TypeCobol.LanguageServer
         /// <summary>
         /// CodeAnalysis completion event handler.
         /// </summary>
-        /// <param name="cUnit">Sender of the event is the CompilationUnit.</param>
+        /// <param name="sender">Sender of the event is the CompilationUnit.</param>
         /// <param name="programEvent">Event arg, contains the version number of the most up-to-date InspectedProgramClassDocument.</param>
-        private void FinalCompilationStepCompleted(object cUnit, ProgramClassEvent programEvent)
+        private void FinalCompilationStepCompleted(object sender, ProgramClassEvent programEvent)
         {
-            var compilationUnit = cUnit as CompilationUnit;
+            Debug.Assert(sender is CompilationUnit);
+            var compilationUnit = (CompilationUnit) sender;
 
             // Search for corresponding opened document.
             Uri fileUri = null;
-            if (TryGetOpenedDocumentByName(compilationUnit.TextSourceInfo.Name, out var documentCtx))
+            foreach (var openedDocument in _allOpenedDocuments)
             {
-                fileUri = documentCtx.Uri;
+                if (openedDocument.Value.FileCompiler?.CompilationResultsForProgram == compilationUnit)
+                {
+                    fileUri = openedDocument.Key;
+                    break;
+                }
             }
 
             // No document found
             if (fileUri == null)  return;
 
-            // Need to handle the groups instead of the diagnostics, so the order of appearance will be the same within the groups
-            // This is meant to avoid the modification of the LSR tests
-            IEnumerable<Diagnostic> diags = new List<Diagnostic>();
-            var severityGroups = compilationUnit?.AllDiagnostics().GroupBy(d => d.Info.Severity);
-
-            if (severityGroups != null)
-            {
-                foreach (var group in severityGroups.OrderBy(d => d.Key))
-                {
-                    // Add Errors first, then Warnings, then Infos
-                    diags = diags.Any() ? diags.Concat(group) : group;
-                }
-            }
+            // Group and order diagnostics by severity: Errors first, then Warnings, then Infos
+            var diags = compilationUnit.AllDiagnostics()
+                .GroupBy(diagnostic => diagnostic.Info.Severity)
+                .OrderBy(group => group.Key)
+                .SelectMany(group => group) // Flatten diagnostic groups now that they are correctly ordered
+                .Take(Configuration.MaximumDiagnostics == 0 ? 200 : Configuration.MaximumDiagnostics) // Limit final diagnostic count
+                .ToList();
 
             if (DiagnosticsEvent != null)
-                DiagnosticsEvent(fileUri, new DiagnosticEvent() { Diagnostics = diags.Take(Configuration.MaximumDiagnostics == 0 
-                    ? 200 : Configuration.MaximumDiagnostics) });
+                DiagnosticsEvent(fileUri, new DiagnosticEvent() { Diagnostics = diags });
 
             if (MissingCopiesEvent != null && compilationUnit?.MissingCopies.Count > 0)
                 MissingCopiesEvent(fileUri, new MissingCopiesEvent() { Copies = new List<string>(compilationUnit.MissingCopies) });
 
-            DocumentModifiedEvent?.Invoke(fileUri, new EventArgs());
+            DocumentModifiedEvent?.Invoke(fileUri, EventArgs.Empty);
         }
 
         #region Data Layout
