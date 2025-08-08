@@ -258,7 +258,7 @@ namespace TypeCobol.LanguageServer
             docContext.LanguageServerConnection(true);
 
             fileCompiler.CompilationResultsForProgram.SetOwnerThread(Thread.CurrentThread);
-            fileCompiler.CompilationResultsForProgram.CodeAnalysisCompleted += FinalCompilationStepCompleted;
+            fileCompiler.CompilationResultsForProgram.CodeAnalysisCompleted += (sender, _) => FinalCompilationStepCompleted(docContext.Uri, (CompilationUnit)sender);
             fileCompiler.CompilationResultsForProgram.UpdateTokensLines();
 
             if (lsrOptions != LsrTestingOptions.LsrSourceDocumentTesting)
@@ -904,27 +904,10 @@ namespace TypeCobol.LanguageServer
         /// <summary>
         /// CodeAnalysis completion event handler.
         /// </summary>
-        /// <param name="sender">Sender of the event is the CompilationUnit.</param>
-        /// <param name="programEvent">Event arg, contains the version number of the most up-to-date InspectedProgramClassDocument.</param>
-        private void FinalCompilationStepCompleted(object sender, ProgramClassEvent programEvent)
+        /// <param name="fileUri">Target document identifier.</param>
+        /// <param name="compilationUnit">Compilation results after final compilation step completed.</param>
+        private void FinalCompilationStepCompleted(Uri fileUri, CompilationUnit compilationUnit)
         {
-            Debug.Assert(sender is CompilationUnit);
-            var compilationUnit = (CompilationUnit) sender;
-
-            // Search for corresponding opened document.
-            Uri fileUri = null;
-            foreach (var openedDocument in _allOpenedDocuments)
-            {
-                if (openedDocument.Value.FileCompiler?.CompilationResultsForProgram == compilationUnit)
-                {
-                    fileUri = openedDocument.Key;
-                    break;
-                }
-            }
-
-            // No document found
-            if (fileUri == null)  return;
-
             // Group and order diagnostics by severity: Errors first, then Warnings, then Infos
             var diags = compilationUnit.AllDiagnostics()
                 .GroupBy(diagnostic => diagnostic.Info.Severity)
