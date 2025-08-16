@@ -76,8 +76,11 @@ label = "{Block30|}"
 Block31 [
 label = "{Block31|    display 'terminate in pararec'\l}"
 ]
-Block2 [
-label = "{Block2|    goback\l}"
+Block35 [
+label = "{Block35|       display 'after perform pararec in pararec2'\l}"
+]
+Block37 [
+label = "{Block37|    display 'terminate in pararec2'\l}"
 ]
 Block63 [
 label = "{Block63|    else\l       display 'not done in pararec3'\l}"
@@ -124,7 +127,9 @@ Block75 -> Block41
 Block41 -> Block43
 Block43 -> Block30
 Block30 -> Block31
-Block31 -> Block2
+Block31 -> Block35
+Block35 -> Block37
+Block37 -> Block41
 Block63 -> Block64
 Block64 -> Block30
 Block58 -> Block59
