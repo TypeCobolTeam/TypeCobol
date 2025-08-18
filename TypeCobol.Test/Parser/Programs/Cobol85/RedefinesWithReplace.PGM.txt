@@ -1,6 +1,6 @@
 --- Diagnostics ---
 Line 10[34,40] <27, Error, Syntax> - Syntax error : mismatched input ':zoneA:' expecting user defined word RuleStack=codeElement>dataDescriptionEntry>redefinesClause>dataNameReference,  OffendingSymbol=[34,40::zoneA:]<PartialCobolWord>
-Line 10[8,41] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbol '' is not referenced
+Line 10[8,41] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Target cannot be identified
 
 --- Program ---
 PROGRAM: TCOBCOMP common:False initial:False recursive:False
