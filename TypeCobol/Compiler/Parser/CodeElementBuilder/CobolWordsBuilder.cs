@@ -67,6 +67,8 @@ namespace TypeCobol.Compiler.Parser
             if (context.symbolicCharacterReference() != null)
             {
                 var symbolicCharacterReference = CreateSymbolicCharacterReference(context.symbolicCharacterReference());
+                System.Diagnostics.Debug.Assert(symbolicCharacterReference.NameLiteral != null);
+                System.Diagnostics.Debug.Assert(symbolicCharacterReference.NameLiteral.Token != null);
                 return new CharacterValue(symbolicCharacterReference);
             }
 
@@ -172,6 +174,8 @@ namespace TypeCobol.Compiler.Parser
             if (context.symbolicCharacterReference() != null)
             {
                 var symbolicCharacterReference = CreateSymbolicCharacterReference(context.symbolicCharacterReference());
+                System.Diagnostics.Debug.Assert(symbolicCharacterReference.NameLiteral != null);
+                System.Diagnostics.Debug.Assert(symbolicCharacterReference.NameLiteral.Token != null);
                 return new RepeatedCharacterValue(allToken, symbolicCharacterReference);
             }
 
@@ -803,7 +807,13 @@ namespace TypeCobol.Compiler.Parser
             
             var reference = CreateQualifiedSymbolReference(new SymbolReference(headLiteral, SymbolType.IndexName), new SymbolReference(CreateAlphanumericValue(tail[0]), SymbolType.IndexName), false);
             for (int c = 1; c < tail.Length; c++) reference = CreateQualifiedSymbolReference(reference, new SymbolReference(CreateAlphanumericValue(tail[c]), SymbolType.IndexName), false);
-            symbolInformationForTokens[reference.NameLiteral.Token] = reference;
+
+            var token = reference.NameLiteral?.Token;
+            if (token != null)
+            {
+                symbolInformationForTokens[token] = reference;
+            }
+
             return reference;
         }
 
@@ -871,7 +881,12 @@ namespace TypeCobol.Compiler.Parser
         private SymbolReference CreateQualifiedParagraphNameReference(CodeElementsParser.ParagraphNameReferenceContext head, CodeElementsParser.SectionNameReferenceContext tail, bool isCOBOL = true)
         {
             var reference = CreateQualifiedSymbolReference(CreateParagraphNameReference(head), CreateSectionNameReference(tail), isCOBOL);
-            symbolInformationForTokens[reference.NameLiteral.Token] = reference;
+            var token = reference.NameLiteral?.Token;
+            if (token != null)
+            {
+                symbolInformationForTokens[token] = reference;
+            }
+
             return reference;
         }
 
@@ -912,9 +927,11 @@ namespace TypeCobol.Compiler.Parser
                 }
                 qname = CreateQualifiedSymbolReference(qname, current, isCOBOL);
             }
-            if (qname != null)
+
+            var token = qname?.NameLiteral?.Token;
+            if (token != null)
             {
-                symbolInformationForTokens[qname.NameLiteral.Token] = qname;
+                symbolInformationForTokens[token] = qname;
                 return qname;
             }
 
@@ -954,7 +971,13 @@ namespace TypeCobol.Compiler.Parser
                     qname = CreateQualifiedSymbolReference(qname, part, isCOBOL);
                 }
             }
-            symbolInformationForTokens[qname.NameLiteral.Token] = qname;
+
+            var token = qname.NameLiteral?.Token;
+            if (token != null)
+            {
+                symbolInformationForTokens[token] = qname;
+            }
+
             return qname;
         }
 
@@ -1015,7 +1038,12 @@ namespace TypeCobol.Compiler.Parser
         {
             var reference = CreateQualifiedSymbolReference(CreateDataNameReferenceOrConditionNameReferenceOrConditionForUPSISwitchNameReferenceOrTCFunctionProcedure(head), CreateDataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference(tail[0]), isCOBOL);
             for (int c = 1; c < tail.Length; c++) reference = CreateQualifiedSymbolReference(reference, CreateDataNameReferenceOrFileNameReferenceOrMnemonicForUPSISwitchNameReference(tail[c]), isCOBOL);
-            symbolInformationForTokens[reference.NameLiteral.Token] = reference;
+            var token = reference.NameLiteral?.Token;
+            if (token != null)
+            {
+                symbolInformationForTokens[token] = reference;
+            }
+            
             return reference;
         }
 
@@ -1134,7 +1162,12 @@ namespace TypeCobol.Compiler.Parser
             {
                 ExternalName libraryName = CreateLibraryName(context.libraryName());
                 var qualifiedTextName = new QualifiedTextName(textName, libraryName);
-                symbolInformationForTokens[qualifiedTextName.NameLiteral.Token] = qualifiedTextName;
+                var textNameToken = qualifiedTextName.NameLiteral?.Token;
+                if (textNameToken != null)
+                {
+                    symbolInformationForTokens[textNameToken] = qualifiedTextName;
+                }
+
                 return qualifiedTextName;
             }
         }

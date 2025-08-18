@@ -618,10 +618,9 @@ namespace TypeCobol.Compiler.Diagnostics
             var functions = functionDeclaration.SymbolTable.GetFunction(headerNameURI, functionDeclaration.Profile);
             if (functions.Count > 1)
             {
-                Token nameToken = header.FunctionName.NameLiteral.Token;
                 DiagnosticUtils.AddError(functionDeclaration,
                     "A function \"" + headerNameURI.Head + "\" with the same profile already exists in namespace \"" +
-                    headerNameURI.Tail + "\".", nameToken, null, MessageCode.SemanticTCErrorInParser);
+                    headerNameURI.Tail + "\".", header.FunctionName, MessageCode.SemanticTCErrorInParser);
             }
         }
 
