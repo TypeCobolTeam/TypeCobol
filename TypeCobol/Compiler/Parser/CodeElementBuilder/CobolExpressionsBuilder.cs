@@ -50,6 +50,21 @@ namespace TypeCobol.Compiler.Parser
 
         private UnsupportedLanguageLevelFeaturesChecker LanguageLevelChecker { get; }
 
+        private void AddToSymbolInformations(SymbolDefinition specialRegisterDefinition, SymbolReference specialRegisterReference)
+        {
+            var specialRegisterNameToken = specialRegisterDefinition?.NameLiteral?.Token;
+            if (specialRegisterNameToken != null)
+            {
+                CobolWordsBuilder.symbolInformationForTokens[specialRegisterNameToken] = specialRegisterDefinition;
+            }
+
+            var specialRegisterReferenceToken = specialRegisterReference?.NameLiteral?.Token;
+            if (specialRegisterReferenceToken != null)
+            {
+                CobolWordsBuilder.symbolInformationForTokens[specialRegisterReferenceToken] = specialRegisterReference;
+            }
+        }
+
         #region --- (Data storage area) Identifiers 1. Table elements reference : subscripting data names or condition names ---
 
         [CanBeNull]
@@ -240,20 +255,7 @@ namespace TypeCobol.Compiler.Parser
                 ParseTreeUtils.GetFirstToken(context.LINAGE_COUNTER()),
                 CobolWordsBuilder.CreateFileNameReference(context.fileNameReference()));
 
-            var dataName = specialRegister.DataDescriptionEntry?.DataName;
-            var dataNameToken = dataName?.NameLiteral?.Token;
-            if (dataNameToken != null)
-            {
-                CobolWordsBuilder.symbolInformationForTokens[dataNameToken] = dataName;
-            }
-
-            var specialRegisterReference = specialRegister.SymbolReference;
-            var specialRegisterReferenceToken = specialRegisterReference?.NameLiteral?.Token;
-            if (specialRegisterReferenceToken != null)
-            {
-                CobolWordsBuilder.symbolInformationForTokens[specialRegisterReferenceToken] = specialRegisterReference;
-            }
-
+            AddToSymbolInformations(specialRegister.DataDescriptionEntry?.DataName, specialRegister.SymbolReference);
             return specialRegister;
         }
 
@@ -263,19 +265,7 @@ namespace TypeCobol.Compiler.Parser
                 ParseTreeUtils.GetFirstToken(context.ADDRESS()),
                 CreateStorageAreaReference(context.storageAreaReference()));
 
-            var specialRegisterName = specialRegister.DataDescriptionEntry?.DataName;
-            var specialRegisterNameToken = specialRegisterName?.NameLiteral?.Token;
-            if (specialRegisterNameToken != null)
-            {
-                CobolWordsBuilder.symbolInformationForTokens[specialRegisterNameToken] = specialRegisterName;
-            }
-
-            var specialRegisterReference = specialRegister.SymbolReference;
-            var specialRegisterReferenceToken = specialRegisterReference?.NameLiteral?.Token;
-            if (specialRegisterReferenceToken != null)
-            {
-                CobolWordsBuilder.symbolInformationForTokens[specialRegisterReferenceToken] = specialRegisterReference;
-            }
+            AddToSymbolInformations(specialRegister.DataDescriptionEntry?.DataName, specialRegister.SymbolReference);
             return specialRegister;
         }
 
@@ -285,20 +275,7 @@ namespace TypeCobol.Compiler.Parser
                 ParseTreeUtils.GetFirstToken(context.LENGTH()),
                 CreateStorageAreaReference(context.storageAreaReference()));
 
-            var specialRegisterDataName = specialRegister.DataDescriptionEntry?.DataName;
-            var specialRegisterDataNameToken = specialRegisterDataName?.NameLiteral?.Token;
-            if (specialRegisterDataNameToken != null)
-            {
-                CobolWordsBuilder.symbolInformationForTokens[specialRegisterDataNameToken] = specialRegisterDataName;
-            }
-
-            var specialRegisterReference = specialRegister.SymbolReference;
-            var specialRegisterReferenceToken = specialRegisterReference?.NameLiteral?.Token;
-            if (specialRegisterReferenceToken != null)
-            {
-                CobolWordsBuilder.symbolInformationForTokens[specialRegisterReferenceToken] = specialRegisterReference;
-            }
-
+            AddToSymbolInformations(specialRegister.DataDescriptionEntry?.DataName, specialRegister.SymbolReference);
             return specialRegister;
         }
 
