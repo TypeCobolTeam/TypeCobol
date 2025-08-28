@@ -387,7 +387,9 @@ namespace TypeCobol.Compiler.Scanner
             if (startLineIndex < 0 || stopLineIndex < 0 || stopLineIndex < startLineIndex || 
                 ((startLineIndex == stopLineIndex) && (stopToken.StartIndex < startToken.StartIndex)))
             {
-                throw new InvalidOperationException($"Invalid selection interval: {startToken}@{startLineIndex + 1} -> {stopToken}@{stopLineIndex + 1} in {DocumentPath}.");
+                string message = $"Invalid selection interval: {startToken}@{startLineIndex + 1} -> {stopToken}@{stopLineIndex + 1} in {DocumentPath}.";
+                if (startLineIndex == stopLineIndex) message += $" Line text: '{startLine.Text}'.";
+                throw new InvalidOperationException(message);
             }
 
             // Save iterator position (to restore it before return)
