@@ -2,7 +2,6 @@
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Parser.Generated;
-using System.Collections.Generic;
 using TypeCobol.Compiler.Diagnostics;
 using TypeCobol.Compiler.Scanner;
 
@@ -50,6 +49,21 @@ namespace TypeCobol.Compiler.Parser
         private CobolWordsBuilder CobolWordsBuilder { get; }
 
         private UnsupportedLanguageLevelFeaturesChecker LanguageLevelChecker { get; }
+
+        private void AddToSymbolInformations(SymbolDefinition specialRegisterDefinition, SymbolReference specialRegisterReference)
+        {
+            var specialRegisterNameToken = specialRegisterDefinition?.NameLiteral?.Token;
+            if (specialRegisterNameToken != null)
+            {
+                CobolWordsBuilder.symbolInformationForTokens[specialRegisterNameToken] = specialRegisterDefinition;
+            }
+
+            var specialRegisterReferenceToken = specialRegisterReference?.NameLiteral?.Token;
+            if (specialRegisterReferenceToken != null)
+            {
+                CobolWordsBuilder.symbolInformationForTokens[specialRegisterReferenceToken] = specialRegisterReference;
+            }
+        }
 
         #region --- (Data storage area) Identifiers 1. Table elements reference : subscripting data names or condition names ---
 
@@ -240,13 +254,8 @@ namespace TypeCobol.Compiler.Parser
             var specialRegister = new FilePropertySpecialRegister(
                 ParseTreeUtils.GetFirstToken(context.LINAGE_COUNTER()),
                 CobolWordsBuilder.CreateFileNameReference(context.fileNameReference()));
-            if(specialRegister.DataDescriptionEntry != null) {
-                var dataDescription = specialRegister.DataDescriptionEntry;
-                CobolWordsBuilder.symbolInformationForTokens[specialRegister.DataDescriptionEntry.DataName.NameLiteral.Token] = specialRegister.DataDescriptionEntry.DataName;
-            }
-            if (specialRegister.SymbolReference != null) {
-                CobolWordsBuilder.symbolInformationForTokens[specialRegister.SymbolReference.NameLiteral.Token] = specialRegister.SymbolReference;
-            }
+
+            AddToSymbolInformations(specialRegister.DataDescriptionEntry?.DataName, specialRegister.SymbolReference);
             return specialRegister;
         }
 
@@ -255,15 +264,8 @@ namespace TypeCobol.Compiler.Parser
             var specialRegister = new StorageAreaPropertySpecialRegister(
                 ParseTreeUtils.GetFirstToken(context.ADDRESS()),
                 CreateStorageAreaReference(context.storageAreaReference()));
-            if (specialRegister.DataDescriptionEntry != null)
-            {
-                var dataDescription = specialRegister.DataDescriptionEntry;
-                CobolWordsBuilder.symbolInformationForTokens[specialRegister.DataDescriptionEntry.DataName.NameLiteral.Token] = specialRegister.DataDescriptionEntry.DataName;
-            }
-            if (specialRegister.SymbolReference != null)
-            {
-                CobolWordsBuilder.symbolInformationForTokens[specialRegister.SymbolReference.NameLiteral.Token] = specialRegister.SymbolReference;
-            }
+
+            AddToSymbolInformations(specialRegister.DataDescriptionEntry?.DataName, specialRegister.SymbolReference);
             return specialRegister;
         }
 
@@ -272,15 +274,8 @@ namespace TypeCobol.Compiler.Parser
             var specialRegister = new StorageAreaPropertySpecialRegister(
                 ParseTreeUtils.GetFirstToken(context.LENGTH()),
                 CreateStorageAreaReference(context.storageAreaReference()));
-            if (specialRegister.DataDescriptionEntry != null)
-            {
-                var dataDescription = specialRegister.DataDescriptionEntry;
-                CobolWordsBuilder.symbolInformationForTokens[specialRegister.DataDescriptionEntry.DataName.NameLiteral.Token] = specialRegister.DataDescriptionEntry.DataName;
-            }
-            if (specialRegister.SymbolReference != null)
-            {
-                CobolWordsBuilder.symbolInformationForTokens[specialRegister.SymbolReference.NameLiteral.Token] = specialRegister.SymbolReference;
-            }
+
+            AddToSymbolInformations(specialRegister.DataDescriptionEntry?.DataName, specialRegister.SymbolReference);
             return specialRegister;
         }
 
@@ -317,8 +312,12 @@ namespace TypeCobol.Compiler.Parser
             if (functionCall.FunctionName != null && functionCall.FunctionNameToken != null)
             {
                 var functionCallResult = new FunctionCallResult(functionCall);
+                System.Diagnostics.Debug.Assert(functionCallResult.DataDescriptionEntry.DataName != null);
+                System.Diagnostics.Debug.Assert(functionCallResult.DataDescriptionEntry.DataName.NameLiteral.Token != null);
                 CobolWordsBuilder.symbolInformationForTokens[functionCallResult.DataDescriptionEntry.DataName.NameLiteral.Token] =
                     functionCallResult.DataDescriptionEntry.DataName;
+                System.Diagnostics.Debug.Assert(functionCallResult.SymbolReference != null);
+                System.Diagnostics.Debug.Assert(functionCallResult.SymbolReference.NameLiteral.Token != null);
                 CobolWordsBuilder.symbolInformationForTokens[functionCallResult.SymbolReference.NameLiteral.Token] =
                     functionCallResult.SymbolReference;
                 return functionCallResult;

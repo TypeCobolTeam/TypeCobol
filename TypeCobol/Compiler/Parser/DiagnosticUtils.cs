@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Antlr4.Runtime;
+﻿using Antlr4.Runtime;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Diagnostics;
@@ -58,20 +55,25 @@ namespace TypeCobol.Compiler.Parser
             node.AddDiagnostic(diagnostic);
         }
 
-        internal static void AddError(Node node, string message, SymbolReference symbol, MessageCode code = MessageCode.SyntaxErrorInParser)
+        internal static void AddError(Node node, string message, SymbolInformation symbol, MessageCode code = MessageCode.SyntaxErrorInParser)
         {
-            var diagnostic = new ParserDiagnostic(message, symbol.NameLiteral.Token, null, code);
-            node.AddDiagnostic(diagnostic);
+            var token = symbol?.NameLiteral?.Token;
+            if (token != null)
+            {
+                AddError(node, message, token, null, code);
+            }
+            else
+            {
+                AddError(node, message, code);
+            }
         }
 
         internal static void AddError(Node node, string message, DataDefinitionEntry data, MessageCode code = MessageCode.SyntaxErrorInParser)
         {
-            ParserDiagnostic diagnostic;
-
-            if (data?.DataName != null)
+            var dataName = data?.DataName;
+            if (dataName != null)
             {
-                diagnostic = new ParserDiagnostic(message, data?.DataName != null ? data.DataName.NameLiteral.Token : data.ConsumedTokens[0], null, code);
-                node.AddDiagnostic(diagnostic);
+                AddError(node, message, dataName, code);
             }
             else
             {

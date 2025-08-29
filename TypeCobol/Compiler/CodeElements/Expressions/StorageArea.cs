@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Scanner;
 
@@ -536,7 +532,7 @@ namespace TypeCobol.Compiler.CodeElements
         [CanBeNull]
         public ExternalName IntrinsicFunctionName { get; private set; }
         public override string FunctionName { get { return IntrinsicFunctionName?.Name; } }
-        public override Token FunctionNameToken { get { return IntrinsicFunctionName?.NameLiteral.Token; } }
+        public override Token FunctionNameToken { get { return IntrinsicFunctionName?.NameLiteral?.Token; } }
 
         public override bool NeedDeclaration
         {
@@ -567,7 +563,7 @@ namespace TypeCobol.Compiler.CodeElements
         [CanBeNull]
         public SymbolReference UserDefinedFunctionName { get; private set;  }
         public override string FunctionName { get { return UserDefinedFunctionName?.Name; } }
-        public override Token FunctionNameToken { get { return UserDefinedFunctionName?.NameLiteral.Token; } }
+        public override Token FunctionNameToken { get { return UserDefinedFunctionName?.NameLiteral?.Token; } }
 
         public override string Namespace { get { return (UserDefinedFunctionName as QualifiedSymbolReference) == null ? null : ((QualifiedSymbolReference)UserDefinedFunctionName).Tail.Name; } }
 
@@ -592,7 +588,7 @@ namespace TypeCobol.Compiler.CodeElements
 
         public SymbolReference ProcedureName { get; private set; }
         public override string FunctionName { get { return ProcedureName.Name; } }
-        public override Token FunctionNameToken { get { return ProcedureName.NameLiteral.Token; } }
+        public override Token FunctionNameToken { get { return ProcedureName.NameLiteral?.Token; } }
         
         public List<CallSiteParameter> InputParameters { get; private set; }
         public List<CallSiteParameter> InoutParameters { get; private set; }
