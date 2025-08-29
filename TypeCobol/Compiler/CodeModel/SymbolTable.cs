@@ -819,7 +819,7 @@ namespace TypeCobol.Compiler.CodeModel
             {
                 //If paragraph is qualified we get a paragraph and a section name
                 var qualifiedSymbolReference = (QualifiedSymbolReference) symbolRef;
-                paragraphName = qualifiedSymbolReference.NameLiteral.Value;
+                paragraphName = qualifiedSymbolReference.Head.Name;
                 parentSectionName = qualifiedSymbolReference.Tail.Name;
             }
             else
@@ -830,7 +830,7 @@ namespace TypeCobol.Compiler.CodeModel
             }
 
             //Retrieve all paragraphs with matching name, then apply additional filters
-            if (Paragraphs.TryGetValue(paragraphName, out var candidates))
+            if (paragraphName != null && Paragraphs.TryGetValue(paragraphName, out var candidates))
             {
                 if (parentSectionName != null)
                 {

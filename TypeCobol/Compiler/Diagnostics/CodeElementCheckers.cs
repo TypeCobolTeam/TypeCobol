@@ -256,7 +256,7 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             foreach (var inputParameter in statement.InputParameters)
             {
-                var errorPosition = inputParameter.StorageAreaOrValue?.MainSymbolReference?.NameLiteral.Token;
+                var errorPosition = inputParameter.StorageAreaOrValue?.MainSymbolReference?.NameLiteral?.Token;
 
                 // TODO#249 these checks should be done during semantic phase, after symbol type resolution
                 // TODO#249 if input is a file name AND input.SendingMode.Value == SendingMode.ByContent OR ByValue
@@ -736,10 +736,16 @@ namespace TypeCobol.Compiler.Diagnostics
             {
                 foreach (var intrinsicFunction in intrinsicFunctions)
                 {
-                    Token token = intrinsicFunction.NameLiteral.Token;
                     var intrinsicFunctionName = intrinsicFunction.Name;
                     if (!CobolIntrinsicFunctions.IsAllowedInRepositoryParagraph(intrinsicFunctionName))
                     {
+                        /*
+                         * NameLiteral cannot be null here, otherwise intrinsicFuntionName would also be null
+                         * and IsAllowedInRepositoryParagraph would then have returned true.
+                         */
+                        System.Diagnostics.Debug.Assert(intrinsicFunction.NameLiteral != null);
+
+                        Token token = intrinsicFunction.NameLiteral.Token;
                         DiagnosticUtils.AddError(paragraph, $"\"{intrinsicFunctionName}\" was specified in the \"FUNCTION\" phrase of the \"REPOSITORY\" paragraph, but the keyword \"FUNCTION\" is always required for this function.", token);
                     }
                 }
