@@ -65,10 +65,13 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
         }
 
         [TestMethod]
-        public void SimpleCompletionForVariable() => ExecuteTest();
+        public void AfterOpeningParenthesisTreatedAsUserDefinedWord() => ExecuteTest();
 
         [TestMethod]
         public void CompletionAfterUserDefinedWord() => ExecuteTest();
+
+        [TestMethod]
+        public void SimpleCompletionForVariable() => ExecuteTest();
 
 #if EUROINFO_RULES
         [TestMethod]
