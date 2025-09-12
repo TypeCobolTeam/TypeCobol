@@ -1,0 +1,208 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TCOMFL06.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+      * should be suggested
+       01 group1.
+          05 say-var1 OCCURS 5     PIC 9.
+          05 group2 OCCURS 5.
+             10 var2-say OCCURS 5  PIC 9.
+             10 var3-say-var3      PIC 9.
+      * should not (does not contain 'say', not numeric)
+       01 item-numeric  PIC 9.
+       01 item-text-1   PIC X.
+       PROCEDURE DIVISION.
+       main.
+           PERFORM say
+           GOBACK
+           .
+       s1-say-hello-world SECTION.
+       p1-say-hello.
+           DISPLAY "hello"
+           .
+       p2-say-world.
+           DISPLAY "world"
+           .
+       s2-say-goodbye-end SECTION.
+       p1-say-goodbye.
+           DISPLAY "goodbye"
+           .
+       p2-say-end.
+           DISPLAY "end of PGM"
+           .
+       say-something.
+           DISPLAY "something"
+           .
+       say-nothing SECTION.
+           CONTINUE
+           .
+       do-something SECTION.
+       one-way.
+           MOVE item-text-1 TO item-text-2
+           .
+       and-the-other.
+           MOVE item-text-2 TO item-text-1
+           .
+       END PROGRAM TCOMFL06.
+---------------------------------------------------------------------------------
+{"line":15,"character":22}
+---------------------------------------------------------------------------------
+[
+  {
+    "label": "p1-say-goodbye",
+    "kind": 18,
+    "data": {
+      "start": {
+        "line": 15,
+        "character": 19
+      },
+      "end": {
+        "line": 15,
+        "character": 22
+      }
+    }
+  },
+  {
+    "label": "p1-say-hello",
+    "kind": 18,
+    "data": {
+      "start": {
+        "line": 15,
+        "character": 19
+      },
+      "end": {
+        "line": 15,
+        "character": 22
+      }
+    }
+  },
+  {
+    "label": "p2-say-end",
+    "kind": 18,
+    "data": {
+      "start": {
+        "line": 15,
+        "character": 19
+      },
+      "end": {
+        "line": 15,
+        "character": 22
+      }
+    }
+  },
+  {
+    "label": "p2-say-world",
+    "kind": 18,
+    "data": {
+      "start": {
+        "line": 15,
+        "character": 19
+      },
+      "end": {
+        "line": 15,
+        "character": 22
+      }
+    }
+  },
+  {
+    "label": "say-something",
+    "kind": 18,
+    "data": {
+      "start": {
+        "line": 15,
+        "character": 19
+      },
+      "end": {
+        "line": 15,
+        "character": 22
+      }
+    }
+  },
+  {
+    "label": "s1-say-hello-world",
+    "kind": 18,
+    "data": {
+      "start": {
+        "line": 15,
+        "character": 19
+      },
+      "end": {
+        "line": 15,
+        "character": 22
+      }
+    }
+  },
+  {
+    "label": "s2-say-goodbye-end",
+    "kind": 18,
+    "data": {
+      "start": {
+        "line": 15,
+        "character": 19
+      },
+      "end": {
+        "line": 15,
+        "character": 22
+      }
+    }
+  },
+  {
+    "label": "say-nothing",
+    "kind": 18,
+    "data": {
+      "start": {
+        "line": 15,
+        "character": 19
+      },
+      "end": {
+        "line": 15,
+        "character": 22
+      }
+    }
+  },
+  {
+    "label": "say-var1 PIC 9",
+    "kind": 6,
+    "insertText": "say-var1(",
+    "data": {
+      "start": {
+        "line": 15,
+        "character": 19
+      },
+      "end": {
+        "line": 15,
+        "character": 22
+      }
+    }
+  },
+  {
+    "label": "var2-say PIC 9",
+    "kind": 6,
+    "insertText": "var2-say(, )",
+    "data": {
+      "start": {
+        "line": 15,
+        "character": 19
+      },
+      "end": {
+        "line": 15,
+        "character": 22
+      }
+    }
+  },
+  {
+    "label": "var3-say-var3 PIC 9",
+    "kind": 6,
+    "insertText": "var3-say-var3(",
+    "data": {
+      "start": {
+        "line": 15,
+        "character": 19
+      },
+      "end": {
+        "line": 15,
+        "character": 22
+      }
+    }
+  }
+]

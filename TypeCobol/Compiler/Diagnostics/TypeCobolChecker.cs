@@ -11,7 +11,7 @@ namespace TypeCobol.Compiler.Diagnostics
 {
     class ReadOnlyPropertiesChecker
     {
-        private static string[] READONLY_DATATYPES = {"DATE",};
+        private static readonly string[] READONLY_DATATYPES = { "DATE" };
 
         public static void OnNode([NotNull] VariableWriter variableWriter, Node node)
         {
@@ -618,10 +618,9 @@ namespace TypeCobol.Compiler.Diagnostics
             var functions = functionDeclaration.SymbolTable.GetFunction(headerNameURI, functionDeclaration.Profile);
             if (functions.Count > 1)
             {
-                Token nameToken = header.FunctionName.NameLiteral.Token;
                 DiagnosticUtils.AddError(functionDeclaration,
                     "A function \"" + headerNameURI.Head + "\" with the same profile already exists in namespace \"" +
-                    headerNameURI.Tail + "\".", nameToken, null, MessageCode.SemanticTCErrorInParser);
+                    headerNameURI.Tail + "\".", header.FunctionName, MessageCode.SemanticTCErrorInParser);
             }
         }
 

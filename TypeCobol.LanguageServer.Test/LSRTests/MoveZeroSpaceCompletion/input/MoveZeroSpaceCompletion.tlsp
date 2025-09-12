@@ -95,7 +95,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"buf (Alphanumeric) (MyLevel1Test::buf)\",\"kind\":6,\"insertText\":\"MyLevel1Test::buf\"},{\"label\":\"char (Alphanumeric) (MyLevel1Test::buf::char)\",\"kind\":6,\"insertText\":\"MyLevel1Test::buf::char\"},{\"label\":\"len (Numeric) (len)\",\"kind\":6,\"insertText\":\"len\"},{\"label\":\"MyLevel1Test (Alphanumeric) (MyLevel1Test)\",\"kind\":6,\"insertText\":\"MyLevel1Test\"},{\"label\":\"var2 (Alphanumeric) (var2)\",\"kind\":6,\"insertText\":\"var2\"},{\"label\":\"W-Alphabetic (Alphabetic) (W-Alphabetic)\",\"kind\":6,\"insertText\":\"W-Alphabetic\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"2\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"buf (Alphanumeric) (MyLevel1Test::buf)\",\"kind\":6,\"insertText\":\"MyLevel1Test::buf\"},{\"label\":\"char (Alphanumeric) (MyLevel1Test::buf::char()\",\"kind\":6,\"insertText\":\"MyLevel1Test::buf::char(\"},{\"label\":\"len (Numeric) (len)\",\"kind\":6,\"insertText\":\"len\"},{\"label\":\"MyLevel1Test (Alphanumeric) (MyLevel1Test)\",\"kind\":6,\"insertText\":\"MyLevel1Test\"},{\"label\":\"var2 (Alphanumeric) (var2)\",\"kind\":6,\"insertText\":\"var2\"},{\"label\":\"W-Alphabetic (Alphabetic) (W-Alphabetic)\",\"kind\":6,\"insertText\":\"W-Alphabetic\"}]}}"
     },
     {
       "category": 0,
@@ -179,7 +179,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"buf (Alphanumeric) (MyLevel1Test::buf)\",\"kind\":6,\"insertText\":\"MyLevel1Test::buf\"},{\"label\":\"char (Alphanumeric) (MyLevel1Test::buf::char)\",\"kind\":6,\"insertText\":\"MyLevel1Test::buf::char\"},{\"label\":\"MyLevel1Test (Alphanumeric) (MyLevel1Test)\",\"kind\":6,\"insertText\":\"MyLevel1Test\"},{\"label\":\"var2 (Alphanumeric) (var2)\",\"kind\":6,\"insertText\":\"var2\"},{\"label\":\"W-Alphabetic (Alphabetic) (W-Alphabetic)\",\"kind\":6,\"insertText\":\"W-Alphabetic\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"4\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"buf (Alphanumeric) (MyLevel1Test::buf)\",\"kind\":6,\"insertText\":\"MyLevel1Test::buf\"},{\"label\":\"char (Alphanumeric) (MyLevel1Test::buf::char()\",\"kind\":6,\"insertText\":\"MyLevel1Test::buf::char(\"},{\"label\":\"MyLevel1Test (Alphanumeric) (MyLevel1Test)\",\"kind\":6,\"insertText\":\"MyLevel1Test\"},{\"label\":\"var2 (Alphanumeric) (var2)\",\"kind\":6,\"insertText\":\"var2\"},{\"label\":\"W-Alphabetic (Alphabetic) (W-Alphabetic)\",\"kind\":6,\"insertText\":\"W-Alphabetic\"}]}}"
     },
     {
       "category": 0,
@@ -263,7 +263,7 @@
     },
     {
       "category": 1,
-      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"buf (Alphanumeric) (MyLevel1Test::buf)\",\"kind\":6,\"insertText\":\"MyLevel1Test::buf\"},{\"label\":\"char (Alphanumeric) (MyLevel1Test::buf::char)\",\"kind\":6,\"insertText\":\"MyLevel1Test::buf::char\"},{\"label\":\"len (Numeric) (len)\",\"kind\":6,\"insertText\":\"len\"},{\"label\":\"MyLevel1Test (Alphanumeric) (MyLevel1Test)\",\"kind\":6,\"insertText\":\"MyLevel1Test\"},{\"label\":\"var2 (Alphanumeric) (var2)\",\"kind\":6,\"insertText\":\"var2\"},{\"label\":\"W-Alphabetic (Alphabetic) (W-Alphabetic)\",\"kind\":6,\"insertText\":\"W-Alphabetic\"}]}}"
+      "message": "{\"jsonrpc\":\"2.0\",\"id\":\"6\",\"result\":{\"isIncomplete\":false,\"items\":[{\"label\":\"buf (Alphanumeric) (MyLevel1Test::buf)\",\"kind\":6,\"insertText\":\"MyLevel1Test::buf\"},{\"label\":\"char (Alphanumeric) (MyLevel1Test::buf::char()\",\"kind\":6,\"insertText\":\"MyLevel1Test::buf::char(\"},{\"label\":\"len (Numeric) (len)\",\"kind\":6,\"insertText\":\"len\"},{\"label\":\"MyLevel1Test (Alphanumeric) (MyLevel1Test)\",\"kind\":6,\"insertText\":\"MyLevel1Test\"},{\"label\":\"var2 (Alphanumeric) (var2)\",\"kind\":6,\"insertText\":\"var2\"},{\"label\":\"W-Alphabetic (Alphabetic) (W-Alphabetic)\",\"kind\":6,\"insertText\":\"W-Alphabetic\"}]}}"
     },
     {
       "category": 0,

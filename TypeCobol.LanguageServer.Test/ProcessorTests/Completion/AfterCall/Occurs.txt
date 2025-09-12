@@ -1,0 +1,97 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TCOMFL06.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+      * should not suggest: no picture
+       01 GROUP-PROCESS.
+          05 VAR1            PIC X.
+       01 GROUP1.
+          05 VAR2            PIC X.
+          05 GROUP11 OCCURS 10.
+      * should suggest: alphanumeric picture
+             10 VAR-PROCESS OCCURS 10    PIC X.
+      * should not suggest: not alphanumeric picture
+          05 NOT-VAR-PROCESS PIC 9.
+       PROCEDURE DIVISION.
+       main.
+           CALL proc
+           GOBACK
+           .
+       DECLARE PROCEDURE proc1 PRIVATE.
+       END-DECLARE.
+       
+       DECLARE PROCEDURE another-proc1 PRIVATE.
+       END-DECLARE.
+       
+       DECLARE PROCEDURE func1 PRIVATE.
+       END-DECLARE.
+       
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. ProcNested1.
+       END PROGRAM ProcNested1.
+       
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. NestedProc1.
+       END PROGRAM NestedProc1.
+       
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. AnotherNested.
+       END PROGRAM AnotherNested.
+       
+       END PROGRAM TCOMFL06.
+---------------------------------------------------------------------------------
+{"line":16,"character":20}
+---------------------------------------------------------------------------------
+[
+  {
+    "label": "proc1",
+    "kind": 3,
+    "insertText": "proc1",
+    "data": [
+      {
+        "start": {
+          "line": 16,
+          "character": 16
+        },
+        "end": {
+          "line": 16,
+          "character": 20
+        }
+      },
+      {
+        "label": "TCOMFL06.proc1",
+        "parameters": []
+      },
+      null
+    ]
+  },
+  {
+    "label": "VAR-PROCESS",
+    "kind": 6,
+    "insertText": "VAR-PROCESS(, )",
+    "data": {
+      "start": {
+        "line": 16,
+        "character": 16
+      },
+      "end": {
+        "line": 16,
+        "character": 20
+      }
+    }
+  },
+  {
+    "label": "ProcNested1",
+    "kind": 9,
+    "data": {
+      "start": {
+        "line": 16,
+        "character": 16
+      },
+      "end": {
+        "line": 16,
+        "character": 20
+      }
+    }
+  }
+]

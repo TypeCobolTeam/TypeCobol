@@ -1,12 +1,9 @@
-﻿using System.Linq;
-using System.Collections.Generic;
-using TypeCobol.Compiler.AntlrUtils;
+﻿using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeElements.Expressions;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Nodes;
-using TypeCobol.Compiler.Scanner;
 
 namespace TypeCobol.Compiler.Diagnostics
 {
@@ -147,7 +144,9 @@ namespace TypeCobol.Compiler.Diagnostics
 
             if (redefinedVariable == null)
             {
-                string message = "Illegal REDEFINES: Symbol \'" + redefinesSymbolReference + "\' is not referenced";
+                var message = redefinesSymbolReference.Name != null
+                    ? "Illegal REDEFINES: Symbol \'" + redefinesSymbolReference + "\' is not referenced"
+                    : "Illegal REDEFINES: Target cannot be identified";
                 DiagnosticUtils.AddError(redefinesNode, message, redefinesSymbolReference, code: MessageCode.SemanticTCErrorInParser);
                 return;
             }
@@ -211,7 +210,7 @@ namespace TypeCobol.Compiler.Diagnostics
     class TypedDeclarationChecker
     {
 
-        private static List<Node> browsedTypes = new List<Node>();
+        private static readonly List<Node> browsedTypes = new List<Node>();
 
         public static void OnNode(DataDefinition dataDefinition)
         {

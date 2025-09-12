@@ -23,23 +23,19 @@ namespace TypeCobol.Compiler.Parser
     /// </summary>
     static class ProgramClassParserStep
     {
-        private static bool CupPrepared = false;
         /// <summary>
         /// This static prepare the parser generated method CUP_TypeCobolProgramParser_do_action.
         /// Which in debug mode JIT precompilation takes time about 400ms.
         /// </summary>
-        public static void PrepareCupParser()
+        static ProgramClassParserStep()
         {
-            if (!CupPrepared)
+            var method = typeof(CUP_TypeCobolProgramParser_actions).GetMethod("CUP_TypeCobolProgramParser_do_action");
+            if (method != null)
             {
-                var method = typeof(CUP_TypeCobolProgramParser_actions).GetMethod("CUP_TypeCobolProgramParser_do_action");
-                if (method != null)
-                {
-                    RuntimeHelpers.PrepareMethod(method.MethodHandle);
-                    CupPrepared = true;
-                }
+                RuntimeHelpers.PrepareMethod(method.MethodHandle);
             }
         }
+
         public static void CupParseProgramOrClass(
             TextSourceInfo textSourceInfo,
             ISearchableReadOnlyList<CodeElementsLine> codeElementsLines,
@@ -54,7 +50,6 @@ namespace TypeCobol.Compiler.Parser
             out List<DataDefinition> typedVariablesOutsideTypedef,
             out List<TypeDefinition> typeThatNeedTypeLinking)
         {
-            PrepareCupParser();
 #if DEBUG_ANTRL_CUP_TIME
             var t1 = DateTime.UtcNow;            
 #endif
@@ -109,7 +104,7 @@ namespace TypeCobol.Compiler.Parser
                 var code = Diagnostics.MessageCode.ImplementationError;
                 programClassBuilderError = new ParserDiagnostic(ex.ToString(), Diagnostic.Position.Default, null, code, ex);
             }
-            perfStatsForParserInvocation.OnStopParsing(0, 0);
+            perfStatsForParserInvocation.OnStopParsing();
 
 
 #if DEBUG_ANTRL_CUP_TIME

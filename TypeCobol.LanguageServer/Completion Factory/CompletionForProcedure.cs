@@ -39,7 +39,7 @@ namespace TypeCobol.LanguageServer
                 return new CompletionItem
                 {
                     label = variable.Name,
-                    insertText = variable.Name,
+                    insertText = variable.Name + CompletionFactoryHelpers.GetSubscript(variable),
                     kind = CompletionItemKind.Variable
                 };
             }

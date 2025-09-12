@@ -22,7 +22,7 @@ namespace TypeCobol.LanguageServer.Processor
 
             var wrappedCodeElements = TypeCobolServer.CodeElementFinder(compilationUnit, position, out var cursorLine);
             if (wrappedCodeElements == null)
-                return null;
+                return new List<CompletionItem>();
 
             //Try to get a significant token for completion and return the codeelement containing the matching token.
             CodeElement matchingCodeElement = CodeElementMatcher.MatchCompletionCodeElement(position,
@@ -97,6 +97,12 @@ namespace TypeCobol.LanguageServer.Processor
                         break;
                     case TokenType.IN or TokenType.OF:
                         items = new CompletionForInOrOf(userFilterToken, position, lastSignificantToken.TokenType).ComputeProposals(compilationUnit, matchingCodeElement);
+                        break;
+                    case TokenType.SEARCH or TokenType.SORT:
+                        // Filtering on OCCURS: use DataType.Occurs instead of IsTableOccurence because the 1st one is more restrictive.
+                        // Only tables (i.e.OCCURS without Picture) will be suggested
+                        Predicate<DataDefinition> occursVariables = dataDefinition => dataDefinition.DataType == DataType.Occurs;
+                        items = new CompletionForVariable(userFilterToken, occursVariables, false).ComputeProposals(compilationUnit, matchingCodeElement);
                         break;
                     default:
                         // Unable to suggest anything

@@ -81,11 +81,17 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
         public void AfterCall_WithUserFilterTextEI() => ExecuteTest();
 #else
         [TestMethod]
+        public void AfterCall_Occurs() => ExecuteTest();
+
+        [TestMethod]
         public void AfterCall_WithoutUserFilterText() => ExecuteTest();
 
         [TestMethod]
         public void AfterCall_WithUserFilterText() => ExecuteTest();
 #endif
+
+        [TestMethod]
+        public void AfterDisplay_Occurs() => ExecuteTest();
 
         [TestMethod]
         public void AfterDisplay_NamesUsingHyphens() => ExecuteTest();
@@ -106,10 +112,16 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
         public void AfterIn_NotImplemented() => ExecuteTest();
 
         [TestMethod]
+        public void AfterIn_Occurs() => ExecuteTest();
+
+        [TestMethod]
         public void AfterIn_SeveralParents() => ExecuteTest(true);
 
         [TestMethod]
         public void AfterIn_Variable() => ExecuteTest(true);
+
+        [TestMethod]
+        public void AfterInto_Occurs() => ExecuteTest();
 
         [TestMethod]
         public void AfterInto_String() => ExecuteTest();
@@ -124,6 +136,9 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
         public void AfterMove_NamesUsingUnderscores() => ExecuteTest();
 
         [TestMethod]
+        public void AfterMove_Occurs() => ExecuteTest();
+
+        [TestMethod]
         public void AfterOf_Chain1() => ExecuteTest();
 
         [TestMethod]
@@ -134,6 +149,9 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
 
         [TestMethod]
         public void AfterOf_NotImplemented() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterOf_Occurs() => ExecuteTest();
 
         [TestMethod]
         public void AfterOf_SetAddress() => ExecuteTest();
@@ -151,13 +169,31 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
         public void AfterPerform_NamesUsingUnderscores() => ExecuteTest();
 
         [TestMethod]
+        public void AfterPerform_Occurs() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterSearch_WithUserFilter() => ExecuteTest();
+
+        [TestMethod]
         public void AfterSet_NamesUsingHyphens() => ExecuteTest();
 
         [TestMethod]
         public void AfterSet_NamesUsingUnderscores() => ExecuteTest();
 
         [TestMethod]
+        public void AfterSet_Occurs() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterSort_WithoutUserFilter() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterSort_WithUserFilter() => ExecuteTest();
+
+        [TestMethod]
         public void AfterTo_AddLiteral() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterTo_AddOccurs() => ExecuteTest();
 
         [TestMethod]
         public void AfterTo_AddVariable() => ExecuteTest();
@@ -166,7 +202,13 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
         public void AfterTo_Inspect() => ExecuteTest();
 
         [TestMethod]
+        public void AfterTo_InspectOccurs() => ExecuteTest();
+
+        [TestMethod]
         public void AfterTo_MoveLiteral() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterTo_MoveOccurs() => ExecuteTest();
 
         [TestMethod]
         public void AfterTo_MoveSpaces() => ExecuteTest();
@@ -182,6 +224,9 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
 
         [TestMethod]
         public void AfterTo_SetNothingAfterTo() => ExecuteTest();
+
+        [TestMethod]
+        public void AfterTo_SetOccurs() => ExecuteTest();
 
         [TestMethod]
         public void AfterTo_SetOf() => ExecuteTest();
@@ -221,5 +266,8 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
 
         [TestMethod]
         public void AtBeginningOfLine_KeywordUserFilter3() => ExecuteTest();
+
+        [TestMethod]
+        public void CompletionOnComments() => ExecuteTest();
     }
 }

@@ -166,7 +166,7 @@ namespace TypeCobol.LanguageServer
                 .Where(MatchesWithUserFilter) //Filter on user text
                 .Distinct()
                 .SelectMany(d => node.SymbolTable.GetVariablesExplicitWithQualifiedName(new URI(d.Name)));
-            var completionItems = CompletionFactoryHelpers.CreateCompletionItemsForVariableSetAndDisambiguate(variables, compilationUnit.CompilerOptions);
+            var completionItems = CompletionFactoryHelpers.CreateCompletionItemsForVariableSetAndDisambiguate(variables, true, compilationUnit.CompilerOptions);
 
             Token callToken = codeElement.ConsumedTokens.First(t => t.TokenType == TokenType.CALL);
             Dictionary<ParameterDescription.PassingTypes, string> paramWithCase = CompletionFactoryHelpers.GetParamsUsingMatchingCase(callToken);

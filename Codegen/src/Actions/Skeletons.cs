@@ -12,7 +12,7 @@ namespace TypeCobol.Codegen.Actions
 {
                 public partial class Skeletons : TypeCobol.Codegen.Actions.IActionsProvider
                 {
-                                private static Dictionary<System.Type, Func<TypeCobol.Compiler.Nodes.Node, TypeCobol.Codegen.GeneratorActions, List<TypeCobol.Codegen.Actions.Action>>> NodeActionsProviderMap;
+                                private static readonly Dictionary<System.Type, Func<TypeCobol.Compiler.Nodes.Node, TypeCobol.Codegen.GeneratorActions, List<TypeCobol.Codegen.Actions.Action>>> NodeActionsProviderMap;
                                 static Skeletons()
                                 {
                                                 NodeActionsProviderMap = new Dictionary<System.Type, Func<TypeCobol.Compiler.Nodes.Node, TypeCobol.Codegen.GeneratorActions, List<TypeCobol.Codegen.Actions.Action>>>();
