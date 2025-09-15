@@ -1,0 +1,20 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DVZS0OSM.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 var1 PIC X(10).
+       PROCEDURE DIVISION.
+      * #2804 Requesting completion after this opening parenthesis
+      * yields nothing because the parenthesis is used as text filter
+      * on variables.
+
+           DISPLAY (
+
+           GOBACK
+           .
+
+       END PROGRAM DVZS0OSM.
+---------------------------------------------------------------------------------
+{"line":10,"character":20}
+---------------------------------------------------------------------------------
+[]
