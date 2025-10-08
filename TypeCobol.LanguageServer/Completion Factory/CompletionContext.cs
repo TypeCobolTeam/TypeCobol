@@ -54,7 +54,7 @@ namespace TypeCobol.LanguageServer
                 return false;
             }
 
-            string userFilterText = UserFilterText;
+            string userFilterText = Regex.Escape(UserFilterText);
             if (userFilterText.Length == 0)
             {
                 return true;
