@@ -119,9 +119,9 @@
       
       *Ok The data description entry of a strictly-typed group item 
       *can contain a VALUE clause. 
-       01  TYPE-GRP TYPEDEF strict.
-          05  TYPE-GRP-1 PIC X VALUE 'A'.
-          05  TYPE-GRP-2 PIC X VALUE 1. 
+       01  TYPE-GRP TYPEDEF strict value 'A1'.
+          05  TYPE-GRP-1 PIC X.
+          05  TYPE-GRP-2 PIC X.
       
       
       *Rule #10 - Strictly-typed group items and elementary 
