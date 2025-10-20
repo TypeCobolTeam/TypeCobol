@@ -9,28 +9,31 @@
           05 group1.
              10 var1 PIC X VALUE 'A'.
       * KO: VALUE used on a REDEFINES
-Line 12[14,57] <30, Error, Semantics> - Semantic error: VALUE clause cannot be used on a REDFINES item or within a REDEFINES group.
+Line 12[14,57] <30, Error, Semantics> - Semantic error: VALUE clause cannot be used on a REDEFINES item or within a REDEFINES group.
              10 var-redef REDEFINES var1 PIC X VALUE 'B'.
           05 group2 REDEFINES group1.
-      * KO: VALUE used on an item whose parent is a REDFINES
-Line 15[14,37] <30, Error, Semantics> - Semantic error: VALUE clause cannot be used on a REDFINES item or within a REDEFINES group.
+      * KO: VALUE used on an item whose parent is a REDEFINES
+Line 15[14,37] <30, Error, Semantics> - Semantic error: VALUE clause cannot be used on a REDEFINES item or within a REDEFINES group.
              10 var2 PIC X VALUE 'C'.
           05 zone PIC X(10).
           05 group-redef REDEFINES zone.
              10 part1 PIC X(2).
              10 part2.
-      * KO: VALUE used on an item located under a REDFINES
-Line 21[17,48] <30, Error, Semantics> - Semantic error: VALUE clause cannot be used on a REDFINES item or within a REDEFINES group.
+      * KO: VALUE used on an item located under a REDEFINES
+Line 21[17,48] <30, Error, Semantics> - Semantic error: VALUE clause cannot be used on a REDEFINES item or within a REDEFINES group.
                 15 var3 PIC X(6) VALUE 'ABCDEF'.
              10 part3 PIC X(2).
+      * OK: VALUE for conditions (level-88) are allowed
+                88 flag-ok VALUE 'ok'.
+                88 flag-ko VALUE 'ko'.
        01 group3 VALUE 'D'.
       * KO: VALUE used on an item whose parent has a VALUE clause
-Line 25[11,34] <30, Error, Semantics> - Semantic error: VALUE clause cannot be used on an item subordinate to a group already defining its own VALUE clause.
+Line 28[11,34] <30, Error, Semantics> - Semantic error: VALUE clause cannot be used on an item subordinate to a group already defining its own VALUE clause.
           05 var3 PIC X VALUE 'E'.
        01 group4 VALUE 'F'.
           05 group41.
       * KO: VALUE used on an item located under an item having a VALUE
-Line 29[14,37] <30, Error, Semantics> - Semantic error: VALUE clause cannot be used on an item subordinate to a group already defining its own VALUE clause.
+Line 32[14,37] <30, Error, Semantics> - Semantic error: VALUE clause cannot be used on an item subordinate to a group already defining its own VALUE clause.
              10 var5 PIC X VALUE 'G'.
        PROCEDURE DIVISION.
            GOBACK

@@ -862,7 +862,7 @@ namespace TypeCobol.Compiler.Diagnostics
 
                 if (dataDefinitionEntry.Type == CodeElementType.DataRedefinesEntry || dataDefinition.IsFlagSet(Node.Flag.InsideRedefines))
                 {
-                    DiagnosticUtils.AddError(dataDefinition, "VALUE clause cannot be used on a REDFINES item or within a REDEFINES group.", code: MessageCode.SemanticTCErrorInParser);
+                    DiagnosticUtils.AddError(dataDefinition, "VALUE clause cannot be used on a REDEFINES item or within a REDEFINES group.", code: MessageCode.SemanticTCErrorInParser);
                 }
             }
 
