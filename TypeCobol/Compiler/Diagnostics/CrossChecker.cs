@@ -852,6 +852,20 @@ namespace TypeCobol.Compiler.Diagnostics
                     "Variable with usage COMP-1, COMP-2, INDEX, POINTER, POINTER-32, PROCEDURE-POINTER and FUNCTION-POINTER cannot have a PICTURE", commonDataDataDefinitionCodeElement);
             }
 
+            // Check VALUE clause presence and validity
+            if (commonDataDataDefinitionCodeElement?.InitialValue != null)
+            {
+                if (dataDefinition.IsFlagSet(Node.Flag.InheritsInitialValue))
+                {
+                    DiagnosticUtils.AddError(dataDefinition, "VALUE clause cannot be used on an item subordinate to a group already defining its own VALUE clause.", code: MessageCode.SemanticTCErrorInParser);
+                }
+
+                if (dataDefinitionEntry.Type == CodeElementType.DataRedefinesEntry || dataDefinition.IsFlagSet(Node.Flag.InsideRedefines))
+                {
+                    DiagnosticUtils.AddError(dataDefinition, "VALUE clause cannot be used on a REDEFINES item or within a REDEFINES group.", code: MessageCode.SemanticTCErrorInParser);
+                }
+            }
+
             return true;
 
             // Return true for usages which cannot have a PICTURE, false for usages requiring a PICTURE
