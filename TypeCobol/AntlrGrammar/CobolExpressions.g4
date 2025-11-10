@@ -655,7 +655,7 @@ conditionalExpression:
 // Complex conditions
 	   LeftParenthesisSeparator conditionalExpression RightParenthesisSeparator
 	|  NOT conditionalExpression
-	|  conditionalExpression AND conditionalExpression
+	|  <assoc=right> conditionalExpression AND conditionalExpression
 	|  conditionalExpression OR conditionalExpression
 // Simple conditions:
 	|  classCondition

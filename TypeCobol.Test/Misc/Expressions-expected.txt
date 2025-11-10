@@ -182,10 +182,10 @@ ConditionNameConditionOrSwitchStatusCondition: GREEN
 ________________________________________
 ConditionNameConditionOrSwitchStatusCondition: MYSWITCH-ON
 ________________________________________
-LogicalOperation: X 3 GreaterThan 5 X LessThan Y 4 LessThan AND OR Y X + 3 EqualTo not Y 5 - Z 2 + LessThan NOT AND Y X LessThanOrEqualTo AND X Y EqualTo not AND OR 9 Y GreaterThan X Z ÷ 2 EqualTo AND OR Y Y + 50 GreaterThan OR Y X 30 - LessThan OR →
-    LogicalOperation: X 3 GreaterThan 5 X LessThan Y 4 LessThan AND OR Y X + 3 EqualTo not Y 5 - Z 2 + LessThan NOT AND Y X LessThanOrEqualTo AND X Y EqualTo not AND OR 9 Y GreaterThan X Z ÷ 2 EqualTo AND OR Y Y + 50 GreaterThan OR →
-        LogicalOperation: X 3 GreaterThan 5 X LessThan Y 4 LessThan AND OR Y X + 3 EqualTo not Y 5 - Z 2 + LessThan NOT AND Y X LessThanOrEqualTo AND X Y EqualTo not AND OR 9 Y GreaterThan X Z ÷ 2 EqualTo AND OR →
-            LogicalOperation: X 3 GreaterThan 5 X LessThan Y 4 LessThan AND OR Y X + 3 EqualTo not Y 5 - Z 2 + LessThan NOT AND Y X LessThanOrEqualTo AND X Y EqualTo not AND OR →
+LogicalOperation: X 3 GreaterThan 5 X LessThan Y 4 LessThan AND OR Y X + 3 EqualTo not Y 5 - Z 2 + LessThan NOT Y X LessThanOrEqualTo X Y EqualTo not AND AND AND OR 9 Y GreaterThan X Z ÷ 2 EqualTo AND OR Y Y + 50 GreaterThan OR Y X 30 - LessThan OR →
+    LogicalOperation: X 3 GreaterThan 5 X LessThan Y 4 LessThan AND OR Y X + 3 EqualTo not Y 5 - Z 2 + LessThan NOT Y X LessThanOrEqualTo X Y EqualTo not AND AND AND OR 9 Y GreaterThan X Z ÷ 2 EqualTo AND OR Y Y + 50 GreaterThan OR →
+        LogicalOperation: X 3 GreaterThan 5 X LessThan Y 4 LessThan AND OR Y X + 3 EqualTo not Y 5 - Z 2 + LessThan NOT Y X LessThanOrEqualTo X Y EqualTo not AND AND AND OR 9 Y GreaterThan X Z ÷ 2 EqualTo AND OR →
+            LogicalOperation: X 3 GreaterThan 5 X LessThan Y 4 LessThan AND OR Y X + 3 EqualTo not Y 5 - Z 2 + LessThan NOT Y X LessThanOrEqualTo X Y EqualTo not AND AND AND OR →
                 LogicalOperation: X 3 GreaterThan 5 X LessThan Y 4 LessThan AND OR →
                     RelationCondition: X 3 GreaterThan →
                         ConditionOperand: X →
@@ -203,35 +203,35 @@ LogicalOperation: X 3 GreaterThan 5 X LessThan Y 4 LessThan AND OR Y X + 3 Equal
                                 NumericVariable: Y
                             ConditionOperand: 4 →
                                 NumericVariable: 4
-                LogicalOperation: Y X + 3 EqualTo not Y 5 - Z 2 + LessThan NOT AND Y X LessThanOrEqualTo AND X Y EqualTo not AND →
-                    LogicalOperation: Y X + 3 EqualTo not Y 5 - Z 2 + LessThan NOT AND Y X LessThanOrEqualTo AND →
-                        LogicalOperation: Y X + 3 EqualTo not Y 5 - Z 2 + LessThan NOT AND →
-                            RelationCondition: Y X + 3 EqualTo not →
-                                ConditionOperand: Y X + →
-                                    ArithmeticOperation: Y X + →
-                                        NumericVariable: Y
-                                        NumericVariable: X
-                                ConditionOperand: 3 →
-                                    NumericVariable: 3
-                            RelationCondition: Y 5 - Z 2 + LessThan NOT →
-                                ConditionOperand: Y 5 - →
-                                    ArithmeticOperation: Y 5 - →
-                                        NumericVariable: Y
-                                        NumericVariable: 5
-                                ConditionOperand: Z 2 + →
-                                    ArithmeticOperation: Z 2 + →
-                                        NumericVariable: Z
-                                        NumericVariable: 2
-                        RelationCondition: Y X LessThanOrEqualTo →
-                            ConditionOperand: Y →
+                LogicalOperation: Y X + 3 EqualTo not Y 5 - Z 2 + LessThan NOT Y X LessThanOrEqualTo X Y EqualTo not AND AND AND →
+                    RelationCondition: Y X + 3 EqualTo not →
+                        ConditionOperand: Y X + →
+                            ArithmeticOperation: Y X + →
                                 NumericVariable: Y
-                            ConditionOperand: X →
                                 NumericVariable: X
-                    RelationCondition: X Y EqualTo not →
-                        ConditionOperand: X →
-                            NumericVariable: X
-                        ConditionOperand: Y →
-                            NumericVariable: Y
+                        ConditionOperand: 3 →
+                            NumericVariable: 3
+                    LogicalOperation: Y 5 - Z 2 + LessThan NOT Y X LessThanOrEqualTo X Y EqualTo not AND AND →
+                        RelationCondition: Y 5 - Z 2 + LessThan NOT →
+                            ConditionOperand: Y 5 - →
+                                ArithmeticOperation: Y 5 - →
+                                    NumericVariable: Y
+                                    NumericVariable: 5
+                            ConditionOperand: Z 2 + →
+                                ArithmeticOperation: Z 2 + →
+                                    NumericVariable: Z
+                                    NumericVariable: 2
+                        LogicalOperation: Y X LessThanOrEqualTo X Y EqualTo not AND →
+                            RelationCondition: Y X LessThanOrEqualTo →
+                                ConditionOperand: Y →
+                                    NumericVariable: Y
+                                ConditionOperand: X →
+                                    NumericVariable: X
+                            RelationCondition: X Y EqualTo not →
+                                ConditionOperand: X →
+                                    NumericVariable: X
+                                ConditionOperand: Y →
+                                    NumericVariable: Y
             LogicalOperation: 9 Y GreaterThan X Z ÷ 2 EqualTo AND →
                 RelationCondition: 9 Y GreaterThan →
                     ConditionOperand: 9 →
