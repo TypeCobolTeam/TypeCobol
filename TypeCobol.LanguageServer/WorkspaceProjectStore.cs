@@ -75,6 +75,7 @@ namespace TypeCobol.LanguageServer
             var defaultDocumentFormat = new DocumentFormat(Encoding.GetEncoding("iso-8859-1"), EndOfLineDelimiter.CrLfCharacters, 80, ColumnsLayout.CobolReferenceFormat);
             var defaultOptions = new TypeCobolOptions()
             {
+                ExecToStep = ExecutionStep.CodeAnalysis, //Language Server does not support Cobol Generation for now
                 UseAntlrProgramParsing = _workspace.UseAntlrProgramParsing,
                 EILegacy_RemoveFirst01Level = _workspace.EILegacy_RemoveFirst01Level,
                 EILegacy_ApplyCopySuffixing = _workspace.EILegacy_ApplyCopySuffixing
