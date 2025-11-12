@@ -1651,14 +1651,14 @@ namespace TypeCobol.Compiler.Diagnostics
 
 
             if (wsymbol != null)
-                receivingTypeDefinition = GetDataDefinitionType(node, wsymbol);
+                receivingTypeDefinition = GetDataDefinitionType(wsymbol, node.SymbolTable);
 
             var sname = sent as QualifiedName;
             if (sname != null)
             {
                 var ssymbol = node.GetDataDefinitionForQualifiedName(sname);
                 if (ssymbol == null) return; // sending symbol name unresolved
-                sendingTypeDefinition = GetDataDefinitionType(node, ssymbol);
+                sendingTypeDefinition = GetDataDefinitionType(ssymbol, node.SymbolTable);
             }
             else if (sent is StorageArea)
             {
@@ -1672,7 +1672,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 }
 
                 if (rsymbol != null)
-                    sendingTypeDefinition = GetDataDefinitionType(node, rsymbol);
+                    sendingTypeDefinition = GetDataDefinitionType(rsymbol, node.SymbolTable);
             }
             else
             {
