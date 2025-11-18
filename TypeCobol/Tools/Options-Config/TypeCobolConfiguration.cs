@@ -57,7 +57,7 @@ namespace TypeCobol.Tools.Options_Config
         // Raw values (it has to be verified)
         public string RawFormat;
         public string RawInputCodepageOrEncoding;
-        public string RawExecToStep = "6";
+        public string RawExecToStep = "6"; //Default value is Generate
         public string RawMaximumDiagnostics;
         public string RawOutputFormat = "0";
         public string RawCfgBuildingMode = "0";
