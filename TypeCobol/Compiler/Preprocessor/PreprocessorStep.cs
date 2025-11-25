@@ -159,7 +159,7 @@ namespace TypeCobol.Compiler.Preprocessor
                         CompilerDirective compilerDirective = directiveBuilder.CompilerDirective;
                         bool errorFoundWhileParsingDirective = compilerDirective == null || compilerDirective.ParsingDiagnostics != null || cupCobolErrorStrategy.Diagnostics != null;
 
-                        int? firstLineIndex = null;
+                        int? diagnosticsLineIndex = null;
                         if (compilerDirective != null)
                         {
                             // 5. Get all tokens consumed while parsing the compiler directive
@@ -168,7 +168,7 @@ namespace TypeCobol.Compiler.Preprocessor
                             Token stopToken = tokensIterator.LastToken;
                             if (stopToken == null) stopToken = startToken;
                             MultilineTokensGroupSelection tokensSelection = tokensIterator.SelectAllTokensBetween(startToken, stopToken);
-                            firstLineIndex = tokensSelection.FirstLineIndex;
+                            diagnosticsLineIndex = tokensSelection.FirstLineIndex;
 
                             // 5. a Set consumed tokens of the compiler directive
                             compilerDirective.ConsumedTokens = tokensSelection;
@@ -233,7 +233,7 @@ namespace TypeCobol.Compiler.Preprocessor
                         // 7. Register compiler directive parse errors
                         if (errorFoundWhileParsingDirective)
                         {
-                            ProcessedTokensLine compilerDirectiveLine = firstLineIndex.HasValue ? documentLines[firstLineIndex.Value] : line;
+                            ProcessedTokensLine compilerDirectiveLine = diagnosticsLineIndex.HasValue ? documentLines[diagnosticsLineIndex.Value] : line;
                             if (compilerDirective != null && compilerDirective.ParsingDiagnostics != null)
                             {
                                 foreach (Diagnostic directiveDiag in compilerDirective.ParsingDiagnostics)
