@@ -23,7 +23,7 @@ namespace TypeCobol.LanguageServer
         private List<CompletionItem> GetCompletionForParent(Node node, Token variableNameBefore, Token firstVariableName, TypeCobolOptions options)
         {
             var completionItems = new List<CompletionItem>();
-            if (node == null)
+            if ((node == null) || (firstVariableName == null))
                 return completionItems;
 
             // Get all variables matching the name of the first variable in the IN/OF chain
