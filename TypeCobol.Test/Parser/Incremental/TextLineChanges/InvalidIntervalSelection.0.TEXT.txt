@@ -1,0 +1,9 @@
+﻿       IDENTIFICATION DIVISION.
+       PROGRAM-ID. TCOFM117.
+       PROCEDURE DIVISION.
+           EXEC-SQL
+             COMMIT
+           END-EXEC
+           GOBACK
+           .
+       END PROGRAM TCOFM117.
