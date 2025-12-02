@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using TypeCobol.Compiler.AntlrUtils;
+﻿using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.Concurrency;
 using TypeCobol.Compiler.CupCommon;
 using TypeCobol.Compiler.Diagnostics;
@@ -108,8 +105,8 @@ namespace TypeCobol.Compiler.Preprocessor
             // Init a CUP compiler directive parser
             CupCobolErrorStrategy cupCobolErrorStrategy = new CupPreprocessor.CompilerDirectiveErrorStrategy();
 
-            // Prepare to analyze the parse tree            
-            TypeCobol.Compiler.CupPreprocessor.CompilerDirectiveBuilder directiveBuilder = new TypeCobol.Compiler.CupPreprocessor.CompilerDirectiveBuilder(document);
+            // Prepare to analyze the parse tree
+            CupPreprocessor.CompilerDirectiveBuilder directiveBuilder = new CupPreprocessor.CompilerDirectiveBuilder(document);
 
             // Track lines with updated COPY directive to prepare COPY import phase
             IList<ProcessedTokensLine> parsedLinesWithCopyDirectives = null;
@@ -150,12 +147,11 @@ namespace TypeCobol.Compiler.Preprocessor
 
                         // 3. Try to parse a compiler directive starting with the current token
                         perfStatsForParserInvocation.OnStartParsing();
-                        TypeCobol.Compiler.CupPreprocessor.CobolCompilerDirectivesParser directivesParser =
-                            new TypeCobol.Compiler.CupPreprocessor.CobolCompilerDirectivesParser(tokensIterator);
+                        CupPreprocessor.CobolCompilerDirectivesParser directivesParser = new CupPreprocessor.CobolCompilerDirectivesParser(tokensIterator);
                         directivesParser.ErrorReporter = cupCobolErrorStrategy;
                         directiveBuilder.ResetCompilerDirective();
                         directivesParser.Builder = directiveBuilder;
-                        TUVienna.CS_CUP.Runtime.Symbol ppSymbol = directivesParser.parse();
+                        directivesParser.parse();
                         perfStatsForParserInvocation.OnStopParsing();
 
                         perfStatsForParserInvocation.OnStartTreeBuilding();
@@ -163,15 +159,15 @@ namespace TypeCobol.Compiler.Preprocessor
                         CompilerDirective compilerDirective = directiveBuilder.CompilerDirective;
                         bool errorFoundWhileParsingDirective = compilerDirective == null || compilerDirective.ParsingDiagnostics != null || cupCobolErrorStrategy.Diagnostics != null;
 
-                        // 5. Get all tokens consumed while parsing the compiler directive
-                        //    and partition them line by line 
-                        Token startToken = tokensIterator.FirstToken;
-                        Token stopToken = tokensIterator.LastToken;
-                        if (stopToken == null) stopToken = startToken;
-                        MultilineTokensGroupSelection tokensSelection = tokensIterator.SelectAllTokensBetween(startToken, stopToken);
-
                         if (compilerDirective != null)
                         {
+                            // 5. Get all tokens consumed while parsing the compiler directive
+                            //    and partition them line by line 
+                            Token startToken = tokensIterator.FirstToken;
+                            Token stopToken = tokensIterator.LastToken;
+                            if (stopToken == null) stopToken = startToken;
+                            MultilineTokensGroupSelection tokensSelection = tokensIterator.SelectAllTokensBetween(startToken, stopToken);
+
                             // 5. a Set consumed tokens of the compiler directive
                             compilerDirective.ConsumedTokens = tokensSelection;
 
@@ -235,7 +231,7 @@ namespace TypeCobol.Compiler.Preprocessor
                         // 7. Register compiler directive parse errors
                         if (errorFoundWhileParsingDirective)
                         {
-                            ProcessedTokensLine compilerDirectiveLine = documentLines[tokensSelection.FirstLineIndex];
+                            ProcessedTokensLine compilerDirectiveLine = compilerDirective != null ? documentLines[compilerDirective.ConsumedTokens.FirstLineIndex] : line;
                             if (compilerDirective != null && compilerDirective.ParsingDiagnostics != null)
                             {
                                 foreach (Diagnostic directiveDiag in compilerDirective.ParsingDiagnostics)
