@@ -164,8 +164,7 @@ namespace TypeCobol.Compiler.Preprocessor
                             // 5. Get all tokens consumed while parsing the compiler directive
                             //    and partition them line by line 
                             Token startToken = tokensIterator.FirstToken;
-                            Token stopToken = tokensIterator.LastToken;
-                            if (stopToken == null) stopToken = startToken;
+                            Token stopToken = tokensIterator.LastToken ?? startToken;
                             MultilineTokensGroupSelection tokensSelection = tokensIterator.SelectAllTokensBetween(startToken, stopToken);
 
                             // 5. a Set consumed tokens of the compiler directive
