@@ -1,4 +1,5 @@
-﻿using TypeCobol.Compiler;
+﻿using System.Diagnostics;
+using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Directives;
@@ -22,11 +23,12 @@ namespace TypeCobol.LanguageServer
         /// <returns>The completion items as a (not null) List</returns>
         private List<CompletionItem> GetCompletionForParent(Node node, Token variableNameBefore, Token firstVariableName, TypeCobolOptions options)
         {
+            Debug.Assert(variableNameBefore != null);
+            Debug.Assert(firstVariableName != null);
+
             var completionItems = new List<CompletionItem>();
             if (node == null)
                 return completionItems;
-
-            firstVariableName = firstVariableName ?? variableNameBefore;
 
             // Get all variables matching the name of the first variable in the IN/OF chain
             var firstVariables = node.SymbolTable.GetVariables(
