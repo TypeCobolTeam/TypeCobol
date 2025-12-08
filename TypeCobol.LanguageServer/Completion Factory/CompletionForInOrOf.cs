@@ -95,11 +95,8 @@ namespace TypeCobol.LanguageServer
                 {
                     // IN/OF is used to qualify a variable => retrieve the first variable in the IN/OF chain
                     var tokenFirstVariable = tokensUntilCursor.TakeWhile(t => t.TokenType is TokenType.UserDefinedWord or TokenType.IN or TokenType.OF).LastOrDefault();
-                    if (tokenFirstVariable == null)
-                    {
-                        // It can happen! In this case we rely on tokenBefore to be able to return something
-                        tokenFirstVariable = tokenBefore;
-                    }
+                    // Real life: tokenFirstVariable can be null! In this case we rely on tokenBefore to be able to return something
+                    tokenFirstVariable ??= tokenBefore;
                     return [ GetCompletionForParent(node, tokenBefore, tokenFirstVariable, compilationUnit.CompilerOptions) ];
                 }
                 case TokenType.ADDRESS:
