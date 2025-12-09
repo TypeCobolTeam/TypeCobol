@@ -37,7 +37,7 @@ namespace TypeCobol.Compiler.Scanner
             _TokenStringFromTokenType[(int)TokenType.ASTERISK_CONTROL] = "*CONTROL";
             _TokenStringFromTokenType[(int)TokenType.DELETE_CD] = "DELETE";
             _TokenStringFromTokenType[(int)TokenType.SERVICE_CD] = "SERVICE";
-            _TokenStringFromTokenType[(int)TokenType.EXEC_SQL] = "EXEC-SQL";
+            _TokenStringFromTokenType[(int)TokenType.EXEC_SQL] = null; // EXEC_SQL stands for "INCLUDE" located immediately after EXEC SQL, it is not a Cobol keyword
 
             // Same thing for SQL keywords
             keywordBegin = (int)TokenFamily.SqlKeywords;
