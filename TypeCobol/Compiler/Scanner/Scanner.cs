@@ -1391,8 +1391,8 @@ namespace TypeCobol.Compiler.Scanner
                         currentIndex++;
                         return ScanAlphanumericLiteral(startIndex, TokenType.NationalLiteral, _multiStringConcatBitPosition);
                     }
-                    else if (currentIndex < lastIndex     && (line[currentIndex + 1] == 'X' || line[currentIndex + 1] == 'x') &&
-                             currentIndex < (lastIndex+1) && (line[currentIndex + 2] == '"' || line[currentIndex + 2] == '\''))
+                    else if (currentIndex <     lastIndex && (line[currentIndex + 1] == 'X' || line[currentIndex + 1] == 'x') &&
+                             currentIndex + 1 < lastIndex && (line[currentIndex + 2] == '"' || line[currentIndex + 2] == '\''))
                     {
                         // consume N and X chars
                         currentIndex += 2;
@@ -1426,8 +1426,8 @@ namespace TypeCobol.Compiler.Scanner
                         currentIndex++;
                         return ScanAlphanumericLiteral(startIndex, TokenType.UTF8Literal, _multiStringConcatBitPosition);
                     }
-                    else if (currentIndex < lastIndex && (line[currentIndex + 1] == 'X' || line[currentIndex + 1] == 'x') &&
-                        currentIndex < (lastIndex + 1) && (line[currentIndex + 2] == '"' || line[currentIndex + 2] == '\''))
+                    else if (currentIndex     < lastIndex && (line[currentIndex + 1] == 'X' || line[currentIndex + 1] == 'x') &&
+                             currentIndex + 1 < lastIndex && (line[currentIndex + 2] == '"' || line[currentIndex + 2] == '\''))
                     {
                         // consume U and X chars
                         currentIndex += 2;
