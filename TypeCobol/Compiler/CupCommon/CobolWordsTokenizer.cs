@@ -113,11 +113,13 @@ namespace TypeCobol.Compiler.CupCommon
         {
             if (LastToken == null)
                 return;
+            if (LastToken == FirstToken)
+                return;
             if (LastToken.TokenType == TokenType.PeriodSeparator)
                 return;
             Token prevToken = PreviousToken();
             if (prevToken == null)
-                return;            
+                return;
             LastToken = prevToken;
         }
 

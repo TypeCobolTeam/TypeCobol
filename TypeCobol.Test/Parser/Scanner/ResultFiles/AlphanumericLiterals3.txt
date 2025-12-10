@@ -32,3 +32,6 @@ Line 0[1,12] <19, Warning, Tokens> - The number of characters in an hexadecimal 
 [1,21+:NX'74007500740075000']<HexadecimalNationalLiteral>(',Y,Y){tutu}
 Line 0[1,21] <20, Warning, Tokens> - The number of characters in an hexadecimal national literal should be a multiple of 4
 
+-- Line 8 --
+[1,2:NX]<UserDefinedWord>
+

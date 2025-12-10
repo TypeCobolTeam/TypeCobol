@@ -220,11 +220,8 @@ namespace TypeCobol.Compiler
         /// </summary>
         /// <param name="exec2Step">The execution step</param>
         /// <param name="haltOnMissingCopy">For preprocessing step, halt on missing copy options</param>
-        public void CompileOnce(ExecutionStep? exec2Step, bool haltOnMissingCopy)
+        public void CompileOnce(ExecutionStep exec2Step, bool haltOnMissingCopy)
         {
-            if (exec2Step == null)
-                exec2Step = ExecutionStep.SemanticCrossCheck;
-
             if (CompilationResultsForProgram != null)
             {
                 CompilationResultsForProgram.UpdateTokensLines(); //Scanner

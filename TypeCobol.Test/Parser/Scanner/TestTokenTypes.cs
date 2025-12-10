@@ -133,7 +133,8 @@ namespace TypeCobol.Test.Parser.Scanner
                 "X\"A396A396\"",
                 "NX'7400750074007500'",
                 "X\"A396A3960\"",
-                "NX'74007500740075000'"
+                "NX'74007500740075000'",
+                "NX"
             };
             result = ScannerUtils.ScanLines(testLines);
             ScannerUtils.CheckWithResultFile(result, testName);
@@ -163,7 +164,8 @@ namespace TypeCobol.Test.Parser.Scanner
                 @"ux""E2ADA0""",
                 @"ux'E2ADA2'",
                 @"B",
-                @"A"
+                @"A",
+                @"UX"
             };
             result = ScannerUtils.ScanLines(testLines);
             ScannerUtils.CheckWithResultFile(result, testName);

@@ -608,6 +608,17 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
 
             node.SetFlag(Node.Flag.Displayable, IsDisplayable());
 
+            if (parent.CodeElement is CommonDataDescriptionAndDataRedefines parentCodeElement)
+            {
+                // Initial VALUE is inherited when parent has a VALUE clause or inherits one itself
+                if (parentCodeElement.InitialValue != null || parent.IsFlagSet(Node.Flag.InheritsInitialValue))
+                    node.SetFlag(Node.Flag.InheritsInitialValue, true);
+
+                // Located within a REDEFINES when parent is a REDEFINES or is located inside one itself
+                if (parentCodeElement.Type == CodeElementType.DataRedefinesEntry || parent.IsFlagSet(Node.Flag.InsideRedefines))
+                    node.SetFlag(Node.Flag.InsideRedefines, true);
+            }
+
             bool IsDisplayable()
             {
                 // Usage Index, FunctionPointer and ProcedurePointer are not displayable

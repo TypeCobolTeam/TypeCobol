@@ -258,7 +258,16 @@ namespace TypeCobol.Compiler.Nodes {
             /// Flag indicating whether the data is allowed as a DISPLAY statement argument
             /// Defined for DataDescription and DataRedefines
             /// </summary>
-            Displayable = 0x01UL << 36
+            Displayable = 0x01UL << 36,
+            /// <summary>
+            /// Flag indicating whether the data inherits implicitly an initial VALUE
+            /// from one of its parent.
+            /// </summary>
+            InheritsInitialValue = 0x01UL << 37,
+            /// <summary>
+            /// Flag indicating whether the data is, directly or indirectly, child of a REDEFINES.
+            /// </summary>
+            InsideRedefines = 0x01UL << 38
         };
         /// <summary>
         /// A 64 bits value for flags associated to this Node
