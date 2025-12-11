@@ -1,20 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TypeCobol.LanguageServer.Utilities
+﻿namespace TypeCobol.LanguageServer.Utilities
 {
     public static class Extensions
     {
-        public static TypeCobol.ExecutionStep? ExecutionStep(this LsrTestingOptions lsrOptions, TypeCobol.ExecutionStep? defaultValue)
+        public static ExecutionStep ExecutionStep(this LsrTestingOptions lsrOptions, ExecutionStep defaultValue)
         {
             switch (lsrOptions)
             {
-                case LsrTestingOptions.NoLsrTesting:
-                case LsrTestingOptions.LsrSourceDocumentTesting:
-                    return defaultValue;
                 case LsrTestingOptions.LsrScanningPhaseTesting:
                     return TypeCobol.ExecutionStep.Scanner;
                 case LsrTestingOptions.LsrPreprocessingPhaseTesting:
@@ -26,6 +17,8 @@ namespace TypeCobol.LanguageServer.Utilities
                 case LsrTestingOptions.LsrCodeAnalysisPhaseTesting:
                     return TypeCobol.ExecutionStep.CodeAnalysis;
             }
+
+            // NoLsrTesting, LsrSourceDocumentTesting or invalid values => use provided default value
             return defaultValue;
         }
 

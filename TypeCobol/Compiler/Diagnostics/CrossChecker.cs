@@ -852,6 +852,20 @@ namespace TypeCobol.Compiler.Diagnostics
                     "Variable with usage COMP-1, COMP-2, INDEX, POINTER, POINTER-32, PROCEDURE-POINTER and FUNCTION-POINTER cannot have a PICTURE", commonDataDataDefinitionCodeElement);
             }
 
+            // Check VALUE clause presence and validity
+            if (commonDataDataDefinitionCodeElement?.InitialValue != null)
+            {
+                if (dataDefinition.IsFlagSet(Node.Flag.InheritsInitialValue))
+                {
+                    DiagnosticUtils.AddError(dataDefinition, "VALUE clause cannot be used on an item subordinate to a group already defining its own VALUE clause.", code: MessageCode.SemanticTCErrorInParser);
+                }
+
+                if (dataDefinitionEntry.Type == CodeElementType.DataRedefinesEntry || dataDefinition.IsFlagSet(Node.Flag.InsideRedefines))
+                {
+                    DiagnosticUtils.AddError(dataDefinition, "VALUE clause cannot be used on a REDEFINES item or within a REDEFINES group.", code: MessageCode.SemanticTCErrorInParser);
+                }
+            }
+
             return true;
 
             // Return true for usages which cannot have a PICTURE, false for usages requiring a PICTURE
@@ -1119,8 +1133,7 @@ namespace TypeCobol.Compiler.Diagnostics
 
             var parentTypeDefinition = (node as DataDefinition)?.ParentTypeDefinition;
 
-            var uri = area.SymbolReference != null ? area.SymbolReference.URI : new URI(area.ToString());
-            var foundQualified = node.SymbolTable.GetVariablesExplicitWithQualifiedName(uri, parentTypeDefinition);
+            var foundQualified = node.SymbolTable.GetVariablesExplicitWithQualifiedName(area.SymbolReference.URI, parentTypeDefinition);
 
             if (foundQualified.Count == 0)
             {
@@ -1638,14 +1651,14 @@ namespace TypeCobol.Compiler.Diagnostics
 
 
             if (wsymbol != null)
-                receivingTypeDefinition = wsymbol.TypeDefinition ?? GetDataDefinitionType(node, wsymbol, false);
+                receivingTypeDefinition = GetDataDefinitionType(wsymbol, node.SymbolTable);
 
             var sname = sent as QualifiedName;
             if (sname != null)
             {
                 var ssymbol = node.GetDataDefinitionForQualifiedName(sname);
                 if (ssymbol == null) return; // sending symbol name unresolved
-                sendingTypeDefinition = ssymbol.TypeDefinition ?? GetDataDefinitionType(node, ssymbol, true);
+                sendingTypeDefinition = GetDataDefinitionType(ssymbol, node.SymbolTable);
             }
             else if (sent is StorageArea)
             {
@@ -1659,7 +1672,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 }
 
                 if (rsymbol != null)
-                    sendingTypeDefinition = rsymbol.TypeDefinition ?? GetDataDefinitionType(node, rsymbol, true);
+                    sendingTypeDefinition = GetDataDefinitionType(rsymbol, node.SymbolTable);
             }
             else
             {
@@ -1710,95 +1723,48 @@ namespace TypeCobol.Compiler.Diagnostics
             }
         }
 
-
-
-        //TODO move this method to DataDefinition
         /// <summary>
-        /// Allows to get DataType of a DataDefinition Node
+        /// Search for data type of the given symbol and return it as a DataDefinition instance.
         /// </summary>
-        /// <param name="node"></param>
-        /// <param name="symbol"></param>
-        /// <param name="isReadDictionary"></param>
-        /// <returns></returns>
-        private static DataDefinition GetDataDefinitionType(Node node, Node symbol, bool isReadDictionary)
+        /// <param name="symbol">Symbol to look type for.</param>
+        /// <param name="symbolTable">Contextual symbol table to use.</param>
+        /// <returns>DataDefinition representing the data type. It may be null when no type could be resolved
+        /// or generated when the data uses built-in Cobol types (instead of user-defined types).</returns>
+        private static DataDefinition GetDataDefinitionType(DataDefinition symbol, SymbolTable symbolTable)
         {
-            var data = symbol as DataDefinition;
-            if (data != null)
-            {
-                var dataCondition = data as DataCondition;
-                if (dataCondition != null)
-                    return new GeneratedDefinition(dataCondition.CodeElement.DataType.Name,
-                        dataCondition.CodeElement.DataType);
-
-                DataDescriptionEntry entry;
-                var descriptionEntry = data.CodeElement as DataDescriptionEntry;
-                if (descriptionEntry != null)
-                {
-                    entry = descriptionEntry;
-                }
-                else if (data.CodeElement is DataRedefinesEntry)
-                {
-                    var redefines = (DataRedefinesEntry) data.CodeElement;
-                    var searchedDataDefinition =
-                        node.GetDataDefinitionForQualifiedName(redefines.RedefinesDataName.URI, isReadDictionary);
-                    if (searchedDataDefinition is DataDescription)
-                    {
-                        entry = (DataDescriptionEntry) searchedDataDefinition.CodeElement;
-                    }
-                    else
-                    {
-                        entry = GetDataDescriptionEntry(node, redefines, isReadDictionary);
-                    }
-                }
-                else
-                {
-                    //TODO Unsupported DataRenames (and IndexDefinition ?)
-                    entry = null;
-                }
-
-                if (entry == null)
-                    return null;
-
-                if (entry.UserDefinedDataType == null)
-                    return new GeneratedDefinition(entry.DataType.Name, entry.DataType);
-            }
-            else
-            {
+            if (symbol == null)
                 return null;
-            }
 
-            if (data.TypeDefinition != null)
-                return data.TypeDefinition;
+            if (symbol.TypeDefinition != null)
+                // Type has already been resolved
+                return symbol.TypeDefinition;
 
-            var types = node.SymbolTable.GetType(data);
-            // return null if symbol type not found or ambiguous
-            return types.Count != 1 ? null : types[0];
-        }
-
-        /// <summary>
-        /// Quick and dirty method, this checker need to be refactored
-        /// </summary>
-        /// <param name="node"></param>
-        /// <param name="dataRedefinesEntry"></param>
-        /// <param name="isReadDictionary"></param>
-        /// <returns></returns>
-        private static DataDescriptionEntry GetDataDescriptionEntry(Node node,
-            DataRedefinesEntry dataRedefinesEntry, bool isReadDictionary)
-        {
-            var searchedDataDefinition =
-                node.GetDataDefinitionForQualifiedName(dataRedefinesEntry.RedefinesDataName.URI, isReadDictionary);
-
-            if (searchedDataDefinition is DataDescription)
+            switch (symbol)
             {
-                return (DataDescriptionEntry) searchedDataDefinition.CodeElement;
-            }
-            if (searchedDataDefinition is DataRedefines)
-            {
-                return GetDataDescriptionEntry(node, (DataRedefinesEntry) searchedDataDefinition.CodeElement, isReadDictionary);
-            }
+                case DataCondition dataCondition:
+                    // Built-in Level 88 DataType, wrapped into a GeneratedDefinition
+                    return new GeneratedDefinition(dataCondition.CodeElement.DataType.Name, dataCondition.CodeElement.DataType);
 
-            return null;
+                case DataDescription data:
+                    var dataDescriptionEntry = data.CodeElement;
+                    if (dataDescriptionEntry.UserDefinedDataType == null)
+                    {
+                        // Wrap built-in Cobol DataType into a GeneratedDefinition
+                        return new GeneratedDefinition(dataDescriptionEntry.DataType.Name, dataDescriptionEntry.DataType);
+                    }
+
+                    var types = symbolTable.GetType(symbol);
+                    // Return null when symbol type could not be found or is ambiguous
+                    return types.Count != 1 ? null : types[0];
+
+                case DataRedefines redefines:
+                    // Return type of the target of the REDEFINES
+                    return GetDataDefinitionType(redefines.RedefinedVariable, symbolTable);
+
+                default:
+                    // Everything else is unsupported (RENAMES, file descriptions, indices)
+                    return null;
+            }
         }
-
     }
 }

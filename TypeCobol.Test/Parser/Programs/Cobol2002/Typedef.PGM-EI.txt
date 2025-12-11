@@ -30,14 +30,15 @@ Line 109[14,20] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'TYPE
 Line 113[14,20] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'TYPE-GRP' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[14,20:TYPEDEF]<TYPEDEF>
 Line 114[9,18] <30, Error, Semantics> - Semantic error: Illegal VALUE clause for subordinate 'TYPE-GRP-1' of STRONG TYPEDEF 'TYPE-GRP' OffendingSymbol=[9,18:TYPE-GRP-1]<UserDefinedWord>
 Line 115[9,18] <30, Error, Semantics> - Semantic error: Illegal VALUE clause for subordinate 'TYPE-GRP-2' of STRONG TYPEDEF 'TYPE-GRP' OffendingSymbol=[9,18:TYPE-GRP-2]<UserDefinedWord>
-Line 124[21,27] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'TYPE-GRP-STRONG' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[21,27:TYPEDEF]<TYPEDEF>
-Line 132[43,61] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: 'USE-TYPE-GRP-STRONG' is strongly-typed OffendingSymbol=[43,61:USE-TYPE-GRP-STRONG]<UserDefinedWord>
-Line 142[9,25] <27, Error, Syntax> - Syntax error : Group item  useTypeGrp2Strong cannot have a "TYPE" OffendingSymbol=[9,25:useTypeGrp2Strong]<UserDefinedWord>
-Line 145[45,65] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbol 'TYPE-GRP-STRONG-PART3' is not referenced OffendingSymbol=[45,65:TYPE-GRP-STRONG-PART3]<UserDefinedWord>
-Line 149[30,36] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'GroupWithLevel77JustAfter' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[30,36:typedef]<TYPEDEF>
-Line 156[17,23] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'strongType1' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[17,23:TYPEDEF]<TYPEDEF>
-Line 160[33,49] <30, Error, Semantics> - Semantic error: Illegal RENAMES: 'strongType1-PART1 IN useStrongType1' is strongly-typed OffendingSymbol=[33,49:strongType1-PART1]<UserDefinedWord>
-Line 161[33,49] <30, Error, Semantics> - Semantic error: Illegal RENAMES: 'strongType1-PART2 IN useStrongType1' is strongly-typed OffendingSymbol=[33,49:strongType1-PART2]<UserDefinedWord>
+Line 117[18,24] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'TYPE-GRP-BIS' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[18,24:TYPEDEF]<TYPEDEF>
+Line 128[21,27] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'TYPE-GRP-STRONG' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[21,27:TYPEDEF]<TYPEDEF>
+Line 136[43,61] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: 'USE-TYPE-GRP-STRONG' is strongly-typed OffendingSymbol=[43,61:USE-TYPE-GRP-STRONG]<UserDefinedWord>
+Line 146[9,25] <27, Error, Syntax> - Syntax error : Group item  useTypeGrp2Strong cannot have a "TYPE" OffendingSymbol=[9,25:useTypeGrp2Strong]<UserDefinedWord>
+Line 149[45,65] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbol 'TYPE-GRP-STRONG-PART3' is not referenced OffendingSymbol=[45,65:TYPE-GRP-STRONG-PART3]<UserDefinedWord>
+Line 153[30,36] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'GroupWithLevel77JustAfter' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[30,36:typedef]<TYPEDEF>
+Line 160[17,23] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'strongType1' must be marked as STRICT. RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[17,23:TYPEDEF]<TYPEDEF>
+Line 164[33,49] <30, Error, Semantics> - Semantic error: Illegal RENAMES: 'strongType1-PART1 IN useStrongType1' is strongly-typed OffendingSymbol=[33,49:strongType1-PART1]<UserDefinedWord>
+Line 165[33,49] <30, Error, Semantics> - Semantic error: Illegal RENAMES: 'strongType1-PART2 IN useStrongType1' is strongly-typed OffendingSymbol=[33,49:strongType1-PART2]<UserDefinedWord>
 
 --- Program ---
 PROGRAM: TypeCobol common:False initial:False recursive:False
@@ -107,6 +108,7 @@ PROGRAM: TypeCobol common:False initial:False recursive:False
   CannotBeStrong:CannotBeStrong
   TYPE_ELT:TYPE_ELT
   TYPE-GRP:TYPE-GRP
+  TYPE-GRP-BIS:TYPE-GRP-BIS
   TYPE-GRP-STRONG:TYPE-GRP-STRONG
   GroupWithLevel77JustAfter:GroupWithLevel77JustAfter
   strongType1:strongType1

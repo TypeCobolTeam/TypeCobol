@@ -16,14 +16,14 @@ Line 90[39,55] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbo
 Line 93[26,33] <27, Error, Syntax> - Syntax error : EXTERNAL clause cannot be specified with TYPEDEF clause RuleStack=codeElement>dataDescriptionEntry>externalClause,  OffendingSymbol=[26,33:EXTERNAL]<EXTERNAL>
 Line 97[33,40] <27, Error, Syntax> - Syntax error : External is only allowed for level 01 RuleStack=codeElement>dataDescriptionEntry>externalClause,  OffendingSymbol=[33,40:EXTERNAL]<EXTERNAL>
 Line 101[27,32] <27, Error, Syntax> - Syntax error : Elementary TYPEDEF cannot be STRONG RuleStack=codeElement>dataDescriptionEntry>cobol2002TypedefClause,  OffendingSymbol=[27,32:STRONG]<STRONG>
-Line 113[29,33] <27, Error, Syntax> - Syntax error : STRONG TYPEDEF cannot contain VALUE clause: RuleStack=codeElement>dataDescriptionEntry>valueClause,  OffendingSymbol=[29,33:value]<VALUE>
 Line 114[9,18] <30, Error, Semantics> - Semantic error: Illegal VALUE clause for subordinate 'TYPE-GRP-1' of STRONG TYPEDEF 'TYPE-GRP' OffendingSymbol=[9,18:TYPE-GRP-1]<UserDefinedWord>
 Line 115[9,18] <30, Error, Semantics> - Semantic error: Illegal VALUE clause for subordinate 'TYPE-GRP-2' of STRONG TYPEDEF 'TYPE-GRP' OffendingSymbol=[9,18:TYPE-GRP-2]<UserDefinedWord>
-Line 132[43,61] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: 'USE-TYPE-GRP-STRONG' is strongly-typed OffendingSymbol=[43,61:USE-TYPE-GRP-STRONG]<UserDefinedWord>
-Line 142[9,25] <27, Error, Syntax> - Syntax error : Group item  useTypeGrp2Strong cannot have a "TYPE" OffendingSymbol=[9,25:useTypeGrp2Strong]<UserDefinedWord>
-Line 145[45,65] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbol 'TYPE-GRP-STRONG-PART3' is not referenced OffendingSymbol=[45,65:TYPE-GRP-STRONG-PART3]<UserDefinedWord>
-Line 160[33,49] <30, Error, Semantics> - Semantic error: Illegal RENAMES: 'strongType1-PART1 IN useStrongType1' is strongly-typed OffendingSymbol=[33,49:strongType1-PART1]<UserDefinedWord>
-Line 161[33,49] <30, Error, Semantics> - Semantic error: Illegal RENAMES: 'strongType1-PART2 IN useStrongType1' is strongly-typed OffendingSymbol=[33,49:strongType1-PART2]<UserDefinedWord>
+Line 117[33,37] <27, Error, Syntax> - Syntax error : STRONG TYPEDEF cannot contain VALUE clause: RuleStack=codeElement>dataDescriptionEntry>valueClause,  OffendingSymbol=[33,37:VALUE]<VALUE>
+Line 136[43,61] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: 'USE-TYPE-GRP-STRONG' is strongly-typed OffendingSymbol=[43,61:USE-TYPE-GRP-STRONG]<UserDefinedWord>
+Line 146[9,25] <27, Error, Syntax> - Syntax error : Group item  useTypeGrp2Strong cannot have a "TYPE" OffendingSymbol=[9,25:useTypeGrp2Strong]<UserDefinedWord>
+Line 149[45,65] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbol 'TYPE-GRP-STRONG-PART3' is not referenced OffendingSymbol=[45,65:TYPE-GRP-STRONG-PART3]<UserDefinedWord>
+Line 164[33,49] <30, Error, Semantics> - Semantic error: Illegal RENAMES: 'strongType1-PART1 IN useStrongType1' is strongly-typed OffendingSymbol=[33,49:strongType1-PART1]<UserDefinedWord>
+Line 165[33,49] <30, Error, Semantics> - Semantic error: Illegal RENAMES: 'strongType1-PART2 IN useStrongType1' is strongly-typed OffendingSymbol=[33,49:strongType1-PART2]<UserDefinedWord>
 
 --- Program ---
 PROGRAM: TypeCobol common:False initial:False recursive:False
@@ -93,6 +93,7 @@ PROGRAM: TypeCobol common:False initial:False recursive:False
   CannotBeStrong:CannotBeStrong
   TYPE_ELT:TYPE_ELT
   TYPE-GRP:TYPE-GRP
+  TYPE-GRP-BIS:TYPE-GRP-BIS
   TYPE-GRP-STRONG:TYPE-GRP-STRONG
   GroupWithLevel77JustAfter:GroupWithLevel77JustAfter
   strongType1:strongType1

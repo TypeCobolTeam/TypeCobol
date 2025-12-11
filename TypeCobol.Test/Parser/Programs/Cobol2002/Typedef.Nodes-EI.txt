@@ -18,9 +18,10 @@ Line 97[33,40] <27, Error, Syntax> - Syntax error : External is only allowed for
 Line 101[19,25] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'CannotBeStrong' must be marked as STRICT.
 Line 109[14,20] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'TYPE_ELT' must be marked as STRICT.
 Line 113[14,20] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'TYPE-GRP' must be marked as STRICT.
-Line 124[21,27] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'TYPE-GRP-STRONG' must be marked as STRICT.
-Line 149[30,36] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'GroupWithLevel77JustAfter' must be marked as STRICT.
-Line 156[17,23] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'strongType1' must be marked as STRICT.
+Line 117[18,24] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'TYPE-GRP-BIS' must be marked as STRICT.
+Line 128[21,27] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'TYPE-GRP-STRONG' must be marked as STRICT.
+Line 153[30,36] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'GroupWithLevel77JustAfter' must be marked as STRICT.
+Line 160[17,23] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'strongType1' must be marked as STRICT.
 Line 36[1,31] <30, Error, Semantics> - Semantic error: TYPE 'TypeNotDefined' is not referenced
 Line 51[1,41] <30, Error, Semantics> - Semantic error: TYPE 'ClausesOrderKO' is not referenced
 Line 57[4,16] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER).
@@ -32,11 +33,11 @@ Line 82[5,57] <30, Error, Semantics> - Semantic error: Illegal REDEFINES as part
 Line 90[39,55] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbol 'varNoRedefines5-a' is not referenced
 Line 114[9,18] <30, Error, Semantics> - Semantic error: Illegal VALUE clause for subordinate 'TYPE-GRP-1' of STRONG TYPEDEF 'TYPE-GRP'
 Line 115[9,18] <30, Error, Semantics> - Semantic error: Illegal VALUE clause for subordinate 'TYPE-GRP-2' of STRONG TYPEDEF 'TYPE-GRP'
-Line 132[43,61] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: 'USE-TYPE-GRP-STRONG' is strongly-typed
-Line 142[9,25] <27, Error, Syntax> - Syntax error : Group item  useTypeGrp2Strong cannot have a "TYPE"
-Line 145[45,65] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbol 'TYPE-GRP-STRONG-PART3' is not referenced
-Line 160[33,49] <30, Error, Semantics> - Semantic error: Illegal RENAMES: 'strongType1-PART1 IN useStrongType1' is strongly-typed
-Line 161[33,49] <30, Error, Semantics> - Semantic error: Illegal RENAMES: 'strongType1-PART2 IN useStrongType1' is strongly-typed
+Line 136[43,61] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: 'USE-TYPE-GRP-STRONG' is strongly-typed
+Line 146[9,25] <27, Error, Syntax> - Syntax error : Group item  useTypeGrp2Strong cannot have a "TYPE"
+Line 149[45,65] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbol 'TYPE-GRP-STRONG-PART3' is not referenced
+Line 164[33,49] <30, Error, Semantics> - Semantic error: Illegal RENAMES: 'strongType1-PART1 IN useStrongType1' is strongly-typed
+Line 165[33,49] <30, Error, Semantics> - Semantic error: Illegal RENAMES: 'strongType1-PART2 IN useStrongType1' is strongly-typed
 --- Nodes ---
 ?
   TypeCobol
@@ -106,6 +107,9 @@ Line 161[33,49] <30, Error, Semantics> - Semantic error: Illegal RENAMES: 'stron
         TYPE-GRP
           TYPE-GRP-1
           TYPE-GRP-2
+        TYPE-GRP-BIS
+          TYPE-GRP-3
+          TYPE-GRP-4
         TYPE-GRP-STRONG
           TYPE-GRP-STRONG-PART1
           TYPE-GRP-STRONG-PART2

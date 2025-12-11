@@ -1,4 +1,5 @@
-﻿using TypeCobol.Compiler;
+﻿using System.Diagnostics;
+using TypeCobol.Compiler;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.CodeModel;
 using TypeCobol.Compiler.Directives;
@@ -22,6 +23,9 @@ namespace TypeCobol.LanguageServer
         /// <returns>The completion items as a (not null) List</returns>
         private List<CompletionItem> GetCompletionForParent(Node node, Token variableNameBefore, Token firstVariableName, TypeCobolOptions options)
         {
+            Debug.Assert(variableNameBefore != null);
+            Debug.Assert(firstVariableName != null);
+
             var completionItems = new List<CompletionItem>();
             if (node == null)
                 return completionItems;
@@ -91,6 +95,8 @@ namespace TypeCobol.LanguageServer
                 {
                     // IN/OF is used to qualify a variable => retrieve the first variable in the IN/OF chain
                     var tokenFirstVariable = tokensUntilCursor.TakeWhile(t => t.TokenType is TokenType.UserDefinedWord or TokenType.IN or TokenType.OF).LastOrDefault();
+                    // Real life: tokenFirstVariable can be null! In this case we rely on tokenBefore to be able to return something
+                    tokenFirstVariable ??= tokenBefore;
                     return [ GetCompletionForParent(node, tokenBefore, tokenFirstVariable, compilationUnit.CompilerOptions) ];
                 }
                 case TokenType.ADDRESS:
