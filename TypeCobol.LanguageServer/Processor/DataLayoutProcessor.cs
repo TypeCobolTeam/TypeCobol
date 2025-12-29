@@ -234,13 +234,13 @@ namespace TypeCobol.LanguageServer
 
             internal static DataLayoutNode From(DataDefinition dataDefinition, DataLayoutNode parent, int index)
             {
-                Debug.Assert(parent != null);
+                Debug.Assert((dataDefinition != null) && (dataDefinition.CodeElement != null) && (parent != null));
 
                 bool incrementDimension = dataDefinition.IsTableOccurence;
 
                 int logicalLevel = parent.LogicalLevel + 1;
                 int line = dataDefinition.CodeElement.GetLineInMainSource() + 1;
-                long physicalLevel = dataDefinition.CodeElement.LevelNumber.Value;
+                long physicalLevel = (dataDefinition.CodeElement.LevelNumber != null) ? dataDefinition.CodeElement.LevelNumber.Value : 0;
                 bool isNamed = !string.IsNullOrEmpty(dataDefinition.Name);
                 var name = isNamed ? dataDefinition.Name : FILLER;
                 int occursDimension = parent.OccursDimension + (incrementDimension ? 1 : 0);
@@ -249,46 +249,7 @@ namespace TypeCobol.LanguageServer
                 string copy = dataDefinition.CodeElement.FirstCopyDirective?.TextName;
                 bool generated = dataDefinition.CodeElement.LevelNumber is GeneratedIntegerValue; // Generated 01 = virtual node built by the parser
 
-                DataLayoutNodeFlags flags = generated ? DataLayoutNodeFlags.Generated : DataLayoutNodeFlags.None;
-                var declarationItems = new List<string>();
-                if (dataDefinition.CodeElement is CommonDataDescriptionAndDataRedefines codeElement)
-                {
-                    if (dataDefinition.Picture != null)
-                    {
-                        declarationItems.Add($"PIC {dataDefinition.Picture.Value}");
-                    }
-                    var usage = codeElement.Usage;
-                    if (usage != null)
-                    {
-                        declarationItems.Add(usage.Token.Text);
-                    }
-
-                    if (dataDefinition.IsFlagSet(Node.Flag.Displayable))
-                    {
-                        flags |= DataLayoutNodeFlags.Displayable;
-                    }
-
-                    if (dataDefinition.IsFlagSet(Node.Flag.ExceedsStandardIndexCapacity))
-                    {
-                        flags |= DataLayoutNodeFlags.ExceedsStandardIndexCapacity;
-                    }
-                }
-
-                if (declarationItems.Count == 0 && dataDefinition.ChildrenCount > 0)
-                {
-                    declarationItems.Add(GROUP);
-                }
-
-                if (dataDefinition.CodeElement.Type == CodeElementType.DataRedefinesEntry)
-                {
-                    flags |= DataLayoutNodeFlags.IsRedefines;
-                    declarationItems.Add($"REDEFINES {((DataRedefines)dataDefinition).CodeElement.RedefinesDataName.Name}");
-                }
-
-                if (incrementDimension)
-                {
-                    declarationItems.Add($"OCCURS {dataDefinition.MaxOccurencesCount}");
-                }
+                var (declaration, flags) = ComputeDeclarationAndFlags();
 
                 return new()
                 {
@@ -296,7 +257,7 @@ namespace TypeCobol.LanguageServer
                     Line = line,
                     PhysicalLevel = physicalLevel,
                     Name = name,
-                    Declaration = string.Join(SPACE, declarationItems),
+                    Declaration = declaration,
                     OccursDimension = occursDimension,
                     Start = start,
                     Length = length,
@@ -305,6 +266,52 @@ namespace TypeCobol.LanguageServer
                     Flags = flags,
                     children = []
                 };
+
+                (string, DataLayoutNodeFlags) ComputeDeclarationAndFlags()
+                {
+                    List<string> declarationItems = [];
+                    DataLayoutNodeFlags flags = generated ? DataLayoutNodeFlags.Generated : DataLayoutNodeFlags.None;
+                    if (dataDefinition.CodeElement is CommonDataDescriptionAndDataRedefines codeElement)
+                    {
+                        if (dataDefinition.Picture != null)
+                        {
+                            declarationItems.Add($"PIC {dataDefinition.Picture.Value}");
+                        }
+                        var usage = codeElement.Usage;
+                        if (usage?.Token != null)
+                        {
+                            declarationItems.Add(usage.Token.Text);
+                        }
+
+                        if (dataDefinition.IsFlagSet(Node.Flag.Displayable))
+                        {
+                            flags |= DataLayoutNodeFlags.Displayable;
+                        }
+
+                        if (dataDefinition.IsFlagSet(Node.Flag.ExceedsStandardIndexCapacity))
+                        {
+                            flags |= DataLayoutNodeFlags.ExceedsStandardIndexCapacity;
+                        }
+                    }
+
+                    if (declarationItems.Count == 0 && dataDefinition.ChildrenCount > 0)
+                    {
+                        declarationItems.Add(GROUP);
+                    }
+
+                    if (dataDefinition.CodeElement.Type == CodeElementType.DataRedefinesEntry)
+                    {
+                        flags |= DataLayoutNodeFlags.IsRedefines;
+                        declarationItems.Add($"REDEFINES {((DataRedefines)dataDefinition).CodeElement.RedefinesDataName?.Name}");
+                    }
+
+                    if (incrementDimension)
+                    {
+                        declarationItems.Add($"OCCURS {dataDefinition.MaxOccurencesCount}");
+                    }
+
+                    return (string.Join(SPACE, declarationItems), flags);
+                }
             }
         }
     }
