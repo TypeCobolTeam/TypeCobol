@@ -1,4 +1,5 @@
 ﻿using TypeCobol.Compiler;
+using TypeCobol.LanguageServer.Context;
 using TypeCobol.LanguageServer.VsCodeProtocol;
 
 namespace TypeCobol.LanguageServer.Commands
@@ -25,6 +26,10 @@ namespace TypeCobol.LanguageServer.Commands
             // Identify target
             var targetDocumentIdentifier = Processor.PrepareRefactoring(arguments);
             var target = Server.GetDocumentContextFromStringUri(targetDocumentIdentifier.uri, Workspace.SyntaxTreeRefreshLevel.RebuildNodes);
+            if (target == null)
+            {
+                throw new UnknownDocumentException(targetDocumentIdentifier.uri);
+            }
             var compilationUnit = target.FileCompiler?.CompilationResultsForProgram;
             if (compilationUnit == null)
             {
