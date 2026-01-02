@@ -234,13 +234,15 @@ namespace TypeCobol.LanguageServer
 
             internal static DataLayoutNode From(DataDefinition dataDefinition, DataLayoutNode parent, int index)
             {
-                Debug.Assert((dataDefinition != null) && (dataDefinition.CodeElement != null) && (parent != null));
+                Debug.Assert(dataDefinition != null);
+                Debug.Assert(dataDefinition.CodeElement != null);
+                Debug.Assert(parent != null);
 
                 bool incrementDimension = dataDefinition.IsTableOccurence;
 
                 int logicalLevel = parent.LogicalLevel + 1;
                 int line = dataDefinition.CodeElement.GetLineInMainSource() + 1;
-                long physicalLevel = (dataDefinition.CodeElement.LevelNumber != null) ? dataDefinition.CodeElement.LevelNumber.Value : 0;
+                long physicalLevel = dataDefinition.CodeElement.LevelNumber?.Value ?? 0;
                 bool isNamed = !string.IsNullOrEmpty(dataDefinition.Name);
                 var name = isNamed ? dataDefinition.Name : FILLER;
                 int occursDimension = parent.OccursDimension + (incrementDimension ? 1 : 0);
