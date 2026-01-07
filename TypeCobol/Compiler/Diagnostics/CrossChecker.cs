@@ -646,7 +646,48 @@ namespace TypeCobol.Compiler.Diagnostics
                 DiagnosticUtils.AddError(ifNode,
                     "\"end-if\" is missing", MessageCode.Warning);
             }
+
+            CheckCondition(ifNode.CodeElement.Condition);
+
+            // Check that the Condition-name are used only with DataCondition and Bool
+            void CheckCondition(ConditionalExpression conditionalExpression)
+            {
+                switch (conditionalExpression?.NodeType)
+                {
+                    case ExpressionNodeType.ConditionNameConditionOrSwitchStatusCondition:
+                        {
+                            // Condition-name or Switch-status condition (for UPSI switch)
+                            var conditionName = (ConditionNameConditionOrSwitchStatusCondition)conditionalExpression;
+                            var conditionReference = conditionName.ConditionReference;
+                            // UPSI switch is not handled by our parser (see issue #2355) => dataDefinition will be null
+                            DataDefinition dataDefinition = ifNode.GetDataDefinitionFromStorageAreaDictionary(conditionReference, true);
+
+                            // If DataDefinition is not found let the parser explain why; otherwise check if it is a DataCondition or a Bool
+                            if ((dataDefinition != null) && IsNotCompliantWithConditionName(dataDefinition.DataType))
+                            {
+                                DiagnosticUtils.AddError(ifNode, "An incomplete condition was found in a conditional expression.");
+                            }
+
+                            break;
+                        }
+
+                    case ExpressionNodeType.LogicalOperation:
+                        {
+                            // Complex condition => check LeftOperand & RightOperand
+                            var complexCondition = (LogicalOperation)conditionalExpression;
+                            CheckCondition(complexCondition.LeftOperand);
+                            CheckCondition(complexCondition.RightOperand);
+                            break;
+                        }
+                }
+            }
+
             return true;
+
+            static bool IsNotCompliantWithConditionName(DataType dataType)
+            {
+                return dataType != DataType.Level88 && dataType != DataType.Boolean;
+            }
         }
 
         public override bool Visit(Then thenNode)
