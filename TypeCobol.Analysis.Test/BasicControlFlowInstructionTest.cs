@@ -485,6 +485,9 @@ namespace TypeCobol.Analysis.Test
         public void NotRecursePerform1() => TestTemplate();
 
         [TestMethod]
+        public void ManySections0() => TestTemplate();
+
+        [TestMethod]
         public void CfgInNestedPrg0()
         {
             string test = Path.Combine(BasicCfgInstrs, "CfgInNestedPrg0");
@@ -686,7 +689,7 @@ namespace TypeCobol.Analysis.Test
         public void ExtendedPerformProc1Recursive0()
         {
             const string baseName = "PerformProc1Recursive0";
-            TestTemplate(inputFileName: baseName, expectedDiagnosticsFileName: baseName, mode: CfgBuildingMode.Extended);
+            TestTemplate(inputFileName: baseName, mode: CfgBuildingMode.Extended);
         }
 
         [TestMethod]
@@ -723,5 +726,13 @@ namespace TypeCobol.Analysis.Test
             const string baseName = "PerformProcIterativeAfterRecursive2";
             TestTemplate(inputFileName: baseName, expectedDiagnosticsFileName: baseName, mode: CfgBuildingMode.Extended);
         }
+
+        [TestMethod]
+        public void ManySections1()
+        {
+            const string baseName = "ManySections1";
+            TestTemplate(inputFileName: baseName, expectedDiagnosticsFileName: baseName, mode: CfgBuildingMode.Extended);
+        }
+
     }
 }
