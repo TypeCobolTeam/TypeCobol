@@ -23,8 +23,8 @@
            end-evaluate      
            search var1
                 when
-                when var2
-                    when var3 display "search"
+                when var2 = "ho"
+                    when var3 = "ho" display "search"
                 when
            end-search
            evaluate true
