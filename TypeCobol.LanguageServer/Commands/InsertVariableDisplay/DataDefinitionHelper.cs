@@ -15,23 +15,25 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
         /// <summary>
         /// Private struct used to compute the leftmost character position expression.
         /// </summary>
+        /// <param name="DirectAccess">Boolean indicating whether the data will be accessed directly
+        /// or through a parent.</param>
         /// <param name="DeltaParent">Delta in bytes of the targeted data from its parent data.
         /// Starts at 1 since the position of a data is 1-based in Cobol.</param>
         /// <param name="EnclosingOccurs">List of tuples made of the name of an index and size of an occurence.
         /// Each tuple corresponds to an OCCURS dimension that need to be traversed to get to the targeted data,
         /// this is used to access data enclosed in anonymous arrays.</param>
-        private record struct LeftmostCharacterPositionInfo(long DeltaParent, List<(string Index, long OccurenceSize)> EnclosingOccurs)
+        private record struct LeftmostCharacterPositionInfo(bool DirectAccess, long DeltaParent, List<(string Index, long OccurenceSize)> EnclosingOccurs)
         {
             public LeftmostCharacterPositionInfo()
-                : this(1, new List<(string Index, long OccurenceSize)>())
+                : this(true, 1, new List<(string Index, long OccurenceSize)>())
             {
 
             }
 
             public List<string> BuildReferenceModifier(long physicalLength)
             {
-                // Default position: no need to create an expression. The whole data is used directly.
-                if (DeltaParent == 1 && EnclosingOccurs.Count == 0)
+                // No need to create an expression when the whole data is used directly.
+                if (DirectAccess && EnclosingOccurs.Count == 0)
                     return null;
 
                 // Start with delta parent preceded by an opening parenthesis
@@ -88,6 +90,7 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
             int index = indices.Length - 1; // Current index used, starting from innermost as we are walking up the chain of parents
             while (parentDefinition != null && string.IsNullOrEmpty(currentDefinition.Name))
             {
+                info.DirectAccess = false;
                 info.DeltaParent += currentDefinition.StartPosition - parentDefinition.StartPosition; // Update delta
                 if (currentDefinition.IsTableOccurence)
                 {
