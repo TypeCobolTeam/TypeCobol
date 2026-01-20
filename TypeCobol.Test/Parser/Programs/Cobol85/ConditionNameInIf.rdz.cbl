@@ -29,8 +29,9 @@
            IF (VAR-SWITCH-ON)
               DISPLAY "Switch-status condition theorically OK"
            END-IF.
-      * IBM reports 2 errors but we only report one = not referenced
-           IF (VAR-NOT-FOUND) THEN
+      * IBM reports 2 errors: data not defined + incomplete condition
+      * We only report one = not referenced
+           IF (VAR-NOT-DEFINED) THEN
               DISPLAY "KO: data not referenced"
            END-IF
            IF (MAIN-GROUP) THEN

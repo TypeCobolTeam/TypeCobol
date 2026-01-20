@@ -106,6 +106,14 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             var performCE = performProcedureNode.CodeElement;
 
+            CheckConditionNames(performCE?.UntilTerminationCondition, performProcedureNode);
+
+            var varyingLoopDescriptions = performCE.VaryingLoopDescriptions ?? [];
+            foreach (var performLoopDescription in varyingLoopDescriptions)
+            {
+                CheckConditionNames(performLoopDescription.TerminationCondition, performProcedureNode);
+            }
+
             (performProcedureNode.ProcedureParagraphSymbol, performProcedureNode.ProcedureSectionSymbol) = SectionOrParagraphUsageChecker.ResolveParagraphOrSection(performProcedureNode, performCE.Procedure, _currentSection);
             (performProcedureNode.ThroughProcedureParagraphSymbol, performProcedureNode.ThroughProcedureSectionSymbol) = SectionOrParagraphUsageChecker.ResolveParagraphOrSection(performProcedureNode, performCE.ThroughProcedure, _currentSection);
 
@@ -435,6 +443,8 @@ namespace TypeCobol.Compiler.Diagnostics
                 DiagnosticUtils.AddError(whenSearch, "Missing statement in \"when\" clause", messageCode);
             }
 
+            CheckConditionNames(whenSearch.CodeElement.Condition, whenSearch);
+
             if (search.CodeElement.StatementType == StatementType.SearchBinaryStatement && _searchTables.TryGetValue(search, out var tableDefinitions))
             {
                 //TC not supported
@@ -647,47 +657,9 @@ namespace TypeCobol.Compiler.Diagnostics
                     "\"end-if\" is missing", MessageCode.Warning);
             }
 
-            CheckCondition(ifNode.CodeElement.Condition);
-
-            // Check that the Condition-name are used only with DataCondition and Bool
-            void CheckCondition(ConditionalExpression conditionalExpression)
-            {
-                switch (conditionalExpression?.NodeType)
-                {
-                    case ExpressionNodeType.ConditionNameConditionOrSwitchStatusCondition:
-                        {
-                            // Condition-name or Switch-status condition (for UPSI switch)
-                            var conditionName = (ConditionNameConditionOrSwitchStatusCondition)conditionalExpression;
-                            var conditionReference = conditionName.ConditionReference;
-                            // UPSI switch is not handled by our parser (see issue #2355) => dataDefinition will be null
-                            DataDefinition dataDefinition = ifNode.GetDataDefinitionFromStorageAreaDictionary(conditionReference, true);
-
-                            // If DataDefinition is not found let the parser explain why; otherwise check if it is a DataCondition or a Bool
-                            if ((dataDefinition != null) && IsNotCompliantWithConditionName(dataDefinition.DataType))
-                            {
-                                DiagnosticUtils.AddError(ifNode, "An incomplete condition was found in a conditional expression.");
-                            }
-
-                            break;
-                        }
-
-                    case ExpressionNodeType.LogicalOperation:
-                        {
-                            // Complex condition => check LeftOperand & RightOperand
-                            var complexCondition = (LogicalOperation)conditionalExpression;
-                            CheckCondition(complexCondition.LeftOperand);
-                            CheckCondition(complexCondition.RightOperand);
-                            break;
-                        }
-                }
-            }
+            CheckConditionNames(ifNode.CodeElement.Condition, ifNode);
 
             return true;
-
-            static bool IsNotCompliantWithConditionName(DataType dataType)
-            {
-                return dataType != DataType.Level88 && dataType != DataType.Boolean;
-            }
         }
 
         public override bool Visit(Then thenNode)
@@ -1530,6 +1502,55 @@ namespace TypeCobol.Compiler.Diagnostics
                     }
                 }
                 DiagnosticUtils.AddError(node, "\"END PROGRAM\" is missing.");
+            }
+        }
+
+        private static void CheckConditionNames(ConditionalExpression conditionalExpression, Node node)
+        {
+            List<DataDefinition> dataDefinitionsFromConditionalName = [];
+            GetDataDefinitionsFromConditionalName(conditionalExpression, node);
+
+            foreach (DataDefinition dataDefinition in dataDefinitionsFromConditionalName)
+            {
+                if (!IsCompliantWithConditionName(dataDefinition.DataType))
+                {
+                    DiagnosticUtils.AddError(node, "An incomplete condition was found in a conditional expression.");
+
+                    return;
+                }
+
+                static bool IsCompliantWithConditionName(DataType dataType)
+                {
+                    return dataType == DataType.Level88 || dataType == DataType.Boolean;
+                }
+            }
+
+            void GetDataDefinitionsFromConditionalName(ConditionalExpression conditionalExpression, Node node)
+            {
+                switch (conditionalExpression)
+                {
+                    case ConditionNameConditionOrSwitchStatusCondition conditionName:
+                        {
+                            // Condition-name or Switch-status condition (for UPSI switch)
+                            var conditionReference = conditionName.ConditionReference;
+                            // UPSI switch is not handled by our parser (see issue #2355) => dataDefinition will be null
+                            DataDefinition dataDefinition = node.GetDataDefinitionFromStorageAreaDictionary(conditionReference, true);
+                            if (dataDefinition != null)
+                            {
+                                dataDefinitionsFromConditionalName.Add(dataDefinition);
+                            }
+
+                            break;
+                        }
+
+                    case LogicalOperation complexCondition:
+                        {
+                            GetDataDefinitionsFromConditionalName(complexCondition.LeftOperand, node);
+                            GetDataDefinitionsFromConditionalName(complexCondition.RightOperand, node);
+
+                            break;
+                        }
+                }
             }
         }
     }
