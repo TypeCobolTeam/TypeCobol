@@ -1519,9 +1519,7 @@ namespace TypeCobol.Compiler.Diagnostics
                 var dataType = dataDefinition.DataType;
                 if (dataType != DataType.Level88 && dataType != DataType.Boolean)
                 {
-                    DiagnosticUtils.AddError(node, "An incomplete condition was found in a conditional expression.");
-
-                    return;
+                    DiagnosticUtils.AddError(node, $"An incomplete condition {dataDefinition.Name} was found in a conditional expression.");
                 }
             }
 
