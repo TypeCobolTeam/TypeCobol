@@ -86,7 +86,7 @@ namespace TypeCobol.Compiler.Symbols
             GroupType CreateDateComponent()
             {
                 var yyyyType = new PictureType(NumericValidationResult(4), false);
-                var mmType = new PictureType(NumericValidationResult(3), false);
+                var mmType = new PictureType(NumericValidationResult(2), false);
                 var ddType = mmType;
 
                 Date.Level = 1;
