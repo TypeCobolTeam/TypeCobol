@@ -95,7 +95,7 @@ Block115 [
 label = "{Block115|    display 'terminate in pararec3'\l}"
 ]
 Block48 [
-label = "{Block48|       perform pararec3 test after varying n from 1 by 1 until n\l}"
+label = "{Block48|       perform pararec3 test after varying n                          from 1 by 1 until n \> 5\l}"
 ]
 Block49 [
 label = "{Block49|       display 'after perform pararec3 in pararec4'\l}"

@@ -1,4 +1,4 @@
-       IDENTIFICATION DIVISION.
+﻿       IDENTIFICATION DIVISION.
        PROGRAM-ID. WhenTest.
        data division.
        working-storage section.
@@ -30,9 +30,9 @@ Line 24[12,22] <27, Error, Syntax> - Syntax error : Cannot SEARCH in 'var1', dat
 Line 25[17,20] <27, Error, Syntax> - Syntax error : Missing condition in "when" clause
 Line 25[17,20] <27, Error, Syntax> - Syntax error : Missing statement in "when" clause
                 when
-Line 26[17,25] <27, Error, Syntax> - Syntax error : Missing statement in "when" clause
-                when var2
-                    when var3 display "search"
+Line 26[17,32] <27, Error, Syntax> - Syntax error : Missing statement in "when" clause
+                when var2 = "ho"
+                    when var3 = "ho" display "search"
 Line 28[17,20] <27, Error, Syntax> - Syntax error : Missing condition in "when" clause
 Line 28[17,20] <27, Error, Syntax> - Syntax error : Missing statement in "when" clause
                 when
