@@ -1510,16 +1510,16 @@ namespace TypeCobol.Compiler.Diagnostics
 
         private static void CheckConditionalExpression(ConditionalExpression conditionalExpression, Node node)
         {
-            List<DataDefinition> dataDefinitionsFromConditionalName = [];
+            List<(DataDefinition dataDefinition, SymbolReference symbolReference)> dataDefinitionsFromConditionalName = [];
             CollectVariablesFromConditionalExpression(conditionalExpression);
 
-            foreach (DataDefinition dataDefinition in dataDefinitionsFromConditionalName)
+            foreach (var (dataDefinition, symbolReference) in dataDefinitionsFromConditionalName)
             {
                 // Data condition and TypeCobol boolean are the only types allowed in conditional expressions
                 var dataType = dataDefinition.DataType;
                 if (dataType != DataType.Level88 && dataType != DataType.Boolean)
                 {
-                    DiagnosticUtils.AddError(node, $"An incomplete condition {dataDefinition.Name} was found in a conditional expression.");
+                    DiagnosticUtils.AddError(node, $"An incomplete condition {dataDefinition.Name} was found in a conditional expression.", symbolReference);
                 }
             }
 
@@ -1535,7 +1535,7 @@ namespace TypeCobol.Compiler.Diagnostics
                             DataDefinition dataDefinition = node.GetDataDefinitionFromStorageAreaDictionary(conditionReference, true);
                             if (dataDefinition != null)
                             {
-                                dataDefinitionsFromConditionalName.Add(dataDefinition);
+                                dataDefinitionsFromConditionalName.Add((dataDefinition, conditionReference.SymbolReference));
                             }
 
                             break;

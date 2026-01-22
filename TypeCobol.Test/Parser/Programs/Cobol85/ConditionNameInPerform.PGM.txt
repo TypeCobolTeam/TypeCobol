@@ -1,14 +1,14 @@
 ﻿--- Diagnostics ---
-Range (25, 12) -> (28, 52) <27, Error, Syntax> - Syntax error : An incomplete condition VAR1 was found in a conditional expression.
-Range (25, 12) -> (28, 52) <27, Error, Syntax> - Syntax error : An incomplete condition VAR3 was found in a conditional expression.
-Range (31, 12) -> (34, 52) <27, Error, Syntax> - Syntax error : An incomplete condition VAR2 was found in a conditional expression.
-Range (31, 12) -> (34, 52) <27, Error, Syntax> - Syntax error : An incomplete condition VAR2 was found in a conditional expression.
-Range (37, 12) -> (40, 52) <27, Error, Syntax> - Syntax error : An incomplete condition VAR4 was found in a conditional expression.
-Range (37, 12) -> (40, 52) <27, Error, Syntax> - Syntax error : An incomplete condition VAR4 was found in a conditional expression.
-Range (43, 12) -> (47, 21) <27, Error, Syntax> - Syntax error : An incomplete condition VAR5 was found in a conditional expression.
-Range (43, 12) -> (47, 21) <27, Error, Syntax> - Syntax error : An incomplete condition VAR5 was found in a conditional expression.
+Line 26[49,52] <27, Error, Syntax> - Syntax error : An incomplete condition VAR1 was found in a conditional expression. OffendingSymbol=[49,52:VAR1]<UserDefinedWord>
+Line 28[48,51] <27, Error, Syntax> - Syntax error : An incomplete condition VAR3 was found in a conditional expression. OffendingSymbol=[48,51:VAR3]<UserDefinedWord>
+Line 32[49,52] <27, Error, Syntax> - Syntax error : An incomplete condition VAR2 was found in a conditional expression. OffendingSymbol=[49,52:VAR2]<UserDefinedWord>
+Line 34[48,51] <27, Error, Syntax> - Syntax error : An incomplete condition VAR2 was found in a conditional expression. OffendingSymbol=[48,51:VAR2]<UserDefinedWord>
+Line 38[49,52] <27, Error, Syntax> - Syntax error : An incomplete condition VAR4 was found in a conditional expression. OffendingSymbol=[49,52:VAR4]<UserDefinedWord>
+Line 40[31,34] <27, Error, Syntax> - Syntax error : An incomplete condition VAR4 was found in a conditional expression. OffendingSymbol=[31,34:VAR4]<UserDefinedWord>
+Line 45[19,22] <27, Error, Syntax> - Syntax error : An incomplete condition VAR5 was found in a conditional expression. OffendingSymbol=[19,22:VAR5]<UserDefinedWord>
+Line 47[18,21] <27, Error, Syntax> - Syntax error : An incomplete condition VAR5 was found in a conditional expression. OffendingSymbol=[18,21:VAR5]<UserDefinedWord>
 Line 53[18,32] <30, Error, Semantics> - Semantic error: Symbol VAR-NOT-DEFINED is not referenced OffendingSymbol=[18,32:VAR-NOT-DEFINED]<UserDefinedWord>
-Range (67, 12) -> (70, 42) <27, Error, Syntax> - Syntax error : An incomplete condition VAR1 was found in a conditional expression.
+Line 70[21,24] <27, Error, Syntax> - Syntax error : An incomplete condition VAR1 was found in a conditional expression. OffendingSymbol=[21,24:VAR1]<UserDefinedWord>
 
 --- Program ---
 PROGRAM: CHKCDNNM common:False initial:False recursive:False

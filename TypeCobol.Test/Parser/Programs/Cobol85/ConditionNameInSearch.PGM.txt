@@ -1,8 +1,8 @@
 ﻿--- Diagnostics ---
-Line 36[15,23] <27, Error, Syntax> - Syntax error : An incomplete condition VAR1 was found in a conditional expression.
-Line 38[15,54] <27, Error, Syntax> - Syntax error : An incomplete condition VAR2 was found in a conditional expression.
-Range (52, 15) -> (53, 43) <27, Error, Syntax> - Syntax error : An incomplete condition STUDENT-CAT was found in a conditional expression.
-Range (52, 15) -> (53, 43) <27, Error, Syntax> - Syntax error : An incomplete condition STUDENT-STATUS was found in a conditional expression.
+Line 36[20,23] <27, Error, Syntax> - Syntax error : An incomplete condition VAR1 was found in a conditional expression. OffendingSymbol=[20,23:VAR1]<UserDefinedWord>
+Line 38[50,53] <27, Error, Syntax> - Syntax error : An incomplete condition VAR2 was found in a conditional expression. OffendingSymbol=[50,53:VAR2]<UserDefinedWord>
+Line 52[20,30] <27, Error, Syntax> - Syntax error : An incomplete condition STUDENT-CAT was found in a conditional expression. OffendingSymbol=[20,30:STUDENT-CAT]<UserDefinedWord>
+Line 53[21,34] <27, Error, Syntax> - Syntax error : An incomplete condition STUDENT-STATUS was found in a conditional expression. OffendingSymbol=[21,34:STUDENT-STATUS]<UserDefinedWord>
 Line 70[20,34] <30, Error, Semantics> - Semantic error: Symbol VAR-NOT-DEFINED is not referenced OffendingSymbol=[20,34:VAR-NOT-DEFINED]<UserDefinedWord>
 
 --- Program ---
