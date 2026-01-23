@@ -90,7 +90,6 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
             int index = indices.Length - 1; // Current index used, starting from innermost as we are walking up the chain of parents
             while (parentDefinition != null && string.IsNullOrEmpty(currentDefinition.Name))
             {
-                info.DirectAccess = false;
                 info.DeltaParent += currentDefinition.StartPosition - parentDefinition.StartPosition; // Update delta
                 if (currentDefinition.IsTableOccurence)
                 {
@@ -110,6 +109,9 @@ namespace TypeCobol.LanguageServer.Commands.InsertVariableDisplay
                 // Could not find any named data: no accessor is available for the given DataDefinition
                 return new DataAccessor(null, 0, null);
             }
+
+            // Check whether data is directly accessed or through one of its parent
+            info.DirectAccess = dataDefinition == currentDefinition;
 
             // Compute reference modifier
             var referenceModifier = info.BuildReferenceModifier(dataDefinition.PhysicalLength);
