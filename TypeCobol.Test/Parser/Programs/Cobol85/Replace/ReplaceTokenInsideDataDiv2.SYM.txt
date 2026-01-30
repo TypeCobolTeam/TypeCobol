@@ -3,16 +3,24 @@ TCOZCHKP (.NET Type=ProgramSymbol, Kind=Program)
 Type:
   (.NET Type=ScopeType, Tag=Scope)
 WorkingStorageData:
-  W-IDTPCB (.NET Type=VariableSymbol, Kind=Variable)
+  W-LEVEL01 (.NET Type=VariableSymbol, Kind=Variable)
   Flags: [WORKING_STORAGE]
   Owner: TCOZCHKP
   Type:
-    (.NET Type=ArrayType, Tag=Array)
-    MinOccur: 1
-    MaxOccur: 6
-    ElementType:
-      (.NET Type=PictureType, Tag=Picture)
-      Picture: X(8)
+    (.NET Type=GroupType, Tag=Group)
+    Fields:
+      W-IDTPCB (.NET Type=VariableSymbol, Kind=Variable)
+      Flags: [WORKING_STORAGE]
+      Owner: TCOZCHKP::W-LEVEL01
+      Type:
+        (.NET Type=ArrayType, Tag=Array)
+        MinOccur: 1
+        MaxOccur: 6
+        ElementType:
+          (.NET Type=PictureType, Tag=Picture)
+          Picture: X(8)
+      Level: 5
+      IsFiller: False
   Level: 1
   IsFiller: False
 IsNested: False

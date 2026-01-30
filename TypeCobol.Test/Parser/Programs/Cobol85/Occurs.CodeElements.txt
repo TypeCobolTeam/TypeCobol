@@ -1,0 +1,33 @@
+--- Diagnostics ---
+Line 6[18,23] <27, Error, Syntax> - Syntax error : OCCURS cannot be specified on level 1. RuleStack=codeElement>dataDescriptionEntry>occursClause,  OffendingSymbol=[18,23:OCCURS]<OCCURS>
+Line 9[28,33] <27, Error, Syntax> - Syntax error : OCCURS cannot be specified on level 77. RuleStack=codeElement>dataDescriptionEntry>occursClause,  OffendingSymbol=[28,33:OCCURS]<OCCURS>
+--- Code Elements ---
+[[ProgramIdentification]] [8,21:IDENTIFICATION]<IDENTIFICATION> --> [28,28+:.]<PeriodSeparator>
+- ProgramName = TCOCCLVL
+- IsInitial = False
+- IsRecursive = False
+- IsCommon = False
+
+[[DataDivisionHeader]] [8,11:DATA]<DATA> --> [21,21+:.]<PeriodSeparator>
+
+[[WorkingStorageSectionHeader]] [8,22:WORKING-STORAGE]<WORKING_STORAGE> --> [31,31+:.]<PeriodSeparator>
+
+[[DataDescriptionEntry]] [9,10:01]<LevelNumber>{1} --> [26,26+:.]<PeriodSeparator>
+
+[[DataDescriptionEntry]] [12,13:05]<LevelNumber>{5} --> [26,26+:.]<PeriodSeparator>
+
+[[DataDescriptionEntry]] [9,10:77]<LevelNumber>{77} --> [36,36+:.]<PeriodSeparator>
+
+[[DataDescriptionEntry]] [9,10:01]<LevelNumber>{1} --> [17,17+:.]<PeriodSeparator>
+
+[[DataDescriptionEntry]] [12,13:05]<LevelNumber>{5} --> [35,35+:.]<PeriodSeparator>
+
+[[ProcedureDivisionHeader]] [8,16:PROCEDURE]<PROCEDURE> --> [26,26+:.]<PeriodSeparator>
+
+[[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
+
+[[SentenceEnd]] [12,12+:.]<PeriodSeparator> --> [12,12+:.]<PeriodSeparator>
+
+[[ProgramEnd]] [8,10:END]<END> --> [28,28+:.]<PeriodSeparator>
+- ProgramName = TCOCCLVL
+
