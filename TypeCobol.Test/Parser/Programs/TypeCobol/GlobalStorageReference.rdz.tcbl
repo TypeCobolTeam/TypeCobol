@@ -10,7 +10,8 @@
        GLOBAL-STORAGE SECTION.
        01 dependOnVarGlobal PIC X(2).
       * OK : Reference to Global-Storage variable but from within GS
-       01  TEST1-ELT0 PIC X(120)
+       01  TEST1-LEV0.
+          05  TEST1-ELT0 PIC X(120)
                  OCCURS 1 TO 10  TIMES
                  DEPENDING ON dependOnVarGlobal.
       
@@ -18,12 +19,14 @@
        01 dependOnVarWorking PIC X(2).
       
       * KO : Reference to Global-Storage variable
-       01  TEST1-ELT1 PIC X(120)
+       01  TEST1-LEV1.
+          05  TEST1-ELT1 PIC X(120)
                  OCCURS 1 TO 10  TIMES
                  DEPENDING ON dependOnVarGlobal.
       
       * OK
-       01  TEST2-ELT1 PIC X(120)
+       01  TEST2-LEV1.
+          05  TEST2-ELT1 PIC X(120)
                  OCCURS 1 TO 10  TIMES
                  DEPENDING ON dependOnVarWorking.
       

@@ -7,13 +7,13 @@ Line 25[15,18] <27, Error, Syntax> - Syntax error : A group item cannot be empty
 Line 25[12,70] <37, Warning, General> - Warning: An index named 'MyIdxsdfsdfzezerzerzerzerzerz' is already defined.
 Line 26[15,18] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[15,18:Dup2]<UserDefinedWord>
 Line 26[12,70] <37, Warning, General> - Warning: An index named 'MyIdxsdfsdfzezerzerzerzerzerz' is already defined.
-Line 65[16,18] <27, Error, Syntax> - Syntax error : Index can not be use with OF or IN qualifiers Account1.Holders.Idx OffendingSymbol=[16,18:Idx]<UserDefinedWord>
-Line 68[16,21] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol BadIdx 
+Line 67[16,18] <27, Error, Syntax> - Syntax error : Index can not be use with OF or IN qualifiers Account1.Holders.Idx OffendingSymbol=[16,18:Idx]<UserDefinedWord>
+Line 70[16,21] <30, Error, Semantics> - Semantic error: Ambiguous reference to symbol BadIdx 
 Symbols found: IndexTesting::Bad::BadType::BadVar::BadIdx | IndexTesting::Bad::BadType::BadVar2::BadIdx OffendingSymbol=[16,21:BadIdx]<UserDefinedWord>
-Line 70[23,27] <27, Error, Syntax> - Syntax error : Index 'MyIdx' inside a COPY cannot be use with qualified symbol OffendingSymbol=[23,27:MyIdx]<UserDefinedWord>
-Line 72[22,50] <27, Error, Syntax> - Syntax error : Index name 'MyIdx3azeazeazeazeazeazeazeaz' is over 22 characters. OffendingSymbol=[22,50:MyIdx3azeazeazeazeazeazeazeaz]<UserDefinedWord>
-Line 75[12,45] <27, Error, Syntax> - Syntax error : [Set [pointer1, pointer2 ...] UP|DOWN BY n] only support pointers.
-Line 77[12,53] <27, Error, Syntax> - Syntax error : Increment only support integer values, numeric variables and arithmetic expressions
+Line 72[23,27] <27, Error, Syntax> - Syntax error : Index 'MyIdx' inside a COPY cannot be use with qualified symbol OffendingSymbol=[23,27:MyIdx]<UserDefinedWord>
+Line 74[22,50] <27, Error, Syntax> - Syntax error : Index name 'MyIdx3azeazeazeazeazeazeazeaz' is over 22 characters. OffendingSymbol=[22,50:MyIdx3azeazeazeazeazeazeazeaz]<UserDefinedWord>
+Line 77[12,45] <27, Error, Syntax> - Syntax error : [Set [pointer1, pointer2 ...] UP|DOWN BY n] only support pointers.
+Line 79[12,53] <27, Error, Syntax> - Syntax error : Increment only support integer values, numeric variables and arithmetic expressions
 
 --- Program ---
 PROGRAM: IndexTesting common:False initial:False recursive:False
@@ -42,6 +42,8 @@ PROGRAM: IndexTesting common:False initial:False recursive:False
   myPointerGroup:Alphanumeric
   myPointer:Alphanumeric
   strVar:Alphanumeric
+  Level01:Alphanumeric
+  LEVEL01:Alphanumeric
   ThisIndexNameIsClearlyToLong:Numeric
   ToLingIndx:Alphanumeric
   W-VAR:Alphanumeric

@@ -43,8 +43,9 @@
 
       *OK : Index Name is over 22 characters 
       *- but not duplicated and not inside TypeDef
-       01 ToLingIndx PIC X(6) OCCURS 5 
-       INDEXED BY ThisIndexNameIsClearlyToLong.
+       01 Level01.
+         05 ToLingIndx PIC X(6) OCCURS 5 
+         INDEXED BY ThisIndexNameIsClearlyToLong.
 
        01 IndexType TYPEDEF STRICT.
       *KO Index is over 22 chars and decared in Typedef
@@ -52,8 +53,9 @@
             indexed by ThisIndexNameIsClearlyToLong2.
 
       *Test on index reference in redefined picture
-       01 W-VAR    PIC XXX.
-       01 W003-REQUESTS REDEFINES W-VAR
+       01 LEVEL01.
+          05 W-VAR    PIC XXX.
+          05 W003-REQUESTS REDEFINES W-VAR
                    OCCURS 3 TIMES INDEXED BY W003-INDX PIC X.
 
        PROCEDURE DIVISION.

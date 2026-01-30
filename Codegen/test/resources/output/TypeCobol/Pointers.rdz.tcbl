@@ -30,7 +30,8 @@
            02 pointer1fe930f3e pic S9(05) comp-5.
                            
        01 notUsedPointer pointer.
-       01 notUsedPointerOccurs pointer OCCURS 10.
+       01 level01.
+         05 notUsedPointerOccurs pointer OCCURS 10.
 
        01 noPointer pic 9(8) value 12.
 
