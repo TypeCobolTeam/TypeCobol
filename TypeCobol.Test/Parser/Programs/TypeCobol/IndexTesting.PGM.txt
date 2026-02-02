@@ -42,10 +42,10 @@ PROGRAM: IndexTesting common:False initial:False recursive:False
   myPointerGroup:Alphanumeric
   myPointer:Alphanumeric
   strVar:Alphanumeric
-  Level01:Alphanumeric
-  LEVEL01:Alphanumeric
+  LevelToLing:Alphanumeric
   ThisIndexNameIsClearlyToLong:Numeric
   ToLingIndx:Alphanumeric
+  W-VAR01:Alphanumeric
   W-VAR:Alphanumeric
   W003-REQUESTS:Alphanumeric
   W003-INDX:Numeric

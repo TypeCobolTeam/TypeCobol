@@ -8,7 +8,7 @@
       * KO: OCCURS cannot be specified on level 77
         77 GRP77 PIC X(10) OCCURS 2.
       * OK
-        01 GRP0K.
+        01 GRPOK.
            05 VAROK PIC X OCCURS 2.
 
        PROCEDURE DIVISION.
