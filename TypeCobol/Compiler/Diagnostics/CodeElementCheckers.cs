@@ -158,6 +158,13 @@ namespace TypeCobol.Compiler.Diagnostics
             [NotNull] CodeElementsParser.OccursClauseContext context,
             [NotNull] List<CodeElementsParser.DataNameReferenceContext> duplicateSortingKeysReferences)
         {
+            // An OCCURS clause cannot be specified for a data whose level is 01 or 77
+            var levelNumberValue = codeElement.LevelNumber?.Value;
+            if (levelNumberValue == 01 || levelNumberValue == 77)
+            {
+                DiagnosticUtils.AddError(codeElement, $"OCCURS cannot be specified on level {levelNumberValue}.", context);
+            }
+
             // Create diagnostic for duplicate keys found by builder
             foreach (var duplicateSortingKeyReference in duplicateSortingKeysReferences)
             {

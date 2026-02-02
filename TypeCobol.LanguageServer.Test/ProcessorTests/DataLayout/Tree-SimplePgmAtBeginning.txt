@@ -36,8 +36,8 @@
             12,
             1,
             "FILLER",
-            "GROUP OCCURS 1",
-            1,
+            "GROUP",
+            0,
             1,
             81,
             null,
@@ -48,64 +48,81 @@
             {
               "dataValues": [
                 3,
-                13,
-                5,
-                "Array1",
-                "GROUP OCCURS 9",
+                12,
                 2,
+                "FILLER",
+                "GROUP OCCURS 1",
+                1,
                 1,
                 81,
                 null,
                 0,
-                2
+                0
               ],
               "children": [
                 {
                   "dataValues": [
                     4,
-                    14,
-                    10,
-                    "Var1",
-                    "PIC X",
+                    13,
+                    5,
+                    "Array1",
+                    "GROUP OCCURS 9",
                     2,
                     1,
-                    1,
+                    81,
                     null,
                     0,
-                    2
-                  ],
-                  "children": []
-                },
-                {
-                  "dataValues": [
-                    4,
-                    15,
-                    10,
-                    "Array2",
-                    "GROUP OCCURS 8",
-                    3,
-                    2,
-                    8,
-                    null,
-                    1,
                     2
                   ],
                   "children": [
                     {
                       "dataValues": [
                         5,
-                        16,
-                        15,
-                        "Var2",
+                        14,
+                        10,
+                        "Var1",
                         "PIC X",
-                        3,
                         2,
+                        1,
                         1,
                         null,
                         0,
                         2
                       ],
                       "children": []
+                    },
+                    {
+                      "dataValues": [
+                        5,
+                        15,
+                        10,
+                        "Array2",
+                        "GROUP OCCURS 8",
+                        3,
+                        2,
+                        8,
+                        null,
+                        1,
+                        2
+                      ],
+                      "children": [
+                        {
+                          "dataValues": [
+                            6,
+                            16,
+                            15,
+                            "Var2",
+                            "PIC X",
+                            3,
+                            2,
+                            1,
+                            null,
+                            0,
+                            2
+                          ],
+                          "children": []
+                        }
+                      ]
                     }
                   ]
                 }

@@ -14,7 +14,8 @@
        01 pointer0 type PointerContainer.
        01 pointer1 pointer.
        01 notUsedPointer pointer.
-       01 notUsedPointerOccurs pointer OCCURS 10.
+       01 level01.
+         05 notUsedPointerOccurs pointer OCCURS 10.
 
        01 noPointer pic 9(8) value 12.
 

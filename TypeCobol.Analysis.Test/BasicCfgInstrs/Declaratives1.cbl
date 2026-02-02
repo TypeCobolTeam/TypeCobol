@@ -9,11 +9,12 @@
       
        DATA DIVISION.
        WORKING-STORAGE SECTION.
-       01 ELEM occurs 12
+       01 LEVEL01.
+         02 ELEM occurs 12
                 INDEXED BY IDX.
            05 NUM     pic 99.
            05 NBJ     pic 99.
-           05 LIB    pic x(9).
+           05 LIB     pic x(9).
       
        PROCEDURE DIVISION.
       
