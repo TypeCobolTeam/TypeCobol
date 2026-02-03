@@ -106,6 +106,17 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             var performCE = performProcedureNode.CodeElement;
 
+            CheckConditionalExpression(performCE.UntilTerminationCondition, performProcedureNode);
+
+            var varyingLoopDescriptions = performCE.VaryingLoopDescriptions;
+            if (varyingLoopDescriptions != null)
+            {
+                foreach (var performLoopDescription in varyingLoopDescriptions)
+                {
+                    CheckConditionalExpression(performLoopDescription.TerminationCondition, performProcedureNode);
+                }
+            }
+
             (performProcedureNode.ProcedureParagraphSymbol, performProcedureNode.ProcedureSectionSymbol) = SectionOrParagraphUsageChecker.ResolveParagraphOrSection(performProcedureNode, performCE.Procedure, _currentSection);
             (performProcedureNode.ThroughProcedureParagraphSymbol, performProcedureNode.ThroughProcedureSectionSymbol) = SectionOrParagraphUsageChecker.ResolveParagraphOrSection(performProcedureNode, performCE.ThroughProcedure, _currentSection);
 
@@ -435,6 +446,8 @@ namespace TypeCobol.Compiler.Diagnostics
                 DiagnosticUtils.AddError(whenSearch, "Missing statement in \"when\" clause", messageCode);
             }
 
+            CheckConditionalExpression(whenSearch.CodeElement.Condition, whenSearch);
+
             if (search.CodeElement.StatementType == StatementType.SearchBinaryStatement && _searchTables.TryGetValue(search, out var tableDefinitions))
             {
                 //TC not supported
@@ -646,6 +659,9 @@ namespace TypeCobol.Compiler.Diagnostics
                 DiagnosticUtils.AddError(ifNode,
                     "\"end-if\" is missing", MessageCode.Warning);
             }
+
+            CheckConditionalExpression(ifNode.CodeElement.Condition, ifNode);
+
             return true;
         }
 
@@ -1489,6 +1505,50 @@ namespace TypeCobol.Compiler.Diagnostics
                     }
                 }
                 DiagnosticUtils.AddError(node, "\"END PROGRAM\" is missing.");
+            }
+        }
+
+        private static void CheckConditionalExpression(ConditionalExpression conditionalExpression, Node node)
+        {
+            List<(DataDefinition dataDefinition, SymbolReference symbolReference)> dataDefinitionsFromConditionalName = [];
+            CollectVariablesFromConditionalExpression(conditionalExpression);
+
+            foreach (var (dataDefinition, symbolReference) in dataDefinitionsFromConditionalName)
+            {
+                // Data condition and TypeCobol boolean are the only types allowed in conditional expressions
+                var dataType = dataDefinition.DataType;
+                if (dataType != DataType.Level88 && dataType != DataType.Boolean)
+                {
+                    DiagnosticUtils.AddError(node, $"An incomplete condition {dataDefinition.Name} was found in a conditional expression.", symbolReference);
+                }
+            }
+
+            void CollectVariablesFromConditionalExpression(ConditionalExpression conditionalExpression)
+            {
+                switch (conditionalExpression)
+                {
+                    case ConditionNameConditionOrSwitchStatusCondition conditionName:
+                        {
+                            // Condition-name or Switch-status condition (for UPSI switch)
+                            var conditionReference = conditionName.ConditionReference;
+                            // UPSI switch is not handled by our parser (see issue #2355) => dataDefinition will be null
+                            DataDefinition dataDefinition = node.GetDataDefinitionFromStorageAreaDictionary(conditionReference, true);
+                            if (dataDefinition != null)
+                            {
+                                dataDefinitionsFromConditionalName.Add((dataDefinition, conditionReference.SymbolReference));
+                            }
+
+                            break;
+                        }
+
+                    case LogicalOperation complexCondition:
+                        {
+                            CollectVariablesFromConditionalExpression(complexCondition.LeftOperand);
+                            CollectVariablesFromConditionalExpression(complexCondition.RightOperand);
+
+                            break;
+                        }
+                }
             }
         }
     }

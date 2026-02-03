@@ -9,7 +9,7 @@
        DATA DIVISION.
        WORKING-STORAGE SECTION.
 
-       01 occurs 1.
+       01. 02 occurs 1.
            05 Array1 occurs 9.
              10 Var1 pic X.
              10 Array2 occurs 8.

@@ -6,13 +6,14 @@ WORKING-STORAGE SECTION.
 
 01 mysize PIC 9 VALUE 99.
 01 X PIC X.
-01 T-fixed-1         OCCURS 100.
-  05 T-fixed-2       OCCURS 100.
-    10 E             PIC X(8).
-01 T-variable        OCCURS 100 DEPENDING ON mysize.
-  05 E               PIC X(8).
-01 T-nobounds        OCCURS UNBOUNDED DEPENDING ON mysize.
-  05 E               PIC X(8).
+01 T-Level01.
+  02 T-fixed-1         OCCURS 100.
+    05 T-fixed-2       OCCURS 100.
+      10 E             PIC X(8).
+  02 T-variable        OCCURS 100 DEPENDING ON mysize.
+    05 E               PIC X(8).
+  02 T-nobounds        OCCURS UNBOUNDED DEPENDING ON mysize.
+    05 E               PIC X(8).
 
 PROCEDURE DIVISION.
 
