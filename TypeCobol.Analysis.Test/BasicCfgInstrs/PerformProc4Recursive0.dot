@@ -90,7 +90,7 @@ Block65 [
 label = "{Block65|    display 'terminate in pararec3'\l}"
 ]
 Block48 [
-label = "{Block48|       perform pararec3 test after varying n from 1 by 1 until n\l}"
+label = "{Block48|       perform pararec3 test after varying n                          from 1 by 1 until n \> 5\l}"
 ]
 subgraph cluster_8{
 color = blue;

@@ -50,7 +50,8 @@
            display n
            if n < 3
               display 'before perform pararec3 in pararec4'
-              perform pararec3 test after varying n from 1 by 1 until n > 5
+              perform pararec3 test after varying n
+                               from 1 by 1 until n > 5
               display 'after perform pararec3 in pararec4'
            else
               display 'Try recurse in pararec4'

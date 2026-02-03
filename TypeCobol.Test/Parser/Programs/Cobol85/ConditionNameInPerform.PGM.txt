@@ -1,0 +1,35 @@
+﻿--- Diagnostics ---
+Line 26[49,52] <27, Error, Syntax> - Syntax error : An incomplete condition VAR1 was found in a conditional expression. OffendingSymbol=[49,52:VAR1]<UserDefinedWord>
+Line 28[48,51] <27, Error, Syntax> - Syntax error : An incomplete condition VAR3 was found in a conditional expression. OffendingSymbol=[48,51:VAR3]<UserDefinedWord>
+Line 32[49,52] <27, Error, Syntax> - Syntax error : An incomplete condition VAR2 was found in a conditional expression. OffendingSymbol=[49,52:VAR2]<UserDefinedWord>
+Line 34[48,51] <27, Error, Syntax> - Syntax error : An incomplete condition VAR2 was found in a conditional expression. OffendingSymbol=[48,51:VAR2]<UserDefinedWord>
+Line 38[49,52] <27, Error, Syntax> - Syntax error : An incomplete condition VAR4 was found in a conditional expression. OffendingSymbol=[49,52:VAR4]<UserDefinedWord>
+Line 40[31,34] <27, Error, Syntax> - Syntax error : An incomplete condition VAR4 was found in a conditional expression. OffendingSymbol=[31,34:VAR4]<UserDefinedWord>
+Line 45[19,22] <27, Error, Syntax> - Syntax error : An incomplete condition VAR5 was found in a conditional expression. OffendingSymbol=[19,22:VAR5]<UserDefinedWord>
+Line 47[18,21] <27, Error, Syntax> - Syntax error : An incomplete condition VAR5 was found in a conditional expression. OffendingSymbol=[18,21:VAR5]<UserDefinedWord>
+Line 53[18,32] <30, Error, Semantics> - Semantic error: Symbol VAR-NOT-DEFINED is not referenced OffendingSymbol=[18,32:VAR-NOT-DEFINED]<UserDefinedWord>
+Line 70[21,24] <27, Error, Syntax> - Syntax error : An incomplete condition VAR1 was found in a conditional expression. OffendingSymbol=[21,24:VAR1]<UserDefinedWord>
+
+--- Program ---
+PROGRAM: CHKCDNNM common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Program:Global:Local
+-- DATA --------
+  MAIN-GROUP:Alphanumeric
+  VAR1:Alphanumeric
+  COND1:Level88
+  COND2:Level88
+  VAR2:Numeric
+  VAR3:Alphanumeric
+  VAR4:?
+  VAR-INDEX1:Numeric
+  VAR-INDEX2:Numeric
+  VAR5:Alphabetic
+-- PARAGRAPHS --
+  PAR1
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING
