@@ -1,0 +1,24 @@
+Line 9[35,41] <27, Error, Syntax> - Syntax error : OCCURS cannot be specified for data VAR-OCC which is redefined.
+Line 15[36,43] <27, Error, Syntax> - Syntax error : OCCURS cannot be specified for data VAR-OCC2 which is redefined.
+--- Nodes ---
+?
+  TCOCCLVL
+    data-division
+      working-storage
+        ROOT-GRP
+          VAR-OCC
+          GRP-REDEF
+            VAR1
+        ROOT-GRP2
+          VAR-OCC2
+          GRP-REDEF2
+        ROOT-GRP3
+          VAR-OCC3
+            POSTE3
+          GRP-REDEF3
+    procedure-division
+      sentence-0
+        [[GobackStatement]] [12,17:GOBACK]<GOBACK> --> [12,17:GOBACK]<GOBACK>
+
+        end
+    end
