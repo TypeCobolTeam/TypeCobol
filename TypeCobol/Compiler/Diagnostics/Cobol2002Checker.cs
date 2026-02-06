@@ -159,6 +159,13 @@ namespace TypeCobol.Compiler.Diagnostics
                     redefinedVariable.IsStronglyTyped ? "strongly-typed" : "strictly-typed");
                 DiagnosticUtils.AddError(redefinesNode, message, redefinesSymbolReference, code:MessageCode.SemanticTCErrorInParser);
             }
+
+            // An OCCURS clause cannot be specified for a data which is redefined.
+            if (redefinedVariable.IsTableOccurence)
+            {
+                DiagnosticUtils.AddError(redefinesNode, $"OCCURS cannot be specified for data {redefinesSymbolReference.Name} which is redefined.", redefinesSymbolReference);
+            }
+
         }
     }
 
