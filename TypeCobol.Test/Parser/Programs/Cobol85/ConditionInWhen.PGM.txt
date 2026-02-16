@@ -1,0 +1,55 @@
+﻿--- Diagnostics ---
+Line 74[22,25] <27, Error, Syntax> - Syntax error : An incomplete condition VAR1 was found in a conditional expression. OffendingSymbol=[22,25:VAR1]<UserDefinedWord>
+Line 81[17,37] <27, Error, Syntax> - Syntax error : The THRU phrase is not valid
+Line 88[17,35] <27, Error, Syntax> - Syntax error : The THRU phrase is not valid
+Line 95[17,36] <27, Error, Syntax> - Syntax error : The THRU phrase is not valid
+Line 102[27,30] <27, Error, Syntax> - Syntax error : extraneous input 'THRU' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[27,30:THRU]<THRU>
+Line 113[33,36] <27, Error, Syntax> - Syntax error : extraneous input 'THRU' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[33,36:THRU]<THRU>
+Line 113[17,31] <27, Error, Syntax> - Syntax error : The object at position 0 in the "WHEN" phrase does not match the type of the corresponding subject in the "EVALUATE" statement
+Line 120[17,36] <27, Error, Syntax> - Syntax error : The THRU phrase is not valid
+Line 127[17,31] <27, Error, Syntax> - Syntax error : The objects in the THRU phrase must be of the same data type
+Line 129[17,31] <27, Error, Syntax> - Syntax error : The objects in the THRU phrase must be of the same data type
+Line 131[17,32] <27, Error, Syntax> - Syntax error : The objects in the THRU phrase must be of the same data type
+Line 133[17,32] <27, Error, Syntax> - Syntax error : The objects in the THRU phrase must be of the same data type
+Line 135[17,41] <27, Error, Syntax> - Syntax error : The objects in the THRU phrase must be of the same data type
+Line 137[17,41] <27, Error, Syntax> - Syntax error : The objects in the THRU phrase must be of the same data type
+Line 146[17,50] <27, Error, Syntax> - Syntax error : The objects in the THRU phrase must be of the same data type
+Line 152[17,43] <27, Error, Syntax> - Syntax error : The objects in the THRU phrase must be of the same data type
+Line 156[17,57] <27, Error, Syntax> - Syntax error : The objects in the THRU phrase must be of the same data type
+Line 162[17,50] <27, Error, Syntax> - Syntax error : The objects in the THRU phrase must be of the same data type
+Line 166[17,48] <27, Error, Syntax> - Syntax error : The objects in the THRU phrase must be of the same data type
+Line 168[17,55] <27, Error, Syntax> - Syntax error : The objects in the THRU phrase must be of the same data type
+Line 170[17,48] <27, Error, Syntax> - Syntax error : The objects in the THRU phrase must be of the same data type
+Line 172[17,55] <27, Error, Syntax> - Syntax error : The objects in the THRU phrase must be of the same data type
+Line 176[17,41] <27, Error, Syntax> - Syntax error : The objects in the THRU phrase must be of the same data type
+Line 180[17,48] <27, Error, Syntax> - Syntax error : The objects in the THRU phrase must be of the same data type
+Line 184[17,48] <27, Error, Syntax> - Syntax error : The objects in the THRU phrase must be of the same data type
+Line 191[39,42] <27, Error, Syntax> - Syntax error : An incomplete condition VAR1 was found in a conditional expression. OffendingSymbol=[39,42:VAR1]<UserDefinedWord>
+Line 198[22,35] <30, Error, Semantics> - Semantic error: Symbol NOT-REFERENCED is not referenced OffendingSymbol=[22,35:NOT-REFERENCED]<UserDefinedWord>
+Line 200[17,20] <27, Error, Syntax> - Syntax error : Missing condition in "when" clause RuleStack=codeElement>whenCondition,  OffendingSymbol=[17,20:WHEN]<WHEN>
+
+--- Program ---
+PROGRAM: CHKCNDTN common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Program:Global:Local
+-- DATA --------
+  MAIN-GROUP:Alphanumeric
+  VAR1:Alphanumeric
+  COND1:Level88
+  COND2:Level88
+  VAR2:Alphanumeric
+  VAR-INDEX1:Numeric
+  VAR-INDEX2:Numeric
+  VAR-ALPHA:Alphanumeric
+  VAR-ALPHA-EDITED:AlphanumericEdited
+  VAR-ALPHABETIC:Alphabetic
+  VAR-NAT:National
+  VAR-NAT-EDITED:NationalEdited
+  VAR-NUM:Numeric
+  VAR-NUM-EDITED:NumericEdited
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING

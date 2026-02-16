@@ -106,14 +106,14 @@ namespace TypeCobol.Compiler.Diagnostics
         {
             var performCE = performProcedureNode.CodeElement;
 
-            CheckConditionalExpression(performCE.UntilTerminationCondition, performProcedureNode);
+            ConditionChecker.CheckConditionalExpression(performCE.UntilTerminationCondition, performProcedureNode);
 
             var varyingLoopDescriptions = performCE.VaryingLoopDescriptions;
             if (varyingLoopDescriptions != null)
             {
                 foreach (var performLoopDescription in varyingLoopDescriptions)
                 {
-                    CheckConditionalExpression(performLoopDescription.TerminationCondition, performProcedureNode);
+                    ConditionChecker.CheckConditionalExpression(performLoopDescription.TerminationCondition, performProcedureNode);
                 }
             }
 
@@ -435,171 +435,196 @@ namespace TypeCobol.Compiler.Diagnostics
             return true;
         }
 
-        
-        public override bool Visit(When whenSearch)
+        public override bool Visit(When when)
         {
-            if (!(whenSearch.Parent is Search search)) return true; //EVALUATE statement, not our concern here.
-
-            if (whenSearch.ChildrenCount == 0)
+            if (when.Parent is Search search)
             {
-                var messageCode = search.CodeElement.StatementType == StatementType.SearchSerialStatement ? MessageCode.SyntaxErrorInParser : MessageCode.Warning;
-                DiagnosticUtils.AddError(whenSearch, "Missing statement in \"when\" clause", messageCode);
-            }
-
-            CheckConditionalExpression(whenSearch.CodeElement.Condition, whenSearch);
-
-            if (search.CodeElement.StatementType == StatementType.SearchBinaryStatement && _searchTables.TryGetValue(search, out var tableDefinitions))
-            {
-                //TC not supported
-                if (tableDefinitions == null) return true;
-
-                //Main table
-                System.Diagnostics.Debug.Assert(tableDefinitions.Count > 0);
-                var searchedTable = tableDefinitions[0];
-
-                //Init a dictionary of used keys
-                Dictionary<string, bool> usedKeys = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
-                var keys = searchedTable.GetTableSortingKeys();
-                if (keys != null)
+                if (when.ChildrenCount == 0)
                 {
-                    foreach (var key in keys)
+                    var messageCode = search.CodeElement.StatementType == StatementType.SearchSerialStatement ? MessageCode.SyntaxErrorInParser : MessageCode.Warning;
+                    DiagnosticUtils.AddError(when, "Missing statement in \"when\" clause", messageCode);
+                }
+
+                ConditionChecker.CheckConditionalExpression(when.CodeElement.Condition, when);
+
+                if (search.CodeElement.StatementType == StatementType.SearchBinaryStatement && _searchTables.TryGetValue(search, out var tableDefinitions))
+                {
+                    //TC not supported
+                    if (tableDefinitions == null) return true;
+
+                    //Main table
+                    System.Diagnostics.Debug.Assert(tableDefinitions.Count > 0);
+                    var searchedTable = tableDefinitions[0];
+
+                    //Init a dictionary of used keys
+                    Dictionary<string, bool> usedKeys = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
+                    var keys = searchedTable.GetTableSortingKeys();
+                    if (keys != null)
                     {
-                        if (key.SortDirection != null && key.SortDirection.Value != SortDirection.None)
+                        foreach (var key in keys)
                         {
-                            usedKeys.Add(key.SortKey.Name, false);//Set initial status of the key to 'not used'
+                            if (key.SortDirection != null && key.SortDirection.Value != SortDirection.None)
+                            {
+                                usedKeys.Add(key.SortKey.Name, false);//Set initial status of the key to 'not used'
+                            }
                         }
                     }
-                }
 
-                //Collect every first index of searched table and its parent tables (multidimensional search)
-                //Reverse order because parent tables are from child to parent but subscripts are from parent to child
-                var expectedIndexes = tableDefinitions.Select(table => table.GetIndexes()?.FirstOrDefault()).Reverse().ToArray();
+                    //Collect every first index of searched table and its parent tables (multidimensional search)
+                    //Reverse order because parent tables are from child to parent but subscripts are from parent to child
+                    var expectedIndexes = tableDefinitions.Select(table => table.GetIndexes()?.FirstOrDefault()).Reverse().ToArray();
 
-                //WHEN condition must use keys and first index of the table
-                if (!CheckCondition(whenSearch.CodeElement.Condition))
-                {
-                    return true;
-                }
-
-                //Check all keys are properly used
-                bool expectKeyUsed = true;
-                foreach (var isKeyUsed in usedKeys.Values)
-                {
-                    if (isKeyUsed)
+                    //WHEN condition must use keys and first index of the table
+                    if (!CheckCondition(when.CodeElement.Condition))
                     {
-                        if (expectKeyUsed) continue; //OK
-
-                        //KO all keys from first to "highest" used must be used
-                        DiagnosticUtils.AddError(whenSearch, "All the table keys that precede a referenced key must be used.");
-                        break;
+                        return true;
                     }
 
-                    if (expectKeyUsed)
+                    //Check all keys are properly used
+                    bool expectKeyUsed = true;
+                    foreach (var isKeyUsed in usedKeys.Values)
                     {
-                        //First time we see an unused key, so all following keys must not be used
-                        expectKeyUsed = false;
+                        if (isKeyUsed)
+                        {
+                            if (expectKeyUsed) continue; //OK
+
+                            //KO all keys from first to "highest" used must be used
+                            DiagnosticUtils.AddError(when, "All the table keys that precede a referenced key must be used.");
+                            break;
+                        }
+
+                        if (expectKeyUsed)
+                        {
+                            //First time we see an unused key, so all following keys must not be used
+                            expectKeyUsed = false;
+                        }
                     }
-                }
 
-                //Check syntax of a whenSearchCondition (in a binary search)
-                bool CheckCondition(ConditionalExpression whenSearchCondition)
-                {
-                    switch (whenSearchCondition)
+                    //Check syntax of a whenSearchCondition (in a binary search)
+                    bool CheckCondition(ConditionalExpression whenSearchCondition)
                     {
-                        case ConditionNameConditionOrSwitchStatusCondition conditionInstance:
-                            DataOrConditionStorageArea dataOrConditionStorageArea = conditionInstance.ConditionReference;
-                            if (dataOrConditionStorageArea.Subscripts.Length > 0)
-                            {
-                                return CheckDataOrConditionStorageArea(dataOrConditionStorageArea);
-                            }
-                            return true;
+                        switch (whenSearchCondition)
+                        {
+                            case ConditionNameConditionOrSwitchStatusCondition conditionInstance:
+                                DataOrConditionStorageArea dataOrConditionStorageArea = conditionInstance.ConditionReference;
+                                if (dataOrConditionStorageArea.Subscripts.Length > 0)
+                                {
+                                    return CheckDataOrConditionStorageArea(dataOrConditionStorageArea);
+                                }
+                                return true;
 
-                        case RelationCondition relationCondition:
-                            if (relationCondition.Operator?.SemanticOperator != RelationalOperatorSymbol.EqualTo)
-                            {
-                                DiagnosticUtils.AddError(whenSearch, "Invalid relational operator in WHEN SEARCH condition, EqualTo operator expected.");
+                            case RelationCondition relationCondition:
+                                if (relationCondition.Operator?.SemanticOperator != RelationalOperatorSymbol.EqualTo)
+                                {
+                                    DiagnosticUtils.AddError(when, "Invalid relational operator in WHEN SEARCH condition, EqualTo operator expected.");
+                                    return false;
+                                }
+                                return CheckOperand(relationCondition.LeftOperand);
+
+                            case LogicalOperation logicalOperation:
+                                if (logicalOperation.Operator.Value != LogicalOperator.AND)
+                                {
+                                    DiagnosticUtils.AddError(when, "Invalid logical operator in WHEN SEARCH condition, AND operator expected.");
+                                }
+                                return CheckCondition(logicalOperation.LeftOperand) && CheckCondition(logicalOperation.RightOperand);
+
+                            default:
+                                DiagnosticUtils.AddError(when, "Invalid condition in WHEN SEARCH, only condition-names and key to value comparison are allowed.");
                                 return false;
-                            }
-                            return CheckOperand(relationCondition.LeftOperand);
-
-                        case LogicalOperation logicalOperation:
-                            if (logicalOperation.Operator.Value != LogicalOperator.AND)
-                            {
-                                DiagnosticUtils.AddError(whenSearch, "Invalid logical operator in WHEN SEARCH condition, AND operator expected.");
-                            }
-                            return CheckCondition(logicalOperation.LeftOperand) && CheckCondition(logicalOperation.RightOperand);
-
-                        default:
-                            DiagnosticUtils.AddError(whenSearch, "Invalid condition in WHEN SEARCH, only condition-names and key to value comparison are allowed.");
-                            return false;
-                    }
-                }
-
-                bool CheckOperand(ConditionOperand operand)
-                {
-                    if (operand.ArithmeticExpression is NumericVariableOperand numericVariableOperand
-                        && numericVariableOperand.NumericVariable?.StorageArea is DataOrConditionStorageArea dataOrConditionStorageArea
-                        && dataOrConditionStorageArea.Subscripts.Length > 0)
-                    {
-                        return CheckDataOrConditionStorageArea(dataOrConditionStorageArea);
-                    }
-
-                    DiagnosticUtils.AddError(whenSearch, "Left side operand of a WHEN condition must use first index of the table and at least one of declared keys.");
-                    return false;
-                }
-
-                bool CheckDataOrConditionStorageArea(DataOrConditionStorageArea dataOrConditionStorageArea)
-                {
-                    //Check indexes for every dimension
-                    if (dataOrConditionStorageArea.Subscripts.Length == expectedIndexes.Length)
-                    {
-                        for (int i = 0; i < dataOrConditionStorageArea.Subscripts.Length; i++)
-                        {
-                            var expectedIndex = expectedIndexes[i];
-                            var subscript = dataOrConditionStorageArea.Subscripts[i];
-
-                            //Check use of first table index for the current dimension
-                            var usedIndexStorageArea = ((NumericVariableOperand)subscript.NumericExpression).IntegerVariable.StorageArea;
-                            var usedIndex = whenSearch.GetDataDefinitionFromStorageAreaDictionary(usedIndexStorageArea);
-                            if (usedIndex != null && (expectedIndex == null || !expectedIndex.Name.Equals(usedIndex.Name, StringComparison.OrdinalIgnoreCase)))
-                            {
-                                //Not the first index (or no index defined for the table)
-                                DiagnosticUtils.AddError(whenSearch, "When subscripting, only first index declared for the table is allowed.");
-                                return false;
-                            }
                         }
                     }
-                    //else invalid subscript count, this is already checked by CheckSubscripts. No need to report more errors on this condition.
 
-                    //Collect used key
-                    var usedKey = whenSearch.GetDataDefinitionFromStorageAreaDictionary(dataOrConditionStorageArea, true);
-                    if (usedKey != null)
+                    bool CheckOperand(ConditionOperand operand)
                     {
-                        if (usedKeys.ContainsKey(usedKey.Name))
+                        if (operand.ArithmeticExpression is NumericVariableOperand numericVariableOperand
+                            && numericVariableOperand.NumericVariable?.StorageArea is DataOrConditionStorageArea dataOrConditionStorageArea
+                            && dataOrConditionStorageArea.Subscripts.Length > 0)
                         {
-                            //Valid key, set key status to 'used'
-                            usedKeys[usedKey.Name] = true;
+                            return CheckDataOrConditionStorageArea(dataOrConditionStorageArea);
                         }
-                        else 
+
+                        DiagnosticUtils.AddError(when, "Left side operand of a WHEN condition must use first index of the table and at least one of declared keys.");
+                        return false;
+                    }
+
+                    bool CheckDataOrConditionStorageArea(DataOrConditionStorageArea dataOrConditionStorageArea)
+                    {
+                        //Check indexes for every dimension
+                        if (dataOrConditionStorageArea.Subscripts.Length == expectedIndexes.Length)
                         {
-                            //Special check for 88 level definitions that are children of a selected used key.
-                            if (usedKey.CodeElement?.Type == CodeElementType.DataConditionEntry &&
-                                usedKey.Parent is DataDefinition parentUsedKey &&
-                                usedKeys.ContainsKey(parentUsedKey.Name))
+                            for (int i = 0; i < dataOrConditionStorageArea.Subscripts.Length; i++)
                             {
-                                usedKeys[parentUsedKey.Name] = true;
+                                var expectedIndex = expectedIndexes[i];
+                                var subscript = dataOrConditionStorageArea.Subscripts[i];
+
+                                //Check use of first table index for the current dimension
+                                var usedIndexStorageArea = ((NumericVariableOperand)subscript.NumericExpression).IntegerVariable.StorageArea;
+                                var usedIndex = when.GetDataDefinitionFromStorageAreaDictionary(usedIndexStorageArea);
+                                if (usedIndex != null && (expectedIndex == null || !expectedIndex.Name.Equals(usedIndex.Name, StringComparison.OrdinalIgnoreCase)))
+                                {
+                                    //Not the first index (or no index defined for the table)
+                                    DiagnosticUtils.AddError(when, "When subscripting, only first index declared for the table is allowed.");
+                                    return false;
+                                }
+                            }
+                        }
+                        //else invalid subscript count, this is already checked by CheckSubscripts. No need to report more errors on this condition.
+
+                        //Collect used key
+                        var usedKey = when.GetDataDefinitionFromStorageAreaDictionary(dataOrConditionStorageArea, true);
+                        if (usedKey != null)
+                        {
+                            if (usedKeys.ContainsKey(usedKey.Name))
+                            {
+                                //Valid key, set key status to 'used'
+                                usedKeys[usedKey.Name] = true;
                             }
                             else
                             {
-                                //Not a key
-                                DiagnosticUtils.AddError(whenSearch, $"'{usedKey.Name}' is not a sorting key of table '{searchedTable.Name}'.");
-                                return false;
+                                //Special check for 88 level definitions that are children of a selected used key.
+                                if (usedKey.CodeElement?.Type == CodeElementType.DataConditionEntry &&
+                                    usedKey.Parent is DataDefinition parentUsedKey &&
+                                    usedKeys.ContainsKey(parentUsedKey.Name))
+                                {
+                                    usedKeys[parentUsedKey.Name] = true;
+                                }
+                                else
+                                {
+                                    //Not a key
+                                    DiagnosticUtils.AddError(when, $"'{usedKey.Name}' is not a sorting key of table '{searchedTable.Name}'.");
+                                    return false;
+                                }
                             }
                         }
-                    }
-                    //else undefined reference
+                        //else undefined reference
 
+                        return true;
+                    }
+                }
+            }
+            else if (when.Parent?.Parent is Evaluate evaluate) 
+            {
+                SelectionObject[] selectionObjects = when.CodeElement.SelectionObjects;
+                if (selectionObjects.Count() == 0)
+                {
+                    // Nothing in WHEN = nothing to do
                     return true;
+                }
+
+                SelectionSubject[] selectionSubjects = evaluate.CodeElement.SelectionSubjects;
+                if (selectionSubjects.Count() != selectionObjects.Count())
+                {
+                    DiagnosticUtils.AddError(when, "The number of WHEN objects is not equal to the number of EVALUATE subjects");
+                }
+                else
+                {
+                    // Check selection subject and object having the same ordinal position
+                    for (int index = 0; index < selectionSubjects.Count(); index++)
+                    {
+                        var selectionSubject = selectionSubjects[index];
+                        var selectionObject = selectionObjects[index];
+                        ConditionChecker.CheckWhenStatement(evaluate, when, selectionSubject, selectionObject, index);
+                    }
                 }
             }
 
@@ -608,6 +633,12 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public override bool Visit(Evaluate evaluate)
         {
+            SelectionSubject[] selectionSubjects = evaluate.CodeElement.SelectionSubjects;
+            foreach (var selectionSubject in selectionSubjects)
+            {
+                ConditionChecker.CheckConditionalExpression(selectionSubject.BooleanComparisonVariable?.Expression, evaluate, true);
+            }
+
             bool whenOtherSeen = false;
             //Start to loop on children from the end because:
             //- Grammar enforce that there is 0 to 1 "whenOther" and that it's the last element of an "evaluate"
@@ -660,7 +691,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     "\"end-if\" is missing", MessageCode.Warning);
             }
 
-            CheckConditionalExpression(ifNode.CodeElement.Condition, ifNode);
+            ConditionChecker.CheckConditionalExpression(ifNode.CodeElement.Condition, ifNode);
 
             return true;
         }
@@ -1507,53 +1538,9 @@ namespace TypeCobol.Compiler.Diagnostics
                 DiagnosticUtils.AddError(node, "\"END PROGRAM\" is missing.");
             }
         }
-
-        private static void CheckConditionalExpression(ConditionalExpression conditionalExpression, Node node)
-        {
-            List<(DataDefinition dataDefinition, SymbolReference symbolReference)> dataDefinitionsFromConditionalName = [];
-            CollectVariablesFromConditionalExpression(conditionalExpression);
-
-            foreach (var (dataDefinition, symbolReference) in dataDefinitionsFromConditionalName)
-            {
-                // Data condition and TypeCobol boolean are the only types allowed in conditional expressions
-                var dataType = dataDefinition.DataType;
-                if (dataType != DataType.Level88 && dataType != DataType.Boolean)
-                {
-                    DiagnosticUtils.AddError(node, $"An incomplete condition {dataDefinition.Name} was found in a conditional expression.", symbolReference);
-                }
-            }
-
-            void CollectVariablesFromConditionalExpression(ConditionalExpression conditionalExpression)
-            {
-                switch (conditionalExpression)
-                {
-                    case ConditionNameConditionOrSwitchStatusCondition conditionName:
-                        {
-                            // Condition-name or Switch-status condition (for UPSI switch)
-                            var conditionReference = conditionName.ConditionReference;
-                            // UPSI switch is not handled by our parser (see issue #2355) => dataDefinition will be null
-                            DataDefinition dataDefinition = node.GetDataDefinitionFromStorageAreaDictionary(conditionReference, true);
-                            if (dataDefinition != null)
-                            {
-                                dataDefinitionsFromConditionalName.Add((dataDefinition, conditionReference.SymbolReference));
-                            }
-
-                            break;
-                        }
-
-                    case LogicalOperation complexCondition:
-                        {
-                            CollectVariablesFromConditionalExpression(complexCondition.LeftOperand);
-                            CollectVariablesFromConditionalExpression(complexCondition.RightOperand);
-
-                            break;
-                        }
-                }
-            }
-        }
     }
 
-    static class SectionOrParagraphUsageChecker
+        static class SectionOrParagraphUsageChecker
     {
         /// <summary>
         /// Disambiguate between Paragraph or Section reference.
@@ -1824,6 +1811,296 @@ namespace TypeCobol.Compiler.Diagnostics
                 default:
                     // Everything else is unsupported (RENAMES, file descriptions, indices)
                     return null;
+            }
+        }
+    }
+
+    // Specific Checker for Condition
+    static class ConditionChecker
+    {
+        // Structure gathering information about SelectionSubject (from EVALUATE) or SelectionObject (from WHEN)
+        private record SelectionInfo
+        {
+            // DataType computed from condition or expression
+            // Set to Unknown if condition or expression is not valid
+            public DataType DataType { get; init; }
+
+            // For numeric and alphanumeric values only
+            public string LiteralValue { get; init; }
+
+            public SelectionInfo(DataType dataType, string literalValue)
+            {
+                DataType = dataType;
+                LiteralValue = literalValue;
+            }
+
+            public SelectionInfo(DataType dataType) : this(dataType, null) { }
+
+            // TRUE for numeric and alphanumeric values only
+            public bool IsLiteral => LiteralValue != null;
+
+            /// <summary>
+            /// Determines whether the given object is conflicting with the current one by comparing their type.
+            /// If both types are valid, a conflict occurs when one is Boolean and the other one not.
+            /// </summary>
+            /// <param name="other">The other object to be compared to the current one</param>
+            /// <returns>true if conflict</returns>
+            public bool HasConflictingType(SelectionInfo other)
+            {
+                return DataType != DataType.Unknown && other != null && other.DataType != DataType.Unknown && IsBoolean() != other.IsBoolean();
+            }
+
+            /// <summary>
+            /// Determines whether the given object has the same type as the current one.
+            /// If both types are valid, types are compared and should be the same.
+            /// Alphanumeric, National and edited types are considered the same.
+            /// Level 88 and Boolean are considered the same as well.
+            /// </summary>
+            /// <param name="other">The other object to be compared to the current one</param>
+            /// <returns>true if same</returns>
+            public bool HasSameType(SelectionInfo other)
+            {
+                if (DataType == DataType.Unknown || other == null || other.DataType == DataType.Unknown) return false;
+                if (IsAlphanumeric()) return other.IsAlphanumeric();
+                if (IsBoolean()) return other.IsBoolean();
+
+                return DataType == other.DataType;
+            }
+
+            // Alphanumeric, National and edited types are considered as Alphanumeric
+            private bool IsAlphanumeric()
+            {
+                return DataType == DataType.Alphanumeric || DataType == DataType.AlphanumericEdited ||
+                        DataType == DataType.National || DataType == DataType.NationalEdited || DataType == DataType.NumericEdited;
+            }
+
+            // Level 88 and Boolean are considered as Boolean
+            public bool IsBoolean() => DataType == DataType.Level88 || DataType == DataType.Boolean;
+        }
+
+        /// <summary>
+        /// Check a conditional expression
+        /// </summary>
+        /// <param name="conditionalExpression">The conditional expression to be checked</param>
+        /// <param name="node">The node containing the conditional expression</param>
+        /// <param name="checkOnlyMultipleExpression">A flag indicating whether only multiple expression should be checked.
+        /// For instance, a PIC X variable used as a single expression is valid in EVALUATE but not in IF</param>
+        /// <returns>true if OK</returns>
+        public static bool CheckConditionalExpression(ConditionalExpression conditionalExpression, Node node, bool checkOnlyMultipleExpression = false)
+        {
+            int nbExpression = 0;
+            List<(DataDefinition dataDefinition, SymbolReference symbolReference)> dataDefinitionsFromConditionalName = [];
+            CollectVariablesFromConditionalExpression(conditionalExpression);
+
+            if (checkOnlyMultipleExpression && nbExpression < 2)
+            {
+                return true;
+            }
+
+            bool ok = true;
+            foreach (var (dataDefinition, symbolReference) in dataDefinitionsFromConditionalName)
+            {
+                // Data condition and TypeCobol boolean are the only types allowed in conditional expressions
+                var dataType = dataDefinition.DataType;
+                if (dataType != DataType.Level88 && dataType != DataType.Boolean)
+                {
+                    ok = false;
+                    DiagnosticUtils.AddError(node, $"An incomplete condition {dataDefinition.Name} was found in a conditional expression.", symbolReference);
+                }
+            }
+
+            return ok;
+
+            void CollectVariablesFromConditionalExpression(ConditionalExpression conditionalExpression)
+            {
+                switch (conditionalExpression)
+                {
+                    case ConditionNameConditionOrSwitchStatusCondition conditionName:
+                        {
+                            // Condition-name or Switch-status condition (for UPSI switch)
+                            var conditionReference = conditionName.ConditionReference;
+                            // UPSI switch is not handled by our parser (see issue #2355) => dataDefinition will be null
+                            DataDefinition dataDefinition = node.GetDataDefinitionFromStorageAreaDictionary(conditionReference, true);
+                            if (dataDefinition != null)
+                            {
+                                dataDefinitionsFromConditionalName.Add((dataDefinition, conditionReference.SymbolReference));
+                            }
+
+                            nbExpression++;
+
+                            break;
+                        }
+
+                    case LogicalOperation complexCondition:
+                        {
+                            var leftOperand = complexCondition.LeftOperand;
+                            // Do not consider null leftOperand (for instance: complexCondition = NOT expression)
+                            if (leftOperand != null)
+                            {
+                                CollectVariablesFromConditionalExpression(leftOperand);
+                            }
+                            CollectVariablesFromConditionalExpression(complexCondition.RightOperand);
+
+                            break;
+                        }
+                    default:
+                        {
+                            nbExpression++;
+
+                            break;
+                        }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Checks the WHEN statement and its compatibility with its parent EVALUATE
+        /// </summary>
+        /// <param name="evaluate">The parent EVALUATE</param>
+        /// <param name="when">The WHEN statement</param>
+        /// <param name="selectionSubject">The selection subject (from EVALUATE)</param>
+        /// <param name="selectionObject">The selection object (from WHEN)</param>
+        /// <param name="index">The position of the selection subject/object</param>
+        public static void CheckWhenStatement(Evaluate evaluate, When when, SelectionSubject selectionSubject, SelectionObject selectionObject, int index)
+        {
+            var booleanComparisonVariable = selectionObject.BooleanComparisonVariable;
+            var alphanumericComparisonVariable = selectionObject.AlphanumericComparisonVariable;
+
+            if (booleanComparisonVariable == null && alphanumericComparisonVariable == null)
+            {
+                // WHEN ANY => OK
+                return;
+            }
+
+            var (isValid, selectionObjectInfo, selectionObjectInfo2) = CheckWhen();
+            if (isValid)
+            {
+                // Check EVALUATE and WHEN are compliant
+                var selectionSubjectInfo = GetSelectionInfo(evaluate, selectionSubject.BooleanComparisonVariable, selectionSubject.AlphanumericComparisonVariable);
+                if (selectionSubjectInfo.HasConflictingType(selectionObjectInfo))
+                {
+                    DiagnosticUtils.AddError(when, $"The object at position {index} in the \"WHEN\" phrase does not match the type of the corresponding subject in the \"EVALUATE\" statement");
+                }
+                else if (selectionSubjectInfo.IsLiteral)
+                {
+                    if (selectionObjectInfo.IsLiteral)
+                    {
+                        DiagnosticUtils.AddError(when, $"The literal {selectionObjectInfo.LiteralValue} is compared to another literal {selectionSubjectInfo.LiteralValue}: this is not valid");
+                    }
+                    if (selectionObjectInfo2 != null && selectionObjectInfo2.IsLiteral)
+                    {
+                        DiagnosticUtils.AddError(when, $"The literal {selectionObjectInfo2.LiteralValue} is compared to another literal {selectionSubjectInfo.LiteralValue}: this is not valid");
+                    }
+                }
+            }
+
+            (bool IsValid, SelectionInfo SelectionObjectInfo, SelectionInfo SelectionObjectInfo2) CheckWhen()
+            {
+                if (!CheckConditionalExpression(booleanComparisonVariable?.Expression, when, true))
+                {
+                    //  WHEN expression not valid
+                    return (false, null, null);
+                }
+
+                var selectionObjectInfo = GetSelectionInfo(when, booleanComparisonVariable, alphanumericComparisonVariable);
+
+                SelectionInfo selectionObjectInfo2 = null;
+                var alphanumericComparisonVariable2 = selectionObject.AlphanumericComparisonVariable2;
+                if (alphanumericComparisonVariable2 != null)
+                {
+                    // THRU => check range
+                    selectionObjectInfo2 = GetSelectionInfo(when, null, alphanumericComparisonVariable2);
+                    if (selectionObjectInfo2.IsBoolean() || selectionObjectInfo.IsBoolean())
+                    {
+                        // Range contains boolean expression => not valid
+                        DiagnosticUtils.AddError(when, "The THRU phrase is not valid");
+
+                        return (false, null, null);
+                    }
+
+                    if (!selectionObjectInfo.HasSameType(selectionObjectInfo2))
+                    {
+                        // Range contains different types => not valid
+                        DiagnosticUtils.AddError(when, "The objects in the THRU phrase must be of the same data type");
+
+                        return (false, null, null);
+                    }
+                }
+
+                return (true, selectionObjectInfo, selectionObjectInfo2);
+            }
+
+            SelectionInfo GetSelectionInfo(Node node, BooleanValueOrExpression booleanComparisonVariable, VariableOrExpression alphanumericComparisonVariable)
+            {
+                if (booleanComparisonVariable != null)
+                {
+                    if (booleanComparisonVariable.BooleanValue != null)
+                    {
+                        // Value TRUE/FALSE
+                        return new SelectionInfo(DataType.Boolean);
+                    }
+
+                    return GetSelectionInfoFromExpression(booleanComparisonVariable.Expression);
+
+                    SelectionInfo GetSelectionInfoFromExpression(ConditionalExpression conditionalExpression)
+                    {
+                        if (conditionalExpression == null) return new SelectionInfo(DataType.Unknown);
+
+                        switch (conditionalExpression)
+                        {
+                            case ConditionNameConditionOrSwitchStatusCondition conditionName:
+                                {
+                                    return GetSelectionInfoFromStorageArea(conditionName.ConditionReference);
+                                }
+
+                            case LogicalOperation complexCondition:
+                                {
+                                    SelectionInfo leftInfo = GetSelectionInfoFromExpression(complexCondition.LeftOperand);
+                                    SelectionInfo rightInfo = GetSelectionInfoFromExpression(complexCondition.RightOperand);
+
+                                    if ((complexCondition.LeftOperand == null) || leftInfo.HasSameType(rightInfo))
+                                    {
+                                        // Only right operand or left and right operand have same type
+                                        return rightInfo;
+                                    }
+
+                                    // Not valid (variable not referenced or mixed types)
+                                    return new SelectionInfo(DataType.Unknown);
+                                }
+
+                            default:
+                                // RelationCondition (for instance VAR1 = "A")
+                                return new SelectionInfo(DataType.Boolean);
+                        }
+                    }
+                }
+
+                if (alphanumericComparisonVariable.AlphanumericValue != null)
+                {
+                    // Literal alphanumeric
+                    return new SelectionInfo(DataType.Alphanumeric, alphanumericComparisonVariable.AlphanumericValue.ToString());
+                }
+                if (alphanumericComparisonVariable.NumericValue != null)
+                {
+                    // Literal numeric
+                    return new SelectionInfo(DataType.Numeric, alphanumericComparisonVariable.NumericValue.ToString());
+                }
+                if ((alphanumericComparisonVariable.ArithmeticExpression != null) ||
+                    (alphanumericComparisonVariable.RepeatedCharacterValue != null))
+                {
+                    // Arithmetic expression or figurative constants or ALL literal
+                    return new SelectionInfo(DataType.Alphanumeric);
+                }
+
+                // Variable
+                return GetSelectionInfoFromStorageArea(alphanumericComparisonVariable.StorageArea);
+
+                SelectionInfo GetSelectionInfoFromStorageArea(StorageArea storageArea)
+                {
+                    DataDefinition dataDefinition = node.GetDataDefinitionFromStorageAreaDictionary(storageArea, true);
+
+                    return new SelectionInfo(dataDefinition?.DataType ?? DataType.Unknown);
+                }
             }
         }
     }

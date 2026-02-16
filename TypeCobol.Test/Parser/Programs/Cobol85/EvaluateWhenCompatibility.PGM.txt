@@ -1,0 +1,64 @@
+﻿--- Diagnostics ---
+Line 23[17,33] <27, Error, Syntax> - Syntax error : The object at position 0 in the "WHEN" phrase does not match the type of the corresponding subject in the "EVALUATE" statement
+Line 25[17,35] <27, Error, Syntax> - Syntax error : The object at position 0 in the "WHEN" phrase does not match the type of the corresponding subject in the "EVALUATE" statement
+Line 27[17,29] <27, Error, Syntax> - Syntax error : The object at position 0 in the "WHEN" phrase does not match the type of the corresponding subject in the "EVALUATE" statement
+Line 29[17,35] <27, Error, Syntax> - Syntax error : The object at position 0 in the "WHEN" phrase does not match the type of the corresponding subject in the "EVALUATE" statement
+Line 35[17,25] <27, Error, Syntax> - Syntax error : The object at position 0 in the "WHEN" phrase does not match the type of the corresponding subject in the "EVALUATE" statement
+Line 39[17,29] <27, Error, Syntax> - Syntax error : The object at position 0 in the "WHEN" phrase does not match the type of the corresponding subject in the "EVALUATE" statement
+Line 41[17,28] <27, Error, Syntax> - Syntax error : The object at position 0 in the "WHEN" phrase does not match the type of the corresponding subject in the "EVALUATE" statement
+Line 58[17,26] <27, Error, Syntax> - Syntax error : The object at position 0 in the "WHEN" phrase does not match the type of the corresponding subject in the "EVALUATE" statement
+Line 60[17,25] <27, Error, Syntax> - Syntax error : The object at position 0 in the "WHEN" phrase does not match the type of the corresponding subject in the "EVALUATE" statement
+Line 64[17,30] <27, Error, Syntax> - Syntax error : The object at position 0 in the "WHEN" phrase does not match the type of the corresponding subject in the "EVALUATE" statement
+Line 77[17,33] <27, Error, Syntax> - Syntax error : The literal A is compared to another literal A: this is not valid
+Line 77[17,33] <27, Error, Syntax> - Syntax error : The literal B is compared to another literal A: this is not valid
+Line 81[17,29] <27, Error, Syntax> - Syntax error : The literal 1 is compared to another literal A: this is not valid
+Line 81[17,29] <27, Error, Syntax> - Syntax error : The literal 9 is compared to another literal A: this is not valid
+Line 85[17,26] <27, Error, Syntax> - Syntax error : The object at position 0 in the "WHEN" phrase does not match the type of the corresponding subject in the "EVALUATE" statement
+Line 87[17,25] <27, Error, Syntax> - Syntax error : The object at position 0 in the "WHEN" phrase does not match the type of the corresponding subject in the "EVALUATE" statement
+Line 91[17,30] <27, Error, Syntax> - Syntax error : The object at position 0 in the "WHEN" phrase does not match the type of the corresponding subject in the "EVALUATE" statement
+Line 95[17,28] <27, Error, Syntax> - Syntax error : The literal A is compared to another literal A: this is not valid
+Line 104[17,33] <27, Error, Syntax> - Syntax error : The object at position 0 in the "WHEN" phrase does not match the type of the corresponding subject in the "EVALUATE" statement
+Line 106[17,35] <27, Error, Syntax> - Syntax error : The object at position 0 in the "WHEN" phrase does not match the type of the corresponding subject in the "EVALUATE" statement
+Line 108[17,29] <27, Error, Syntax> - Syntax error : The object at position 0 in the "WHEN" phrase does not match the type of the corresponding subject in the "EVALUATE" statement
+Line 110[17,35] <27, Error, Syntax> - Syntax error : The object at position 0 in the "WHEN" phrase does not match the type of the corresponding subject in the "EVALUATE" statement
+Line 116[17,25] <27, Error, Syntax> - Syntax error : The object at position 0 in the "WHEN" phrase does not match the type of the corresponding subject in the "EVALUATE" statement
+Line 120[17,29] <27, Error, Syntax> - Syntax error : The object at position 0 in the "WHEN" phrase does not match the type of the corresponding subject in the "EVALUATE" statement
+Line 122[17,28] <27, Error, Syntax> - Syntax error : The object at position 0 in the "WHEN" phrase does not match the type of the corresponding subject in the "EVALUATE" statement
+Line 133[17,25] <27, Error, Syntax> - Syntax error : The object at position 0 in the "WHEN" phrase does not match the type of the corresponding subject in the "EVALUATE" statement
+Line 137[17,29] <27, Error, Syntax> - Syntax error : The object at position 0 in the "WHEN" phrase does not match the type of the corresponding subject in the "EVALUATE" statement
+Line 139[17,28] <27, Error, Syntax> - Syntax error : The object at position 0 in the "WHEN" phrase does not match the type of the corresponding subject in the "EVALUATE" statement
+Line 148[17,45] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the type of the corresponding subject in the "EVALUATE" statement
+Line 155[17,24] <27, Error, Syntax> - Syntax error : The literal B is compared to another literal A: this is not valid
+Line 157[17,22] <27, Error, Syntax> - Syntax error : The literal 9 is compared to another literal A: this is not valid
+Line 159[17,34] <27, Error, Syntax> - Syntax error : The literal Z is compared to another literal A: this is not valid
+Line 166[17,33] <27, Error, Syntax> - Syntax error : The literal B is compared to another literal 1: this is not valid
+Line 168[17,36] <27, Error, Syntax> - Syntax error : The literal 2 is compared to another literal 1: this is not valid
+Line 168[17,36] <27, Error, Syntax> - Syntax error : The literal 9 is compared to another literal 1: this is not valid
+Line 175[17,25] <27, Error, Syntax> - Syntax error : The number of WHEN objects is not equal to the number of EVALUATE subjects
+Line 179[17,46] <27, Error, Syntax> - Syntax error : The number of WHEN objects is not equal to the number of EVALUATE subjects
+Line 188[21,35] <30, Error, Semantics> - Semantic error: Symbol NOT-REFERENCED1 is not referenced OffendingSymbol=[21,35:NOT-REFERENCED1]<UserDefinedWord>
+Line 189[22,36] <30, Error, Semantics> - Semantic error: Symbol NOT-REFERENCED2 is not referenced OffendingSymbol=[22,36:NOT-REFERENCED2]<UserDefinedWord>
+
+--- Program ---
+PROGRAM: EVALWHEN common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Program:Global:Local
+-- DATA --------
+  MAIN-GROUP:Alphanumeric
+  VAR1:Alphanumeric
+  COND1:Level88
+  COND2:Level88
+  VAR2:Alphanumeric
+  VAR3:Alphanumeric
+  VAR4:?
+  VAR-INDEX1:Numeric
+  VAR-INDEX2:Numeric
+  VAR5:Alphabetic
+  VAR6:Numeric
+  VAR7:Numeric
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING
