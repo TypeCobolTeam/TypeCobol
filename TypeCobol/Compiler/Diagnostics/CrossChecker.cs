@@ -1540,7 +1540,7 @@ namespace TypeCobol.Compiler.Diagnostics
         }
     }
 
-        static class SectionOrParagraphUsageChecker
+    static class SectionOrParagraphUsageChecker
     {
         /// <summary>
         /// Disambiguate between Paragraph or Section reference.
