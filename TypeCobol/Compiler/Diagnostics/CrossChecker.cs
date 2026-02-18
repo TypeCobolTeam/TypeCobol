@@ -2043,7 +2043,7 @@ namespace TypeCobol.Compiler.Diagnostics
         /// <param name="when">The WHEN statement</param>
         /// <param name="selectionSubject">The selection subject (from EVALUATE)</param>
         /// <param name="selectionObject">The selection object (from WHEN)</param>
-        /// <param name="index">The 1 absed position of the selection subject/object</param>
+        /// <param name="index">The 1 based position of the selection subject/object</param>
         public static void CheckWhenStatement(Evaluate evaluate, When when, SelectionSubject selectionSubject, SelectionObject selectionObject, int index)
         {
             var booleanComparisonVariable = selectionObject.BooleanComparisonVariable;
