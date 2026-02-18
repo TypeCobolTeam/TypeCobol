@@ -1864,14 +1864,27 @@ namespace TypeCobol.Compiler.Diagnostics
             // Level 88 and Boolean are considered as Boolean
             public bool IsBoolean() => DataType == DataType.Level88 || DataType == DataType.Boolean;
 
+            /// <summary>
+            /// Create a SelectionInfo for a selection subject of an Evaluate statement 
+            /// </summary>
+            /// <param name="evaluate">The Evaluate statement </param>
+            /// <param name="selectionSubject">The selection subject</param>
+            /// <returns></returns>
             public static SelectionInfo Create(Evaluate evaluate, SelectionSubject selectionSubject)
             {
                 return GetSelectionInfo(evaluate, selectionSubject.BooleanComparisonVariable, selectionSubject.AlphanumericComparisonVariable);
             }
 
-            public static SelectionInfo Create(When when, SelectionObject selectionObject, bool from = true)
+            /// <summary>
+            /// Create a SelectionInfo for the selection object of an When statement by using the argument From or Thru of the range
+            /// </summary>
+            /// <param name="when">The When statement</param>
+            /// <param name="selectionObject">The selection object</param>
+            /// <param name="rangeFrom">Flag indicating whether the argument From of the range is used (default)</param>
+            /// <returns></returns>
+            public static SelectionInfo Create(When when, SelectionObject selectionObject, bool rangeFrom = true)
             {
-                if (from) return GetSelectionInfo(when, selectionObject.BooleanComparisonVariable, selectionObject.AlphanumericComparisonVariable);
+                if (rangeFrom) return GetSelectionInfo(when, selectionObject.BooleanComparisonVariable, selectionObject.AlphanumericComparisonVariable);
 
                 return GetSelectionInfo(when, null, selectionObject.AlphanumericComparisonVariable2);
             }
