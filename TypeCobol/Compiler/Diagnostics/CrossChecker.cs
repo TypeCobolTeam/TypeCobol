@@ -1823,6 +1823,8 @@ namespace TypeCobol.Compiler.Diagnostics
         // LiteralValue is only relevant for numeric and alphanumeric values
         private record SelectionInfo(DataType DataType, string LiteralValue = null)
         {
+            public static readonly SelectionInfo Unknown = new(DataType.Unknown);
+
             // TRUE for numeric and alphanumeric values only
             public bool IsLiteral => LiteralValue != null;
 
@@ -1903,7 +1905,7 @@ namespace TypeCobol.Compiler.Diagnostics
 
                     SelectionInfo GetSelectionInfoFromExpression(ConditionalExpression conditionalExpression)
                     {
-                        if (conditionalExpression == null) return new SelectionInfo(DataType.Unknown);
+                        if (conditionalExpression == null) return Unknown;
 
                         switch (conditionalExpression)
                         {
@@ -1924,7 +1926,7 @@ namespace TypeCobol.Compiler.Diagnostics
                                     }
 
                                     // Not valid (variable not referenced or mixed types)
-                                    return new SelectionInfo(DataType.Unknown);
+                                    return Unknown;
                                 }
 
                             default:
@@ -2057,39 +2059,37 @@ namespace TypeCobol.Compiler.Diagnostics
                 return;
             }
 
-            var (isValid, selectionObjectInfo, selectionObjectInfo2) = CheckWhen();
-            if (isValid)
+            var (selectionObjectInfo, selectionObjectInfo2) = CheckWhen();
+
+            // Check EVALUATE and WHEN are compliant
+            var selectionSubjectInfo = SelectionInfo.Create(evaluate, selectionSubject);
+            if (selectionSubjectInfo.HasConflictingType(selectionObjectInfo))
             {
-                // Check EVALUATE and WHEN are compliant
-                var selectionSubjectInfo = SelectionInfo.Create(evaluate, selectionSubject);
-                if (selectionSubjectInfo.HasConflictingType(selectionObjectInfo))
+                DiagnosticUtils.AddError(when, $"The object at position {index} in the \"WHEN\" phrase does not match the type of the corresponding subject in the \"EVALUATE\" statement");
+            }
+            else if (selectionSubjectInfo.IsLiteral)
+            {
+                if (selectionObjectInfo.IsLiteral)
                 {
-                    DiagnosticUtils.AddError(when, $"The object at position {index} in the \"WHEN\" phrase does not match the type of the corresponding subject in the \"EVALUATE\" statement");
+                    DiagnosticUtils.AddError(when, $"The literal \"{selectionObjectInfo.LiteralValue}\" is compared to another literal \"{selectionSubjectInfo.LiteralValue}\": this is not valid");
                 }
-                else if (selectionSubjectInfo.IsLiteral)
+                if (selectionObjectInfo2.IsLiteral)
                 {
-                    if (selectionObjectInfo.IsLiteral)
-                    {
-                        DiagnosticUtils.AddError(when, $"The literal \"{selectionObjectInfo.LiteralValue}\" is compared to another literal \"{selectionSubjectInfo.LiteralValue}\": this is not valid");
-                    }
-                    if (selectionObjectInfo2 != null && selectionObjectInfo2.IsLiteral)
-                    {
-                        DiagnosticUtils.AddError(when, $"The literal \"{selectionObjectInfo2.LiteralValue}\" is compared to another literal \"{selectionSubjectInfo.LiteralValue}\": this is not valid");
-                    }
+                    DiagnosticUtils.AddError(when, $"The literal \"{selectionObjectInfo2.LiteralValue}\" is compared to another literal \"{selectionSubjectInfo.LiteralValue}\": this is not valid");
                 }
             }
 
-            (bool IsValid, SelectionInfo SelectionObjectInfo, SelectionInfo SelectionObjectInfo2) CheckWhen()
+            (SelectionInfo SelectionObjectInfo, SelectionInfo SelectionObjectInfo2) CheckWhen()
             {
                 if (!CheckConditionalExpression(booleanComparisonVariable?.Expression, when, true))
                 {
                     //  WHEN expression not valid
-                    return (false, null, null);
+                    return (SelectionInfo.Unknown, SelectionInfo.Unknown);
                 }
 
                 var selectionObjectInfo = SelectionInfo.Create(when, selectionObject);
 
-                SelectionInfo selectionObjectInfo2 = null;
+                var selectionObjectInfo2 = SelectionInfo.Unknown;
                 var alphanumericComparisonVariable2 = selectionObject.AlphanumericComparisonVariable2;
                 if (alphanumericComparisonVariable2 != null)
                 {
@@ -2100,7 +2100,7 @@ namespace TypeCobol.Compiler.Diagnostics
                         // Range contains boolean expression => not valid
                         DiagnosticUtils.AddError(when, "The THRU phrase is not valid");
 
-                        return (false, null, null);
+                        return (SelectionInfo.Unknown, SelectionInfo.Unknown);
                     }
 
                     if (!selectionObjectInfo.HasSameType(selectionObjectInfo2))
@@ -2108,11 +2108,11 @@ namespace TypeCobol.Compiler.Diagnostics
                         // Range contains different types => not valid
                         DiagnosticUtils.AddError(when, "The objects in the THRU phrase must be of the same data type");
 
-                        return (false, null, null);
+                        return (SelectionInfo.Unknown, SelectionInfo.Unknown);
                     }
                 }
 
-                return (true, selectionObjectInfo, selectionObjectInfo2);
+                return (selectionObjectInfo, selectionObjectInfo2);
             }
         }
     }

@@ -55,6 +55,8 @@
            END-EVALUATE
 
            EVALUATE "A"
+                WHEN 1 THRU VAR1
+                    DISPLAY "KO: WHEN NOT VALID"
                 WHEN VAR1 THRU VAR2
                     DISPLAY "OK"
                 WHEN NOT VAR1
