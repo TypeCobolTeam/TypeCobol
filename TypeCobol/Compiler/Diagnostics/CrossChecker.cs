@@ -1972,8 +1972,7 @@ namespace TypeCobol.Compiler.Diagnostics
         /// <param name="node">The node containing the conditional expression</param>
         /// <param name="checkOnlyMultipleExpression">A flag indicating whether only multiple expression should be checked.
         /// For instance, a PIC X variable used as a single expression is valid in EVALUATE but not in IF</param>
-        /// <returns>true if OK</returns>
-        public static bool CheckConditionalExpression(ConditionalExpression conditionalExpression, Node node, bool checkOnlyMultipleExpression = false)
+        public static void CheckConditionalExpression(ConditionalExpression conditionalExpression, Node node, bool checkOnlyMultipleExpression = false)
         {
             int nbExpression = 0;
             List<(DataDefinition dataDefinition, SymbolReference symbolReference)> dataDefinitionsFromConditionalName = [];
@@ -1981,22 +1980,19 @@ namespace TypeCobol.Compiler.Diagnostics
 
             if (checkOnlyMultipleExpression && nbExpression < 2)
             {
-                return true;
+                // Nothing to do
+                return;
             }
 
-            bool ok = true;
             foreach (var (dataDefinition, symbolReference) in dataDefinitionsFromConditionalName)
             {
                 // Data condition and TypeCobol boolean are the only types allowed in conditional expressions
                 var dataType = dataDefinition.DataType;
                 if (dataType != DataType.Level88 && dataType != DataType.Boolean)
                 {
-                    ok = false;
                     DiagnosticUtils.AddError(node, $"An incomplete condition {dataDefinition.Name} was found in a conditional expression.", symbolReference);
                 }
             }
-
-            return ok;
 
             void CollectVariablesFromConditionalExpression(ConditionalExpression conditionalExpression)
             {
@@ -2081,11 +2077,7 @@ namespace TypeCobol.Compiler.Diagnostics
 
             (SelectionInfo SelectionObjectInfo, SelectionInfo SelectionObjectInfo2) CheckWhen()
             {
-                if (!CheckConditionalExpression(booleanComparisonVariable?.Expression, when, true))
-                {
-                    //  WHEN expression not valid
-                    return (SelectionInfo.Unknown, SelectionInfo.Unknown);
-                }
+                CheckConditionalExpression(booleanComparisonVariable?.Expression, when, true);
 
                 var selectionObjectInfo = SelectionInfo.Create(when, selectionObject);
 
