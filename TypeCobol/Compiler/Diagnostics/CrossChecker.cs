@@ -605,25 +605,25 @@ namespace TypeCobol.Compiler.Diagnostics
             else if (when.Parent?.Parent is Evaluate evaluate) 
             {
                 SelectionObject[] selectionObjects = when.CodeElement.SelectionObjects;
-                if (selectionObjects.Count() == 0)
+                if (selectionObjects.Length == 0)
                 {
                     // Nothing in WHEN = nothing to do
                     return true;
                 }
 
                 SelectionSubject[] selectionSubjects = evaluate.CodeElement.SelectionSubjects;
-                if (selectionSubjects.Count() != selectionObjects.Count())
+                if (selectionSubjects.Length != selectionObjects.Length)
                 {
-                    DiagnosticUtils.AddError(when, "The number of WHEN objects is not equal to the number of EVALUATE subjects");
+                    DiagnosticUtils.AddError(when, "The number of WHEN objects does not match the number of EVALUATE subjects");
                 }
                 else
                 {
                     // Check selection subject and object having the same ordinal position
-                    for (int index = 0; index < selectionSubjects.Count(); index++)
+                    for (int index = 0; index < selectionSubjects.Length; index++)
                     {
                         var selectionSubject = selectionSubjects[index];
                         var selectionObject = selectionObjects[index];
-                        ConditionChecker.CheckWhenStatement(evaluate, when, selectionSubject, selectionObject, index);
+                        ConditionChecker.CheckWhenStatement(evaluate, when, selectionSubject, selectionObject, index + 1);
                     }
                 }
             }
@@ -1818,30 +1818,17 @@ namespace TypeCobol.Compiler.Diagnostics
     // Specific Checker for Condition
     static class ConditionChecker
     {
-        // Structure gathering information about SelectionSubject (from EVALUATE) or SelectionObject (from WHEN)
-        private record SelectionInfo
+        // Structure gathering information about SelectionSubject (from EVALUATE) or SelectionObject (from WHEN):
+        // DataType is computed from condition or expression and set to Unknown if not valid
+        // LiteralValue is only relevant for numeric and alphanumeric values
+        private record SelectionInfo(DataType DataType, string LiteralValue = null)
         {
-            // DataType computed from condition or expression
-            // Set to Unknown if condition or expression is not valid
-            public DataType DataType { get; init; }
-
-            // For numeric and alphanumeric values only
-            public string LiteralValue { get; init; }
-
-            public SelectionInfo(DataType dataType, string literalValue)
-            {
-                DataType = dataType;
-                LiteralValue = literalValue;
-            }
-
-            public SelectionInfo(DataType dataType) : this(dataType, null) { }
-
             // TRUE for numeric and alphanumeric values only
             public bool IsLiteral => LiteralValue != null;
 
             /// <summary>
-            /// Determines whether the given object is conflicting with the current one by comparing their type.
-            /// If both types are valid, a conflict occurs when one is Boolean and the other one not.
+            /// Determines whether the given object is conflicting with the current one by comparing their types.
+            /// If both types are valid, a conflict occurs when one is Boolean and the other isn't.
             /// </summary>
             /// <param name="other">The other object to be compared to the current one</param>
             /// <returns>true if conflict</returns>
@@ -1876,6 +1863,91 @@ namespace TypeCobol.Compiler.Diagnostics
 
             // Level 88 and Boolean are considered as Boolean
             public bool IsBoolean() => DataType == DataType.Level88 || DataType == DataType.Boolean;
+
+            public static SelectionInfo Create(Evaluate evaluate, SelectionSubject selectionSubject)
+            {
+                return GetSelectionInfo(evaluate, selectionSubject.BooleanComparisonVariable, selectionSubject.AlphanumericComparisonVariable);
+            }
+
+            public static SelectionInfo Create(When when, SelectionObject selectionObject, bool from = true)
+            {
+                if (from) return GetSelectionInfo(when, selectionObject.BooleanComparisonVariable, selectionObject.AlphanumericComparisonVariable);
+
+                return GetSelectionInfo(when, null, selectionObject.AlphanumericComparisonVariable2);
+            }
+
+            private static SelectionInfo GetSelectionInfo(Node node, BooleanValueOrExpression booleanComparisonVariable, VariableOrExpression alphanumericComparisonVariable)
+            {
+                if (booleanComparisonVariable != null)
+                {
+                    if (booleanComparisonVariable.BooleanValue != null)
+                    {
+                        // Value TRUE/FALSE
+                        return new SelectionInfo(DataType.Boolean);
+                    }
+
+                    return GetSelectionInfoFromExpression(booleanComparisonVariable.Expression);
+
+                    SelectionInfo GetSelectionInfoFromExpression(ConditionalExpression conditionalExpression)
+                    {
+                        if (conditionalExpression == null) return new SelectionInfo(DataType.Unknown);
+
+                        switch (conditionalExpression)
+                        {
+                            case ConditionNameConditionOrSwitchStatusCondition conditionName:
+                                {
+                                    return GetSelectionInfoFromStorageArea(conditionName.ConditionReference);
+                                }
+
+                            case LogicalOperation complexCondition:
+                                {
+                                    SelectionInfo leftInfo = GetSelectionInfoFromExpression(complexCondition.LeftOperand);
+                                    SelectionInfo rightInfo = GetSelectionInfoFromExpression(complexCondition.RightOperand);
+
+                                    if ((complexCondition.LeftOperand == null) || leftInfo.HasSameType(rightInfo))
+                                    {
+                                        // Only right operand or left and right operand have same type
+                                        return rightInfo;
+                                    }
+
+                                    // Not valid (variable not referenced or mixed types)
+                                    return new SelectionInfo(DataType.Unknown);
+                                }
+
+                            default:
+                                // RelationCondition (for instance VAR1 = "A")
+                                return new SelectionInfo(DataType.Boolean);
+                        }
+                    }
+                }
+
+                if (alphanumericComparisonVariable.AlphanumericValue != null)
+                {
+                    // Literal alphanumeric
+                    return new SelectionInfo(DataType.Alphanumeric, alphanumericComparisonVariable.AlphanumericValue.ToString());
+                }
+                if (alphanumericComparisonVariable.NumericValue != null)
+                {
+                    // Literal numeric
+                    return new SelectionInfo(DataType.Numeric, alphanumericComparisonVariable.NumericValue.ToString());
+                }
+                if ((alphanumericComparisonVariable.ArithmeticExpression != null) ||
+                    (alphanumericComparisonVariable.RepeatedCharacterValue != null))
+                {
+                    // Arithmetic expression or figurative constants or ALL literal
+                    return new SelectionInfo(DataType.Alphanumeric);
+                }
+
+                // Variable
+                return GetSelectionInfoFromStorageArea(alphanumericComparisonVariable.StorageArea);
+
+                SelectionInfo GetSelectionInfoFromStorageArea(StorageArea storageArea)
+                {
+                    DataDefinition dataDefinition = node.GetDataDefinitionFromStorageAreaDictionary(storageArea, true);
+
+                    return new SelectionInfo(dataDefinition?.DataType ?? DataType.Unknown);
+                }
+            }
         }
 
         /// <summary>
@@ -1960,7 +2032,7 @@ namespace TypeCobol.Compiler.Diagnostics
         /// <param name="when">The WHEN statement</param>
         /// <param name="selectionSubject">The selection subject (from EVALUATE)</param>
         /// <param name="selectionObject">The selection object (from WHEN)</param>
-        /// <param name="index">The position of the selection subject/object</param>
+        /// <param name="index">The 1 absed position of the selection subject/object</param>
         public static void CheckWhenStatement(Evaluate evaluate, When when, SelectionSubject selectionSubject, SelectionObject selectionObject, int index)
         {
             var booleanComparisonVariable = selectionObject.BooleanComparisonVariable;
@@ -1976,7 +2048,7 @@ namespace TypeCobol.Compiler.Diagnostics
             if (isValid)
             {
                 // Check EVALUATE and WHEN are compliant
-                var selectionSubjectInfo = GetSelectionInfo(evaluate, selectionSubject.BooleanComparisonVariable, selectionSubject.AlphanumericComparisonVariable);
+                var selectionSubjectInfo = SelectionInfo.Create(evaluate, selectionSubject);
                 if (selectionSubjectInfo.HasConflictingType(selectionObjectInfo))
                 {
                     DiagnosticUtils.AddError(when, $"The object at position {index} in the \"WHEN\" phrase does not match the type of the corresponding subject in the \"EVALUATE\" statement");
@@ -1985,11 +2057,11 @@ namespace TypeCobol.Compiler.Diagnostics
                 {
                     if (selectionObjectInfo.IsLiteral)
                     {
-                        DiagnosticUtils.AddError(when, $"The literal {selectionObjectInfo.LiteralValue} is compared to another literal {selectionSubjectInfo.LiteralValue}: this is not valid");
+                        DiagnosticUtils.AddError(when, $"The literal \"{selectionObjectInfo.LiteralValue}\" is compared to another literal \"{selectionSubjectInfo.LiteralValue}\": this is not valid");
                     }
                     if (selectionObjectInfo2 != null && selectionObjectInfo2.IsLiteral)
                     {
-                        DiagnosticUtils.AddError(when, $"The literal {selectionObjectInfo2.LiteralValue} is compared to another literal {selectionSubjectInfo.LiteralValue}: this is not valid");
+                        DiagnosticUtils.AddError(when, $"The literal \"{selectionObjectInfo2.LiteralValue}\" is compared to another literal \"{selectionSubjectInfo.LiteralValue}\": this is not valid");
                     }
                 }
             }
@@ -2002,14 +2074,14 @@ namespace TypeCobol.Compiler.Diagnostics
                     return (false, null, null);
                 }
 
-                var selectionObjectInfo = GetSelectionInfo(when, booleanComparisonVariable, alphanumericComparisonVariable);
+                var selectionObjectInfo = SelectionInfo.Create(when, selectionObject);
 
                 SelectionInfo selectionObjectInfo2 = null;
                 var alphanumericComparisonVariable2 = selectionObject.AlphanumericComparisonVariable2;
                 if (alphanumericComparisonVariable2 != null)
                 {
                     // THRU => check range
-                    selectionObjectInfo2 = GetSelectionInfo(when, null, alphanumericComparisonVariable2);
+                    selectionObjectInfo2 = SelectionInfo.Create(when, selectionObject, false);
                     if (selectionObjectInfo2.IsBoolean() || selectionObjectInfo.IsBoolean())
                     {
                         // Range contains boolean expression => not valid
@@ -2028,79 +2100,6 @@ namespace TypeCobol.Compiler.Diagnostics
                 }
 
                 return (true, selectionObjectInfo, selectionObjectInfo2);
-            }
-
-            SelectionInfo GetSelectionInfo(Node node, BooleanValueOrExpression booleanComparisonVariable, VariableOrExpression alphanumericComparisonVariable)
-            {
-                if (booleanComparisonVariable != null)
-                {
-                    if (booleanComparisonVariable.BooleanValue != null)
-                    {
-                        // Value TRUE/FALSE
-                        return new SelectionInfo(DataType.Boolean);
-                    }
-
-                    return GetSelectionInfoFromExpression(booleanComparisonVariable.Expression);
-
-                    SelectionInfo GetSelectionInfoFromExpression(ConditionalExpression conditionalExpression)
-                    {
-                        if (conditionalExpression == null) return new SelectionInfo(DataType.Unknown);
-
-                        switch (conditionalExpression)
-                        {
-                            case ConditionNameConditionOrSwitchStatusCondition conditionName:
-                                {
-                                    return GetSelectionInfoFromStorageArea(conditionName.ConditionReference);
-                                }
-
-                            case LogicalOperation complexCondition:
-                                {
-                                    SelectionInfo leftInfo = GetSelectionInfoFromExpression(complexCondition.LeftOperand);
-                                    SelectionInfo rightInfo = GetSelectionInfoFromExpression(complexCondition.RightOperand);
-
-                                    if ((complexCondition.LeftOperand == null) || leftInfo.HasSameType(rightInfo))
-                                    {
-                                        // Only right operand or left and right operand have same type
-                                        return rightInfo;
-                                    }
-
-                                    // Not valid (variable not referenced or mixed types)
-                                    return new SelectionInfo(DataType.Unknown);
-                                }
-
-                            default:
-                                // RelationCondition (for instance VAR1 = "A")
-                                return new SelectionInfo(DataType.Boolean);
-                        }
-                    }
-                }
-
-                if (alphanumericComparisonVariable.AlphanumericValue != null)
-                {
-                    // Literal alphanumeric
-                    return new SelectionInfo(DataType.Alphanumeric, alphanumericComparisonVariable.AlphanumericValue.ToString());
-                }
-                if (alphanumericComparisonVariable.NumericValue != null)
-                {
-                    // Literal numeric
-                    return new SelectionInfo(DataType.Numeric, alphanumericComparisonVariable.NumericValue.ToString());
-                }
-                if ((alphanumericComparisonVariable.ArithmeticExpression != null) ||
-                    (alphanumericComparisonVariable.RepeatedCharacterValue != null))
-                {
-                    // Arithmetic expression or figurative constants or ALL literal
-                    return new SelectionInfo(DataType.Alphanumeric);
-                }
-
-                // Variable
-                return GetSelectionInfoFromStorageArea(alphanumericComparisonVariable.StorageArea);
-
-                SelectionInfo GetSelectionInfoFromStorageArea(StorageArea storageArea)
-                {
-                    DataDefinition dataDefinition = node.GetDataDefinitionFromStorageAreaDictionary(storageArea, true);
-
-                    return new SelectionInfo(dataDefinition?.DataType ?? DataType.Unknown);
-                }
             }
         }
     }

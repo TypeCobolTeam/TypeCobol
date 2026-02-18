@@ -5,7 +5,7 @@ Line 88[17,35] <27, Error, Syntax> - Syntax error : The THRU phrase is not valid
 Line 95[17,36] <27, Error, Syntax> - Syntax error : The THRU phrase is not valid
 Line 102[27,30] <27, Error, Syntax> - Syntax error : extraneous input 'THRU' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[27,30:THRU]<THRU>
 Line 113[33,36] <27, Error, Syntax> - Syntax error : extraneous input 'THRU' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[33,36:THRU]<THRU>
-Line 113[17,31] <27, Error, Syntax> - Syntax error : The object at position 0 in the "WHEN" phrase does not match the type of the corresponding subject in the "EVALUATE" statement
+Line 113[17,31] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the type of the corresponding subject in the "EVALUATE" statement
 Line 120[17,36] <27, Error, Syntax> - Syntax error : The THRU phrase is not valid
 Line 127[17,31] <27, Error, Syntax> - Syntax error : The objects in the THRU phrase must be of the same data type
 Line 129[17,31] <27, Error, Syntax> - Syntax error : The objects in the THRU phrase must be of the same data type
