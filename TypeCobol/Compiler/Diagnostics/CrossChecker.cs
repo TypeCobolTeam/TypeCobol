@@ -623,6 +623,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     {
                         var selectionSubject = selectionSubjects[index];
                         var selectionObject = selectionObjects[index];
+                        // Ordinal position + 1 because starts counting at 1 in possible diagnostic
                         ConditionChecker.CheckWhenStatement(evaluate, when, selectionSubject, selectionObject, index + 1);
                     }
                 }
@@ -1960,7 +1961,8 @@ namespace TypeCobol.Compiler.Diagnostics
                 {
                     DataDefinition dataDefinition = node.GetDataDefinitionFromStorageAreaDictionary(storageArea, true);
 
-                    return new SelectionInfo(dataDefinition?.DataType ?? DataType.Unknown);
+                    var dataType = dataDefinition?.DataType;
+                    return dataType != null ? new SelectionInfo(dataType) : Unknown;
                 }
             }
         }
