@@ -1822,9 +1822,9 @@ namespace TypeCobol.Compiler.Diagnostics
         // Structure gathering information about SelectionSubject (from EVALUATE) or SelectionObject (from WHEN):
         // DataType is computed from condition or expression and set to Unknown if not valid
         // LiteralValue is only relevant for numeric and alphanumeric values
-        private record SelectionInfo(DataType DataType, string LiteralValue = null)
+        private record SelectionInfo(DataType DataType, DataUsage? Usage, string LiteralValue = null)
         {
-            public static readonly SelectionInfo Unknown = new(DataType.Unknown);
+            public static readonly SelectionInfo Unknown = new(DataType.Unknown, DataUsage.None);
 
             // TRUE for numeric and alphanumeric values only
             public bool IsLiteral => LiteralValue != null;
@@ -1838,6 +1838,50 @@ namespace TypeCobol.Compiler.Diagnostics
             public bool HasConflictingType(SelectionInfo other)
             {
                 return DataType != DataType.Unknown && other != null && other.DataType != DataType.Unknown && IsBoolean() != other.IsBoolean();
+            }
+
+            /// <summary>
+            /// Determines whether the given subject and object are conflicting by comparing their usages (check is not symetric!).
+            /// </summary>
+            /// <param name="subjectSelectionInfo">The subject's SelectionInfo</param>
+            /// <param name="objectSelectionInfo">The object's SelectionInfo</param>
+            /// <returns>true if conflict</returns>
+            public static bool HasConflictingUsage(SelectionInfo subjectSelectionInfo, SelectionInfo objectSelectionInfo)
+            {
+                var subjectUsage = subjectSelectionInfo?.Usage ?? DataUsage.None;
+                var objectUsage = objectSelectionInfo?.Usage ?? DataUsage.None;
+
+                // None and UTF-8 (which is not managed, see #2504) are ignored
+                if (objectUsage is DataUsage.None or DataUsage.UTF8) return false;
+
+                return subjectUsage switch
+                {
+                    // Binary + all COMPs are compatible
+                    DataUsage.Binary or DataUsage.NativeBinary or DataUsage.PackedDecimal or DataUsage.FloatingPoint or DataUsage.LongFloatingPoint =>
+                        objectUsage is not DataUsage.Binary and not DataUsage.NativeBinary and not DataUsage.PackedDecimal and
+                        not DataUsage.FloatingPoint and not DataUsage.LongFloatingPoint,
+                    // National is compatible with Display
+                    DataUsage.Display =>
+                        objectUsage is not DataUsage.Display and not DataUsage.National,
+                    // National is compatible with DBCS
+                    DataUsage.DBCS =>
+                        objectUsage is not DataUsage.DBCS and not DataUsage.National,
+                    DataUsage.Index =>
+                        objectUsage != DataUsage.Index,
+                    // Display and DBCS are compatible with National
+                    DataUsage.National =>
+                        objectUsage is not DataUsage.Display and not DataUsage.DBCS and not DataUsage.National,
+                    DataUsage.ObjectReference =>
+                        objectUsage != DataUsage.ObjectReference,
+                    // Pointer and Pointer32 are compatible
+                    DataUsage.Pointer or DataUsage.Pointer32 =>
+                        objectUsage is not DataUsage.Pointer and not DataUsage.Pointer32,
+                    // FunctionPointer and ProcedurePointer are compatible
+                    DataUsage.FunctionPointer or DataUsage.ProcedurePointer =>
+                        objectUsage is not DataUsage.FunctionPointer and not DataUsage.ProcedurePointer,
+                    // None or UTF-8
+                    _ => false,
+                };
             }
 
             /// <summary>
@@ -1899,7 +1943,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     if (booleanComparisonVariable.BooleanValue != null)
                     {
                         // Value TRUE/FALSE
-                        return new SelectionInfo(DataType.Boolean);
+                        return new SelectionInfo(DataType.Boolean, DataUsage.None);
                     }
 
                     return GetSelectionInfoFromExpression(booleanComparisonVariable.Expression);
@@ -1932,7 +1976,7 @@ namespace TypeCobol.Compiler.Diagnostics
 
                             default:
                                 // RelationCondition (for instance VAR1 = "A")
-                                return new SelectionInfo(DataType.Boolean);
+                                return new SelectionInfo(DataType.Boolean, DataUsage.None);
                         }
                     }
                 }
@@ -1940,18 +1984,18 @@ namespace TypeCobol.Compiler.Diagnostics
                 if (alphanumericComparisonVariable.AlphanumericValue != null)
                 {
                     // Literal alphanumeric
-                    return new SelectionInfo(DataType.Alphanumeric, alphanumericComparisonVariable.AlphanumericValue.ToString());
+                    return new SelectionInfo(DataType.Alphanumeric, DataUsage.None, alphanumericComparisonVariable.AlphanumericValue.ToString());
                 }
                 if (alphanumericComparisonVariable.NumericValue != null)
                 {
                     // Literal numeric
-                    return new SelectionInfo(DataType.Numeric, alphanumericComparisonVariable.NumericValue.ToString());
+                    return new SelectionInfo(DataType.Numeric, DataUsage.None, alphanumericComparisonVariable.NumericValue.ToString());
                 }
                 if ((alphanumericComparisonVariable.ArithmeticExpression != null) ||
                     (alphanumericComparisonVariable.RepeatedCharacterValue != null))
                 {
                     // Arithmetic expression or figurative constants or ALL literal
-                    return new SelectionInfo(DataType.Alphanumeric);
+                    return new SelectionInfo(DataType.Alphanumeric, DataUsage.None);
                 }
 
                 // Variable
@@ -1962,7 +2006,9 @@ namespace TypeCobol.Compiler.Diagnostics
                     DataDefinition dataDefinition = node.GetDataDefinitionFromStorageAreaDictionary(storageArea, true);
 
                     var dataType = dataDefinition?.DataType;
-                    return dataType != null ? new SelectionInfo(dataType) : Unknown;
+                    var usage = dataDefinition?.Usage ?? DataUsage.None;
+
+                    return dataType != null ? new SelectionInfo(dataType, usage) : Unknown;
                 }
             }
         }
@@ -2075,6 +2121,10 @@ namespace TypeCobol.Compiler.Diagnostics
                 {
                     DiagnosticUtils.AddError(when, $"The literal \"{selectionObjectInfo2.LiteralValue}\" is compared to another literal \"{selectionSubjectInfo.LiteralValue}\": this is not valid");
                 }
+            }
+            else if (SelectionInfo.HasConflictingUsage(selectionSubjectInfo, selectionObjectInfo))
+            {
+                DiagnosticUtils.AddError(when, $"The object at position {index} in the \"WHEN\" phrase does not match the usage of the corresponding subject in the \"EVALUATE\" statement");
             }
 
             (SelectionInfo SelectionObjectInfo, SelectionInfo SelectionObjectInfo2) CheckWhen()

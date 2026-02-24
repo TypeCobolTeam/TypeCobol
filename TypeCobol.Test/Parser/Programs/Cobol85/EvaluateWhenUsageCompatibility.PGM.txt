@@ -1,0 +1,250 @@
+﻿--- Diagnostics ---
+Line 24[11,30] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[11,30:VAR-OBJECT-REFERENCE]<UserDefinedWord>
+Line 31[50,54] <27, Error, Syntax> - Syntax error : USAGE UTF-8 is not supported. OffendingSymbol=[50,54:UTF-8]<UTF_8>
+Line 31[11,18] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[11,18:VAR-UTF8]<UserDefinedWord>
+Line 52[16,31] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 54[16,32] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 56[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 58[16,32] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 60[16,40] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 62[16,31] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 64[16,33] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 66[16,40] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 68[16,41] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 93[16,31] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 95[16,32] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 97[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 99[16,32] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 101[16,40] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 103[16,31] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 105[16,33] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 107[16,40] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 109[16,41] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 134[16,31] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 136[16,32] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 138[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 140[16,32] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 142[16,40] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 144[16,31] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 146[16,33] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 148[16,40] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 150[16,41] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 175[16,31] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 177[16,32] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 179[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 181[16,32] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 183[16,40] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 185[16,31] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 187[16,33] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 189[16,40] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 191[16,41] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 216[16,31] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 218[16,32] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 220[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 222[16,32] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 224[16,40] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 226[16,31] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 228[16,33] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 230[16,40] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 232[16,41] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 257[16,31] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 259[16,32] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 261[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 263[16,32] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 265[16,40] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 267[16,31] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 269[16,33] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 271[16,40] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 273[16,41] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 298[16,31] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 300[16,32] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 302[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 304[16,32] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 306[16,40] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 308[16,31] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 310[16,33] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 312[16,40] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 314[16,41] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 339[16,31] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 341[16,32] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 343[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 345[16,32] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 347[16,40] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 349[16,31] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 351[16,33] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 353[16,40] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 355[16,41] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 368[16,30] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 370[16,28] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 372[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 374[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 376[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 378[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 380[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 382[16,38] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 384[16,32] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 386[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 388[16,40] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 390[16,31] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 392[16,33] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 394[16,40] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 396[16,41] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 409[16,30] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 411[16,28] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 413[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 415[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 417[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 419[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 421[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 423[16,38] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 425[16,31] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 427[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 429[16,40] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 431[16,31] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 433[16,33] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 435[16,40] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 437[16,41] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 452[16,30] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 454[16,28] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 456[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 458[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 460[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 462[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 464[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 466[16,38] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 468[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 470[16,40] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 472[16,31] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 474[16,33] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 476[16,40] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 478[16,41] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 489[16,30] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 491[16,28] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 493[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 495[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 497[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 499[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 501[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 503[16,38] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 505[16,31] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 507[16,32] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 509[16,32] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 511[16,40] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 513[16,31] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 515[16,33] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 517[16,40] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 519[16,41] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 530[16,30] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 532[16,28] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 534[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 536[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 538[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 540[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 542[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 544[16,38] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 546[16,31] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 548[16,32] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 550[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 552[16,32] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 554[16,31] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 556[16,33] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 558[16,40] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 560[16,41] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 573[16,30] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 575[16,28] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 577[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 579[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 581[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 583[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 585[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 587[16,38] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 589[16,31] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 591[16,32] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 593[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 595[16,32] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 597[16,40] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 599[16,40] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 601[16,41] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 614[16,30] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 616[16,28] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 618[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 620[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 622[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 624[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 626[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 628[16,38] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 630[16,31] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 632[16,32] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 634[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 636[16,32] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 638[16,40] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 640[16,40] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 642[16,41] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 655[16,30] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 657[16,28] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 659[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 661[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 663[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 665[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 667[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 669[16,38] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 671[16,31] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 673[16,32] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 675[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 677[16,32] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 679[16,40] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 681[16,38] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 683[16,31] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 685[16,33] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 698[16,30] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 700[16,28] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 702[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 704[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 706[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 708[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 710[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 712[16,38] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 714[16,31] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 716[16,32] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 718[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 720[16,32] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 722[16,40] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 724[16,31] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+Line 726[16,33] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
+
+--- Program ---
+PROGRAM: EVALWHEN common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Program:Global:Local
+-- DATA --------
+  GRP-BINARY:Alphanumeric
+  VAR-BINARY:Numeric
+  VAR-COMP:Numeric
+  VAR-COMP1:Alphanumeric
+  GRP-COMP2:Alphanumeric
+  VAR-COMP2:Alphanumeric
+  VAR-COMP3:Numeric
+  GRP-COMP4:Alphanumeric
+  VAR-COMP4:Numeric
+  VAR-COMP5:Numeric
+  VAR-PACKED-DECIMAL:Numeric
+  VAR-DISPLAY1:DBCS
+  GRP-DISPLAY:Alphanumeric
+  VAR-DISPLAY:Alphanumeric
+  VAR-NATIONAL:National
+  GRP-INDEX:Alphanumeric
+  VAR-INDEX:Alphanumeric
+  VAR-OBJECT-REFERENCE:Alphanumeric
+  GRP-POINTER:Alphanumeric
+  VAR-POINTER:Alphanumeric
+  VAR-POINTER32:Alphanumeric
+  GRP-FUNCTION-POINTER:Alphanumeric
+  VAR-FUNCTION-POINTER:Alphanumeric
+  VAR-PROCEDURE-POINTER:Alphanumeric
+  VAR-UTF8:Alphanumeric
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING
