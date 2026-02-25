@@ -1,5 +1,5 @@
-Line 9[35,41] <27, Error, Syntax> - Syntax error : OCCURS cannot be specified for data VAR-OCC which is redefined.
-Line 15[36,43] <27, Error, Syntax> - Syntax error : OCCURS cannot be specified for data VAR-OCC2 which is redefined.
+Line 9[35,41] <27, Error, Syntax> - Syntax error : REDEFINES cannot be specified for a data having an OCCURS clause.
+Line 15[36,43] <27, Error, Syntax> - Syntax error : REDEFINES cannot be specified for a data having an OCCURS clause.
 --- Nodes ---
 ?
   TCOCCLVL

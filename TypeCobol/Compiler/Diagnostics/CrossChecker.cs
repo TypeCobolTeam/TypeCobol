@@ -87,9 +87,31 @@ namespace TypeCobol.Compiler.Diagnostics
 
         public override bool Visit(DataRedefines dataRedefines)
         {
-            RedefinesChecker.OnNode(dataRedefines);
+            
+            var redefinesSymbolReference = dataRedefines.CodeElement.RedefinesDataName;
+            var redefinedVariable = dataRedefines.RedefinedVariable;
+
+            if (redefinedVariable == null)
+            {
+                var message = redefinesSymbolReference.Name != null
+                    ? "Illegal REDEFINES: Symbol \'" + redefinesSymbolReference + "\' is not referenced"
+                    : "Illegal REDEFINES: Target cannot be identified";
+                DiagnosticUtils.AddError(dataRedefines, message, redefinesSymbolReference, code: MessageCode.SemanticTCErrorInParser);
+                return true;
+            }
+            redefinedVariable.AddDataRedefinition(dataRedefines);
+
+            // An OCCURS clause cannot be specified for a data which is redefined.
+            if (redefinedVariable.IsTableOccurence)
+            {
+                DiagnosticUtils.AddError(dataRedefines, "REDEFINES cannot be specified for a data having an OCCURS clause.", redefinesSymbolReference);
+                return true;
+            }
+
+            RedefinesChecker.OnNode(dataRedefines, redefinedVariable, redefinesSymbolReference);
             return true;
         }
+
         public override bool Visit(DataRenames dataRenames)
         {
             RenamesChecker.OnNode(dataRenames);

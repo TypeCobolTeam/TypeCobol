@@ -128,42 +128,20 @@ namespace TypeCobol.Compiler.Diagnostics
 
     class RedefinesChecker
     {
-        public static void OnNode(DataRedefines redefinesNode)
+        public static void OnNode(DataRedefines redefinesNode,DataDefinition redefinedVariable, SymbolReference redefinesSymbolReference)
         {
-            if (redefinesNode == null)
-                return; //not my job
-
+            
             if (redefinesNode.IsPartOfATypeDef)
             {
                 DiagnosticUtils.AddError(redefinesNode, "Illegal REDEFINES as part of a TYPEDEF",
                     MessageCode.SemanticTCErrorInParser);
             }
 
-            var redefinesSymbolReference = redefinesNode.CodeElement.RedefinesDataName;
-            var redefinedVariable = redefinesNode.RedefinedVariable;
-
-            if (redefinedVariable == null)
-            {
-                var message = redefinesSymbolReference.Name != null
-                    ? "Illegal REDEFINES: Symbol \'" + redefinesSymbolReference + "\' is not referenced"
-                    : "Illegal REDEFINES: Target cannot be identified";
-                DiagnosticUtils.AddError(redefinesNode, message, redefinesSymbolReference, code: MessageCode.SemanticTCErrorInParser);
-                return;
-            }
-            redefinedVariable.AddDataRedefinition(redefinesNode);
-
-
             if (redefinedVariable.IsStronglyTyped || redefinedVariable.IsStrictlyTyped)
             {
                 string message = string.Format("Illegal REDEFINES: '{0}' is {1}", redefinesSymbolReference,
                     redefinedVariable.IsStronglyTyped ? "strongly-typed" : "strictly-typed");
                 DiagnosticUtils.AddError(redefinesNode, message, redefinesSymbolReference, code:MessageCode.SemanticTCErrorInParser);
-            }
-
-            // An OCCURS clause cannot be specified for a data which is redefined.
-            if (redefinedVariable.IsTableOccurence)
-            {
-                DiagnosticUtils.AddError(redefinesNode, $"OCCURS cannot be specified for data {redefinesSymbolReference.Name} which is redefined.", redefinesSymbolReference);
             }
 
         }
