@@ -1,4 +1,4 @@
-﻿      * Commentaire       
+﻿      * Commentaire
        IDENTIFICATION DIVISION.
        PROGRAM-ID. EVALWHEN.
 
