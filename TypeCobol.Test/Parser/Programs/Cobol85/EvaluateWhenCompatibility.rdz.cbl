@@ -1,4 +1,5 @@
-﻿       IDENTIFICATION DIVISION.
+﻿      * Commentaire       
+       IDENTIFICATION DIVISION.
        PROGRAM-ID. EVALWHEN.
 
        DATA DIVISION.
