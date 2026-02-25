@@ -1821,6 +1821,7 @@ namespace TypeCobol.Compiler.Diagnostics
     {
         // Structure gathering information about SelectionSubject (from EVALUATE) or SelectionObject (from WHEN):
         // DataType is computed from condition or expression and set to Unknown if not valid
+        // Usage is retrieved from the data definition (if relevant) or set to None
         // LiteralValue is only relevant for numeric and alphanumeric values
         private record SelectionInfo(DataType DataType, DataUsage? Usage, string LiteralValue = null)
         {
@@ -1841,45 +1842,44 @@ namespace TypeCobol.Compiler.Diagnostics
             }
 
             /// <summary>
-            /// Determines whether the given subject and object are conflicting by comparing their usages (check is not symetric!).
+            /// Determines whether the given object is conflicting with the current one by comparing their usages.
             /// </summary>
-            /// <param name="subjectSelectionInfo">The subject's SelectionInfo</param>
-            /// <param name="objectSelectionInfo">The object's SelectionInfo</param>
+            /// <param name="other">The other object to be compared to the current one</param>
             /// <returns>true if conflict</returns>
-            public static bool HasConflictingUsage(SelectionInfo subjectSelectionInfo, SelectionInfo objectSelectionInfo)
+            public bool HasConflictingUsage(SelectionInfo other)
             {
-                var subjectUsage = subjectSelectionInfo?.Usage ?? DataUsage.None;
-                var objectUsage = objectSelectionInfo?.Usage ?? DataUsage.None;
+                var usage = Usage ?? DataUsage.None;
+                var otherUsage = other?.Usage ?? DataUsage.None;
 
                 // None and UTF-8 (which is not managed, see #2504) are ignored
-                if (objectUsage is DataUsage.None or DataUsage.UTF8) return false;
+                if (otherUsage is DataUsage.None or DataUsage.UTF8) return false;
 
-                return subjectUsage switch
+                return usage switch
                 {
                     // Binary + all COMPs are compatible
                     DataUsage.Binary or DataUsage.NativeBinary or DataUsage.PackedDecimal or DataUsage.FloatingPoint or DataUsage.LongFloatingPoint =>
-                        objectUsage is not DataUsage.Binary and not DataUsage.NativeBinary and not DataUsage.PackedDecimal and
+                        otherUsage is not DataUsage.Binary and not DataUsage.NativeBinary and not DataUsage.PackedDecimal and
                         not DataUsage.FloatingPoint and not DataUsage.LongFloatingPoint,
                     // National is compatible with Display
                     DataUsage.Display =>
-                        objectUsage is not DataUsage.Display and not DataUsage.National,
+                        otherUsage is not DataUsage.Display and not DataUsage.National,
                     // National is compatible with DBCS
                     DataUsage.DBCS =>
-                        objectUsage is not DataUsage.DBCS and not DataUsage.National,
+                        otherUsage is not DataUsage.DBCS and not DataUsage.National,
                     DataUsage.Index =>
-                        objectUsage != DataUsage.Index,
+                        otherUsage != DataUsage.Index,
                     // Display and DBCS are compatible with National
                     DataUsage.National =>
-                        objectUsage is not DataUsage.Display and not DataUsage.DBCS and not DataUsage.National,
+                        otherUsage is not DataUsage.Display and not DataUsage.DBCS and not DataUsage.National,
                     DataUsage.ObjectReference =>
-                        objectUsage != DataUsage.ObjectReference,
+                        otherUsage != DataUsage.ObjectReference,
                     // Pointer and Pointer32 are compatible
                     DataUsage.Pointer or DataUsage.Pointer32 =>
-                        objectUsage is not DataUsage.Pointer and not DataUsage.Pointer32,
+                        otherUsage is not DataUsage.Pointer and not DataUsage.Pointer32,
                     // FunctionPointer and ProcedurePointer are compatible
                     DataUsage.FunctionPointer or DataUsage.ProcedurePointer =>
-                        objectUsage is not DataUsage.FunctionPointer and not DataUsage.ProcedurePointer,
-                    // None or UTF-8
+                        otherUsage is not DataUsage.FunctionPointer and not DataUsage.ProcedurePointer,
+                    // Ignore None and UTF-8
                     _ => false,
                 };
             }
@@ -2122,7 +2122,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     DiagnosticUtils.AddError(when, $"The literal \"{selectionObjectInfo2.LiteralValue}\" is compared to another literal \"{selectionSubjectInfo.LiteralValue}\": this is not valid");
                 }
             }
-            else if (SelectionInfo.HasConflictingUsage(selectionSubjectInfo, selectionObjectInfo))
+            else if (selectionSubjectInfo.HasConflictingUsage(selectionObjectInfo))
             {
                 DiagnosticUtils.AddError(when, $"The object at position {index} in the \"WHEN\" phrase does not match the usage of the corresponding subject in the \"EVALUATE\" statement");
             }
