@@ -1823,7 +1823,7 @@ namespace TypeCobol.Compiler.Diagnostics
         // DataType is computed from condition or expression and set to Unknown if not valid
         // Usage is retrieved from the data definition (if relevant) or set to None
         // LiteralValue is only relevant for numeric and alphanumeric values
-        private record SelectionInfo(DataType DataType, DataUsage? Usage, string LiteralValue = null)
+        private record SelectionInfo(DataType DataType, DataUsage Usage, string LiteralValue = null)
         {
             public static readonly SelectionInfo Unknown = new(DataType.Unknown, DataUsage.None);
 
@@ -1848,13 +1848,15 @@ namespace TypeCobol.Compiler.Diagnostics
             /// <returns>true if conflict</returns>
             public bool HasConflictingUsage(SelectionInfo other)
             {
-                var usage = Usage ?? DataUsage.None;
                 var otherUsage = other?.Usage ?? DataUsage.None;
 
                 // None and UTF-8 (which is not managed, see #2504) are ignored
                 if (otherUsage is DataUsage.None or DataUsage.UTF8) return false;
 
-                return usage switch
+                // Same usage
+                if (Usage == otherUsage) return false;
+
+                return Usage switch
                 {
                     // Binary + all COMPs are compatible
                     DataUsage.Binary or DataUsage.NativeBinary or DataUsage.PackedDecimal or DataUsage.FloatingPoint or DataUsage.LongFloatingPoint =>
@@ -1862,23 +1864,22 @@ namespace TypeCobol.Compiler.Diagnostics
                         not DataUsage.FloatingPoint and not DataUsage.LongFloatingPoint,
                     // National is compatible with Display
                     DataUsage.Display =>
-                        otherUsage is not DataUsage.Display and not DataUsage.National,
+                        otherUsage is not DataUsage.National,
                     // National is compatible with DBCS
                     DataUsage.DBCS =>
-                        otherUsage is not DataUsage.DBCS and not DataUsage.National,
-                    DataUsage.Index =>
-                        otherUsage != DataUsage.Index,
+                        otherUsage is not DataUsage.National,
                     // Display and DBCS are compatible with National
                     DataUsage.National =>
-                        otherUsage is not DataUsage.Display and not DataUsage.DBCS and not DataUsage.National,
-                    DataUsage.ObjectReference =>
-                        otherUsage != DataUsage.ObjectReference,
+                        otherUsage is not DataUsage.Display and not DataUsage.DBCS,
                     // Pointer and Pointer32 are compatible
                     DataUsage.Pointer or DataUsage.Pointer32 =>
                         otherUsage is not DataUsage.Pointer and not DataUsage.Pointer32,
                     // FunctionPointer and ProcedurePointer are compatible
                     DataUsage.FunctionPointer or DataUsage.ProcedurePointer =>
                         otherUsage is not DataUsage.FunctionPointer and not DataUsage.ProcedurePointer,
+                    // Compatible only when equality (previously checked) => conflict
+                    DataUsage.Index or DataUsage.ObjectReference =>
+                        true,
                     // Ignore None and UTF-8
                     _ => false,
                 };
