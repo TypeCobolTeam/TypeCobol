@@ -1985,12 +1985,12 @@ namespace TypeCobol.Compiler.Diagnostics
                 if (alphanumericComparisonVariable.AlphanumericValue != null)
                 {
                     // Literal alphanumeric
-                    return new SelectionInfo(DataType: DataType.Alphanumeric, LiteralValue: alphanumericComparisonVariable.AlphanumericValue.ToString());
+                    return new SelectionInfo(DataType.Alphanumeric, LiteralValue: alphanumericComparisonVariable.AlphanumericValue.ToString());
                 }
                 if (alphanumericComparisonVariable.NumericValue != null)
                 {
                     // Literal numeric
-                    return new SelectionInfo(DataType: DataType.Numeric, LiteralValue: alphanumericComparisonVariable.NumericValue.ToString());
+                    return new SelectionInfo(DataType.Numeric, LiteralValue: alphanumericComparisonVariable.NumericValue.ToString());
                 }
                 if ((alphanumericComparisonVariable.ArithmeticExpression != null) ||
                     (alphanumericComparisonVariable.RepeatedCharacterValue != null))
