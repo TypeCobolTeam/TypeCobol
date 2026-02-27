@@ -1823,9 +1823,9 @@ namespace TypeCobol.Compiler.Diagnostics
         // DataType is computed from condition or expression and set to Unknown if not valid
         // Usage is retrieved from the data definition (if relevant) or set to None
         // LiteralValue is only relevant for numeric and alphanumeric values
-        private record SelectionInfo(DataType DataType, DataUsage Usage, string LiteralValue = null)
+        private record SelectionInfo(DataType DataType, DataUsage Usage = DataUsage.None, string LiteralValue = null)
         {
-            public static readonly SelectionInfo Unknown = new(DataType.Unknown, DataUsage.None);
+            public static readonly SelectionInfo Unknown = new(DataType.Unknown);
 
             // TRUE for numeric and alphanumeric values only
             public bool IsLiteral => LiteralValue != null;
@@ -1977,7 +1977,7 @@ namespace TypeCobol.Compiler.Diagnostics
 
                             default:
                                 // RelationCondition (for instance VAR1 = "A")
-                                return new SelectionInfo(DataType.Boolean, DataUsage.None);
+                                return new SelectionInfo(DataType.Boolean);
                         }
                     }
                 }
@@ -1985,18 +1985,18 @@ namespace TypeCobol.Compiler.Diagnostics
                 if (alphanumericComparisonVariable.AlphanumericValue != null)
                 {
                     // Literal alphanumeric
-                    return new SelectionInfo(DataType.Alphanumeric, DataUsage.None, alphanumericComparisonVariable.AlphanumericValue.ToString());
+                    return new SelectionInfo(DataType: DataType.Alphanumeric, LiteralValue: alphanumericComparisonVariable.AlphanumericValue.ToString());
                 }
                 if (alphanumericComparisonVariable.NumericValue != null)
                 {
                     // Literal numeric
-                    return new SelectionInfo(DataType.Numeric, DataUsage.None, alphanumericComparisonVariable.NumericValue.ToString());
+                    return new SelectionInfo(DataType: DataType.Numeric, LiteralValue: alphanumericComparisonVariable.NumericValue.ToString());
                 }
                 if ((alphanumericComparisonVariable.ArithmeticExpression != null) ||
                     (alphanumericComparisonVariable.RepeatedCharacterValue != null))
                 {
                     // Arithmetic expression or figurative constants or ALL literal
-                    return new SelectionInfo(DataType.Alphanumeric, DataUsage.None);
+                    return new SelectionInfo(DataType.Alphanumeric);
                 }
 
                 // Variable
