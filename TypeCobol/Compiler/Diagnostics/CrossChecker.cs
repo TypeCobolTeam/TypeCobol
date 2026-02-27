@@ -1944,7 +1944,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     if (booleanComparisonVariable.BooleanValue != null)
                     {
                         // Value TRUE/FALSE
-                        return new SelectionInfo(DataType.Boolean, DataUsage.None);
+                        return new SelectionInfo(DataType.Boolean);
                     }
 
                     return GetSelectionInfoFromExpression(booleanComparisonVariable.Expression);
