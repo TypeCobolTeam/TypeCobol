@@ -885,6 +885,13 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         /// </summary>
         /// <param name="executeImmediate">The corresponding  ExecuteImmediate Statement Code Element</param>
         void OnExecuteImmediateStatement([NotNull] ExecuteImmediateStatement executeImmediate);
+        void OnInsertStatement([NotNull] InsertStatement insert);
+        void OnUpdateStatement([NotNull] UpdateStatement update);
+        void OnSqlDeleteStatement([NotNull] SqlDeleteStatement delete);
+        void OnDeclareCursorStatement([NotNull] DeclareCursorStatement declareCursor);
+        void OnSqlOpenStatement([NotNull] SqlOpenStatement open);
+        void OnSqlCloseStatement([NotNull] SqlCloseStatement close);
+        void OnFetchStatement([NotNull] FetchStatement fetch);
         #endregion
     }
 }

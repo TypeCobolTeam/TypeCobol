@@ -2463,5 +2463,47 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = executeImmediateStatement;
             ExecuteImmediateStatementChecker.OnCodeElement(executeImmediateStatement, context);
         }
+
+        public override void EnterInsertStatement([NotNull] CodeElementsParser.InsertStatementContext context)
+        {
+            Context = context;
+            CodeElement = _sqlCodeElementBuilder.CreateInsertStatement(context);
+        }
+
+        public override void EnterUpdateStatement([NotNull] CodeElementsParser.UpdateStatementContext context)
+        {
+            Context = context;
+            CodeElement = _sqlCodeElementBuilder.CreateUpdateStatement(context);
+        }
+
+        public override void EnterSqlDeleteStatement([NotNull] CodeElementsParser.SqlDeleteStatementContext context)
+        {
+            Context = context;
+            CodeElement = _sqlCodeElementBuilder.CreateSqlDeleteStatement(context);
+        }
+
+        public override void EnterDeclareCursorStatement([NotNull] CodeElementsParser.DeclareCursorStatementContext context)
+        {
+            Context = context;
+            CodeElement = _sqlCodeElementBuilder.CreateDeclareCursorStatement(context);
+        }
+
+        public override void EnterSqlOpenStatement([NotNull] CodeElementsParser.SqlOpenStatementContext context)
+        {
+            Context = context;
+            CodeElement = _sqlCodeElementBuilder.CreateSqlOpenStatement(context);
+        }
+
+        public override void EnterSqlCloseStatement([NotNull] CodeElementsParser.SqlCloseStatementContext context)
+        {
+            Context = context;
+            CodeElement = _sqlCodeElementBuilder.CreateSqlCloseStatement(context);
+        }
+
+        public override void EnterFetchStatement([NotNull] CodeElementsParser.FetchStatementContext context)
+        {
+            Context = context;
+            CodeElement = _sqlCodeElementBuilder.CreateFetchStatement(context);
+        }
     }
 }

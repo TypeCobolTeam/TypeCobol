@@ -143,7 +143,14 @@
         SetAssignmentStatement,
         GetDiagnosticsStatement,
         AlterSequenceStatement,
-        ExecuteImmediateStatement
+        ExecuteImmediateStatement,
+        InsertStatement,
+        UpdateStatement,
+        SqlDeleteStatement,
+        DeclareCursorStatement,
+        SqlOpenStatement,
+        SqlCloseStatement,
+        FetchStatement
 
     }
 }

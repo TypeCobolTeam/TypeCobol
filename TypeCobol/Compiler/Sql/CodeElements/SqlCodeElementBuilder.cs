@@ -937,5 +937,85 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
             return null;
         }
+
+        public InsertStatement CreateInsertStatement(CodeElementsParser.InsertStatementContext context)
+        {
+            var tableName = CreateTableOrViewOrCorrelationName(context.tableOrViewOrCorrelationName());
+            FullSelect fullSelect = null;
+            if (context.fullselect() != null)
+            {
+                fullSelect = CreateFullSelect(context.fullselect());
+            }
+            return new InsertStatement(tableName, fullSelect);
+        }
+
+        public UpdateStatement CreateUpdateStatement(CodeElementsParser.UpdateStatementContext context)
+        {
+            var tableName = CreateTableOrViewOrCorrelationName(context.tableOrViewOrCorrelationName());
+            bool hasWhereClause = context.SQL_WHERE() != null;
+            return new UpdateStatement(tableName, hasWhereClause);
+        }
+
+        public SqlDeleteStatement CreateSqlDeleteStatement(CodeElementsParser.SqlDeleteStatementContext context)
+        {
+            var tableName = CreateTableOrViewOrCorrelationName(context.tableOrViewOrCorrelationName());
+            bool hasWhereClause = context.SQL_WHERE() != null;
+            return new SqlDeleteStatement(tableName, hasWhereClause);
+        }
+
+        public DeclareCursorStatement CreateDeclareCursorStatement(CodeElementsParser.DeclareCursorStatementContext context)
+        {
+            SymbolReference cursorName = null;
+            if (context.cursor_name != null)
+            {
+                cursorName = new SymbolReference(new AlphanumericValue((Token)context.cursor_name), SymbolType.SqlIdentifier);
+            }
+            FullSelect fullSelect = null;
+            if (context.fullselect() != null)
+            {
+                fullSelect = CreateFullSelect(context.fullselect());
+            }
+            bool withHold = context.SQL_HOLD() != null;
+            return new DeclareCursorStatement(cursorName, fullSelect, withHold);
+        }
+
+        public SqlOpenStatement CreateSqlOpenStatement(CodeElementsParser.SqlOpenStatementContext context)
+        {
+            SymbolReference cursorName = null;
+            if (context.cursor_name != null)
+            {
+                cursorName = new SymbolReference(new AlphanumericValue((Token)context.cursor_name), SymbolType.SqlIdentifier);
+            }
+            return new SqlOpenStatement(cursorName);
+        }
+
+        public SqlCloseStatement CreateSqlCloseStatement(CodeElementsParser.SqlCloseStatementContext context)
+        {
+            SymbolReference cursorName = null;
+            if (context.cursor_name != null)
+            {
+                cursorName = new SymbolReference(new AlphanumericValue((Token)context.cursor_name), SymbolType.SqlIdentifier);
+            }
+            return new SqlCloseStatement(cursorName);
+        }
+
+        public FetchStatement CreateFetchStatement(CodeElementsParser.FetchStatementContext context)
+        {
+            SymbolReference cursorName = null;
+            if (context.cursor_name != null)
+            {
+                cursorName = new SymbolReference(new AlphanumericValue((Token)context.cursor_name), SymbolType.SqlIdentifier);
+            }
+            var intoVariables = new List<SqlVariable>();
+            foreach (var hostVar in context.hostVariable())
+            {
+                var sqlVar = CreateSqlHostVariable(hostVar);
+                if (sqlVar != null)
+                {
+                    intoVariables.Add(sqlVar);
+                }
+            }
+            return new FetchStatement(cursorName, intoVariables);
+        }
     }
 }

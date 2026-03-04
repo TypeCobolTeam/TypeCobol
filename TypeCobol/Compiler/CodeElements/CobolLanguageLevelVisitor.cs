@@ -412,6 +412,20 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit([NotNull] AlterSequence alterSequence);
         bool Visit([NotNull] ExecuteImmediateStatement executeImmediateStatement);
         bool Visit([NotNull] ExecuteImmediate executeImmediate);
+        bool Visit([NotNull] InsertStatement insertStatement);
+        bool Visit([NotNull] Insert insert);
+        bool Visit([NotNull] UpdateStatement updateStatement);
+        bool Visit([NotNull] Update update);
+        bool Visit([NotNull] SqlDeleteStatement sqlDeleteStatement);
+        bool Visit([NotNull] SqlDelete sqlDelete);
+        bool Visit([NotNull] DeclareCursorStatement declareCursorStatement);
+        bool Visit([NotNull] DeclareCursor declareCursor);
+        bool Visit([NotNull] SqlOpenStatement sqlOpenStatement);
+        bool Visit([NotNull] OpenCursor openCursor);
+        bool Visit([NotNull] SqlCloseStatement sqlCloseStatement);
+        bool Visit([NotNull] CloseCursor closeCursor);
+        bool Visit([NotNull] FetchStatement fetchStatement);
+        bool Visit([NotNull] Fetch fetch);
     }
 
 
@@ -1661,6 +1675,62 @@ namespace TypeCobol.Compiler.CodeElements
             return true;
         }
         public virtual bool Visit([NotNull] ExecuteImmediate executeImmediate)
+        {
+            return true;
+        }
+        public virtual bool Visit([NotNull] InsertStatement insertStatement)
+        {
+            return true;
+        }
+        public virtual bool Visit([NotNull] Insert insert)
+        {
+            return true;
+        }
+        public virtual bool Visit([NotNull] UpdateStatement updateStatement)
+        {
+            return true;
+        }
+        public virtual bool Visit([NotNull] Update update)
+        {
+            return true;
+        }
+        public virtual bool Visit([NotNull] SqlDeleteStatement sqlDeleteStatement)
+        {
+            return true;
+        }
+        public virtual bool Visit([NotNull] SqlDelete sqlDelete)
+        {
+            return true;
+        }
+        public virtual bool Visit([NotNull] DeclareCursorStatement declareCursorStatement)
+        {
+            return true;
+        }
+        public virtual bool Visit([NotNull] DeclareCursor declareCursor)
+        {
+            return true;
+        }
+        public virtual bool Visit([NotNull] SqlOpenStatement sqlOpenStatement)
+        {
+            return true;
+        }
+        public virtual bool Visit([NotNull] OpenCursor openCursor)
+        {
+            return true;
+        }
+        public virtual bool Visit([NotNull] SqlCloseStatement sqlCloseStatement)
+        {
+            return true;
+        }
+        public virtual bool Visit([NotNull] CloseCursor closeCursor)
+        {
+            return true;
+        }
+        public virtual bool Visit([NotNull] FetchStatement fetchStatement)
+        {
+            return true;
+        }
+        public virtual bool Visit([NotNull] Fetch fetch)
         {
             return true;
         }

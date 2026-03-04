@@ -176,6 +176,13 @@
         GetDiagnosticsStatement,
         AlterSequenceStatement,
         ExecuteImmediateStatement,
+        InsertStatement,
+        UpdateStatement,
+        SqlDeleteStatement,
+        DeclareCursorStatement,
+        SqlOpenStatement,
+        SqlCloseStatement,
+        FetchStatement,
 
         // [TYPECOBOL]
         LibraryCopy,

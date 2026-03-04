@@ -1798,5 +1798,47 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Exit();
             Dispatcher.OnExecuteImmediateStatement(executeImmediate);
         }
+        public void OnInsertStatement([NotNull] InsertStatement insert)
+        {
+            Enter(new Insert(insert), insert);
+            Exit();
+            Dispatcher.OnInsertStatement(insert);
+        }
+        public void OnUpdateStatement([NotNull] UpdateStatement update)
+        {
+            Enter(new Update(update), update);
+            Exit();
+            Dispatcher.OnUpdateStatement(update);
+        }
+        public void OnSqlDeleteStatement([NotNull] SqlDeleteStatement delete)
+        {
+            Enter(new SqlDelete(delete), delete);
+            Exit();
+            Dispatcher.OnSqlDeleteStatement(delete);
+        }
+        public void OnDeclareCursorStatement([NotNull] DeclareCursorStatement declareCursor)
+        {
+            Enter(new DeclareCursor(declareCursor), declareCursor);
+            Exit();
+            Dispatcher.OnDeclareCursorStatement(declareCursor);
+        }
+        public void OnSqlOpenStatement([NotNull] SqlOpenStatement open)
+        {
+            Enter(new OpenCursor(open), open);
+            Exit();
+            Dispatcher.OnSqlOpenStatement(open);
+        }
+        public void OnSqlCloseStatement([NotNull] SqlCloseStatement close)
+        {
+            Enter(new CloseCursor(close), close);
+            Exit();
+            Dispatcher.OnSqlCloseStatement(close);
+        }
+        public void OnFetchStatement([NotNull] FetchStatement fetch)
+        {
+            Enter(new Fetch(fetch), fetch);
+            Exit();
+            Dispatcher.OnFetchStatement(fetch);
+        }
     }
 }
