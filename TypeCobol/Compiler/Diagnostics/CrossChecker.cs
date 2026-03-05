@@ -908,7 +908,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     && commonDataDataDefinitionCodeElement.UserDefinedDataType == null 
                     && (!dataDefinition.Usage.HasValue || !IsUsageStandalone(dataDefinition.Usage.Value)))
                 {
-                    DiagnosticUtils.AddError(dataDefinition, "A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER).", commonDataDataDefinitionCodeElement);
+                    DiagnosticUtils.AddError(dataDefinition, "A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, OBJECT REFERENCE, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER).", commonDataDataDefinitionCodeElement);
 
                     //Detect copy included at wrong level (because there is already the same level in the copy)
                     CheckCopyAtWrongLevel(dataDefinition, commonDataDataDefinitionCodeElement);
@@ -919,7 +919,7 @@ namespace TypeCobol.Compiler.Diagnostics
             if (usage != null && IsUsageStandalone(usage.Value) && commonDataDataDefinitionCodeElement.Picture != null)
             {
                 DiagnosticUtils.AddError(dataDefinition,
-                    "Variable with usage COMP-1, COMP-2, INDEX, POINTER, POINTER-32, PROCEDURE-POINTER and FUNCTION-POINTER cannot have a PICTURE", commonDataDataDefinitionCodeElement);
+                    "Variable with usage COMP-1, COMP-2, INDEX, OBJECT REFERENCE, POINTER, POINTER-32, PROCEDURE-POINTER and FUNCTION-POINTER cannot have a PICTURE", commonDataDataDefinitionCodeElement);
             }
 
             // Check VALUE clause presence and validity
@@ -946,6 +946,7 @@ namespace TypeCobol.Compiler.Diagnostics
                     case DataUsage.Index:
                     case DataUsage.FloatingPoint:
                     case DataUsage.LongFloatingPoint:
+                    case DataUsage.ObjectReference:
                     case DataUsage.Pointer:
                     case DataUsage.Pointer32:
                     case DataUsage.ProcedurePointer:

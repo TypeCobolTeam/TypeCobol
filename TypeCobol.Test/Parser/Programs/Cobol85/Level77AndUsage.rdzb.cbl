@@ -77,5 +77,6 @@
        77 Var17-OK USAGE POINTER-32.
        77 Var18-OK USAGE IS procedure-pointer.
        77 Var19-OK USAGE IS function-pointer.
+       77 Var20-OK USAGE OBJECT REFERENCE.
       
        END PROGRAM Level77AndUsage.
