@@ -9,6 +9,8 @@
        01 MyVar5 PIC 9(4) POINTER-32.
        01 MyVar6 PIC 9(8) PROCEDURE-POINTER.
        01 MyVar7 PIC 9(4) FUNCTION-POINTER.
+       01 MyVar8 PIC 9(4) OBJECT REFERENCE.
+
        PROCEDURE DIVISION.
 
        declare procedure KONotCorrectFormat private

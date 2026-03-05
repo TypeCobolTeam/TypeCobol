@@ -1,7 +1,6 @@
 ﻿--- Diagnostics ---
-Line 23[11,30] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[11,30:VAR-OBJECT-REFERENCE]<UserDefinedWord>
 Line 30[50,54] <27, Error, Syntax> - Syntax error : USAGE UTF-8 is not supported. OffendingSymbol=[50,54:UTF-8]<UTF_8>
-Line 30[11,18] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[11,18:VAR-UTF8]<UserDefinedWord>
+Line 30[11,18] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, OBJECT REFERENCE, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER). OffendingSymbol=[11,18:VAR-UTF8]<UserDefinedWord>
 Line 51[16,31] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
 Line 53[16,32] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement
 Line 55[16,29] <27, Error, Syntax> - Syntax error : The object at position 1 in the "WHEN" phrase does not match the usage of the corresponding subject in the "EVALUATE" statement

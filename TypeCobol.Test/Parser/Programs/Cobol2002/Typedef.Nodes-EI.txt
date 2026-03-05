@@ -1,4 +1,4 @@
-Line 9[12,18] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'Feature' must be marked as STRICT.
+﻿Line 9[12,18] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'Feature' must be marked as STRICT.
 Line 15[10,16] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'Vect2' must be marked as STRICT.
 Line 40[21,27] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'TypeDefinedAfter' must be marked as STRICT.
 Line 45[14,20] <27, Error, Syntax> - Syntax error : TYPEDEF clause can only be specified for level 01 entries
@@ -24,7 +24,7 @@ Line 153[30,36] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'Grou
 Line 160[17,23] <27, Error, Syntax> - Syntax error : Custom EI rule : Type 'strongType1' must be marked as STRICT.
 Line 36[1,31] <30, Error, Semantics> - Semantic error: TYPE 'TypeNotDefined' is not referenced
 Line 51[1,41] <30, Error, Semantics> - Semantic error: TYPE 'ClausesOrderKO' is not referenced
-Line 57[4,16] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER).
+Line 57[4,16] <27, Error, Syntax> - Syntax error : A group item cannot be empty. Add children, picture or valid usage (INDEX, COMP-1, COMP-2, OBJECT REFERENCE, POINTER, POINTER-32, PROCEDURE-POINTER or FUNCTION-POINTER).
 Line 64[1,37] <30, Error, Semantics> - Semantic error: TYPE 'NoRedefines1' is not referenced
 Line 70[1,37] <30, Error, Semantics> - Semantic error: TYPE 'NoRedefines2' is not referenced
 Line 73[27,40] <30, Error, Semantics> - Semantic error: Illegal REDEFINES: Symbol 'TypeNotDefined' is not referenced
