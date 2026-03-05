@@ -8,14 +8,14 @@
        01 bool1 pic 9.
        01 bool2 pic 9.
        PROCEDURE DIVISION.
-           evaluate true
+           evaluate 1
                 when
                 when bool1 display "evaluate"
                 when bool1
                      when bool2 display "evaluate"
                 when
                 when other continue
-           evaluate true
+           evaluate 1
                 when bool1 display "evaluate"
                 when bool1
                 when other continue
@@ -25,7 +25,7 @@
                     when var3 = "ho" display "search"
                 when
            end-search
-           evaluate true
+           evaluate 1
                 when bool1 display "evaluate"
                 when other
            move "hi" to var1
