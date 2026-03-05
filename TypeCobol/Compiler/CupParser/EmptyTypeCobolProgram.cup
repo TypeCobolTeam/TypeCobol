@@ -155,11 +155,11 @@ terminal TypeCobol.Compiler.Sql.CodeElements.Statements.AlterSequenceStatement A
 terminal TypeCobol.Compiler.Sql.CodeElements.Statements.ExecuteImmediateStatement ExecuteImmediateStatement;
 terminal TypeCobol.Compiler.Sql.CodeElements.Statements.InsertStatement InsertStatement;
 terminal TypeCobol.Compiler.Sql.CodeElements.Statements.UpdateStatement UpdateStatement;
-terminal TypeCobol.Compiler.Sql.CodeElements.Statements.SqlDeleteStatement SqlDeleteStatement;
+terminal TypeCobol.Compiler.Sql.CodeElements.Statements.DeleteSqlStatement DeleteSqlStatement;
 terminal TypeCobol.Compiler.Sql.CodeElements.Statements.DeclareCursorStatement DeclareCursorStatement;
-terminal TypeCobol.Compiler.Sql.CodeElements.Statements.SqlOpenStatement SqlOpenStatement;
-terminal TypeCobol.Compiler.Sql.CodeElements.Statements.SqlCloseStatement SqlCloseStatement;
+terminal TypeCobol.Compiler.Sql.CodeElements.Statements.OpenCursorStatement OpenCursorStatement;
 terminal TypeCobol.Compiler.Sql.CodeElements.Statements.FetchStatement FetchStatement;
+terminal TypeCobol.Compiler.Sql.CodeElements.Statements.CloseCursorStatement CloseCursorStatement;
 
 
 terminal TypeCobol.Compiler.CodeElements.LibraryCopyCodeElement LibraryCopy;
@@ -746,15 +746,15 @@ sqlStatement ::= CommitStatement:stmt
 {: :}
 |	UpdateStatement:stmt
 {: :}
-|	SqlDeleteStatement:stmt
+|	DeleteSqlStatement:stmt
 {: :}
 |	DeclareCursorStatement:stmt
 {: :}
-|	SqlOpenStatement:stmt
-{: :}
-|	SqlCloseStatement:stmt
+|	OpenCursorStatement:stmt
 {: :}
 |	FetchStatement:stmt
+{: :}
+|	CloseCursorStatement:stmt
 {: :}
 ;
 

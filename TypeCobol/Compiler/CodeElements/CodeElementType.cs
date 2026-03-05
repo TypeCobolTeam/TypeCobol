@@ -178,11 +178,11 @@
         ExecuteImmediateStatement,
         InsertStatement,
         UpdateStatement,
-        SqlDeleteStatement,
+        DeleteSqlStatement,
         DeclareCursorStatement,
-        SqlOpenStatement,
-        SqlCloseStatement,
+        OpenCursorStatement,
         FetchStatement,
+        CloseCursorStatement,
 
         // [TYPECOBOL]
         LibraryCopy,

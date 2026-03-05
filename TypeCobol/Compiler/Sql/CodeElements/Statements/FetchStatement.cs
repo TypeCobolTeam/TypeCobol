@@ -6,23 +6,18 @@ namespace TypeCobol.Compiler.Sql.CodeElements.Statements
 {
     /// <summary>
     /// SQL FETCH Statement Code Element.
+    /// EXEC SQL FETCH cursor-name INTO :host-var [, :host-var ...] END-EXEC
     /// </summary>
     public class FetchStatement : SqlStatementElement
     {
         public SymbolReference CursorName { get; }
-        public IList<SqlVariable> IntoVariables { get; }
+        public IList<HostVariable> IntoVariables { get; }
 
-        public FetchStatement(SymbolReference cursorName, IList<SqlVariable> intoVariables)
+        public FetchStatement(SymbolReference cursorName, IList<HostVariable> intoVariables)
             : base(CodeElementType.FetchStatement, StatementType.FetchStatement)
         {
             CursorName = cursorName;
             IntoVariables = intoVariables;
-        }
-
-        public override bool VisitCodeElement(IASTVisitor astVisitor)
-        {
-            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this)
-                                                     && this.ContinueVisitToChildren(astVisitor, CursorName);
         }
     }
 }

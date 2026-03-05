@@ -4,12 +4,9 @@ using TypeCobol.Compiler.Sql.CodeElements.Statements;
 
 namespace TypeCobol.Compiler.Sql.Nodes
 {
-    /// <summary>
-    /// Sql OPEN Node
-    /// </summary>
-    public class OpenCursor : GenericNode<SqlOpenStatement>, Statement
+    public class OpenCursor : GenericNode<OpenCursorStatement>, Statement
     {
-        public OpenCursor(SqlOpenStatement statement) : base(statement) { }
+        public OpenCursor(OpenCursorStatement statement) : base(statement) { }
 
         public override bool VisitNode(IASTVisitor astVisitor)
         {

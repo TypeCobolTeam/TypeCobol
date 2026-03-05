@@ -4,9 +4,6 @@ using TypeCobol.Compiler.Sql.CodeElements.Statements;
 
 namespace TypeCobol.Compiler.Sql.Nodes
 {
-    /// <summary>
-    /// Sql UPDATE Node
-    /// </summary>
     public class Update : GenericNode<UpdateStatement>, Statement
     {
         public Update(UpdateStatement statement) : base(statement) { }

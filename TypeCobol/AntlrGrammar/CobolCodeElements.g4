@@ -230,11 +230,11 @@ codeElement:
 	| executeImmediateStatement
 	| insertStatement
 	| updateStatement
-	| sqlDeleteStatement
+	| deleteSqlStatement
 	| declareCursorStatement
-	| sqlOpenStatement
-	| sqlCloseStatement
+	| openCursorStatement
 	| fetchStatement
+	| closeCursorStatement
 
 //	[TYPECOBOL]
 	| tcCodeElement;
@@ -8536,49 +8536,41 @@ repeatedSourceValue: sourceValue (SQL_CommaSeparator sourceValue)*;
 executeImmediateStatement : SQL_EXECUTE SQL_IMMEDIATE (sqlVariable | stringExpression);
 //TODO extend stringExpression to support all expressions that yield a string (i.e string concat, function calls returning text,...)
 stringExpression: AlphanumericLiteral;
+// --- INSERT ---
+insertStatement: SQL_INSERT SQL_INTO tableOrViewOrCorrelationName insertColumnList? (SQL_VALUES LeftParenthesisSeparator insertValueList RightParenthesisSeparator | fullselect);
+insertColumnList: LeftParenthesisSeparator column_name (SQL_CommaSeparator column_name)* RightParenthesisSeparator;
+insertValueList: sqlExpression (SQL_CommaSeparator sqlExpression)*;
 
-// INSERT — INSERT INTO table [(col, ...)] VALUES (...) | INSERT INTO table SELECT ...
-insertStatement:
-    SQL_INSERT SQL_INTO tableOrViewOrCorrelationName
-    (LeftParenthesisSeparator sqlVariable (SQL_CommaSeparator sqlVariable)* RightParenthesisSeparator)?
-    (SQL_VALUES LeftParenthesisSeparator sqlExpression (SQL_CommaSeparator sqlExpression)* RightParenthesisSeparator
-    | fullselect)?;
+// --- UPDATE ---
+updateStatement: SQL_UPDATE tableOrViewOrCorrelationName SQL_SET updateAssignmentClause (SQL_CommaSeparator updateAssignmentClause)* updateWhereClause?;
+updateAssignmentClause: column_name EqualOperator sqlExpression;
+updateWhereClause: SQL_WHERE sqlSearchCondition;
 
-// UPDATE — UPDATE table SET col=expr [WHERE ...]
-updateStatement:
-    SQL_UPDATE tableOrViewOrCorrelationName SQL_SET
-    sqlSetClause (SQL_CommaSeparator sqlSetClause)*
-    (SQL_WHERE searchCondition)?;
+// --- DELETE (SQL) ---
+deleteSqlStatement: SQL_DELETE SQL_FROM tableOrViewOrCorrelationName deleteWhereClause?;
+deleteWhereClause: SQL_WHERE sqlSearchCondition;
 
-sqlSetClause:
-    sqlVariable EqualOperator sqlExpression;
+// --- DECLARE CURSOR ---
+declareCursorStatement: SQL_DECLARE (cursor_name=UserDefinedWord) SQL_CURSOR withHoldClause? withReturnClause? SQL_FOR fullselect;
+withHoldClause: SQL_WITH ({ string.Equals(CurrentToken.Text, "HOLD", System.StringComparison.OrdinalIgnoreCase) }? KeywordHOLD=UserDefinedWord);
+withReturnClause: SQL_WITH ({ string.Equals(CurrentToken.Text, "RETURN", System.StringComparison.OrdinalIgnoreCase) }? KeywordRETURN=UserDefinedWord);
 
-// DELETE — DELETE FROM table [WHERE ...]
-sqlDeleteStatement:
-    SQL_DELETE SQL_FROM tableOrViewOrCorrelationName
-    (SQL_WHERE searchCondition)?;
+// --- OPEN cursor ---
+openCursorStatement: SQL_OPEN (cursor_name=UserDefinedWord);
 
-//TODO extend searchCondition to support AND/OR/BETWEEN/IN/LIKE etc.
-searchCondition: sqlExpression EqualOperator sqlExpression;
+// --- FETCH ---
+fetchStatement: SQL_FETCH (cursor_name=UserDefinedWord) fetchIntoClause?;
+fetchIntoClause: SQL_INTO hostVariable (SQL_CommaSeparator hostVariable)*;
 
-// DECLARE CURSOR — DECLARE cursor-name CURSOR [WITH HOLD] FOR fullselect
-declareCursorStatement:
-    SQL_DECLARE cursor_name=UserDefinedWord SQL_CURSOR
-    (SQL_WITH SQL_HOLD)?
-    SQL_FOR fullselect;
+// --- CLOSE cursor ---
+closeCursorStatement: SQL_CLOSE (cursor_name=UserDefinedWord);
 
-// OPEN cursor
-sqlOpenStatement:
-    SQL_OPEN cursor_name=UserDefinedWord;
-
-// CLOSE cursor
-sqlCloseStatement:
-    SQL_CLOSE cursor_name=UserDefinedWord;
-
-// FETCH cursor INTO :host-var [, :host-var]*
-fetchStatement:
-    SQL_FETCH cursor_name=UserDefinedWord SQL_INTO
-    hostVariable (SQL_CommaSeparator hostVariable)*;
+// --- Shared SQL predicate (simplified) ---
+// Must NOT consume END_EXEC or tokens that start a new codeElement,
+// otherwise the ANTLR prediction for the enclosing updateStatement / deleteSqlStatement
+// alternative in the codeElement rule becomes ambiguous and fails.
+sqlSearchCondition: sqlSearchConditionToken+;
+sqlSearchConditionToken: ~(SemicolonSeparator | END_EXEC | EXEC | EXECUTE | PeriodSeparator);
 
 // ------------------------------
 // End of DB2 coprocessor

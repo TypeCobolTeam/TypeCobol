@@ -146,11 +146,11 @@
         ExecuteImmediateStatement,
         InsertStatement,
         UpdateStatement,
-        SqlDeleteStatement,
+        DeleteSqlStatement,
         DeclareCursorStatement,
-        SqlOpenStatement,
-        SqlCloseStatement,
-        FetchStatement
+        OpenCursorStatement,
+        FetchStatement,
+        CloseCursorStatement
 
     }
 }

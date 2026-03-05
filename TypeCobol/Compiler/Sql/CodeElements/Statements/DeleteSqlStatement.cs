@@ -5,17 +5,17 @@ namespace TypeCobol.Compiler.Sql.CodeElements.Statements
 {
     /// <summary>
     /// SQL DELETE Statement Code Element.
+    /// EXEC SQL DELETE FROM table-name [WHERE condition] END-EXEC
+    /// Named DeleteSqlStatement to avoid conflict with COBOL DELETE statement.
     /// </summary>
-    public class SqlDeleteStatement : SqlStatementElement
+    public class DeleteSqlStatement : SqlStatementElement
     {
         public TableViewCorrelationName TableName { get; }
-        public bool HasWhereClause { get; }
 
-        public SqlDeleteStatement(TableViewCorrelationName tableName, bool hasWhereClause)
-            : base(CodeElementType.SqlDeleteStatement, StatementType.SqlDeleteStatement)
+        public DeleteSqlStatement(TableViewCorrelationName tableName)
+            : base(CodeElementType.DeleteSqlStatement, StatementType.DeleteSqlStatement)
         {
             TableName = tableName;
-            HasWhereClause = hasWhereClause;
         }
 
         public override bool VisitCodeElement(IASTVisitor astVisitor)

@@ -4,9 +4,6 @@ using TypeCobol.Compiler.Sql.CodeElements.Statements;
 
 namespace TypeCobol.Compiler.Sql.Nodes
 {
-    /// <summary>
-    /// Sql INSERT Node
-    /// </summary>
     public class Insert : GenericNode<InsertStatement>, Statement
     {
         public Insert(InsertStatement statement) : base(statement) { }

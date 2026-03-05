@@ -416,16 +416,16 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit([NotNull] Insert insert);
         bool Visit([NotNull] UpdateStatement updateStatement);
         bool Visit([NotNull] Update update);
-        bool Visit([NotNull] SqlDeleteStatement sqlDeleteStatement);
-        bool Visit([NotNull] SqlDelete sqlDelete);
+        bool Visit([NotNull] DeleteSqlStatement deleteSqlStatement);
+        bool Visit([NotNull] DeleteSql deleteSql);
         bool Visit([NotNull] DeclareCursorStatement declareCursorStatement);
         bool Visit([NotNull] DeclareCursor declareCursor);
-        bool Visit([NotNull] SqlOpenStatement sqlOpenStatement);
+        bool Visit([NotNull] OpenCursorStatement openCursorStatement);
         bool Visit([NotNull] OpenCursor openCursor);
-        bool Visit([NotNull] SqlCloseStatement sqlCloseStatement);
-        bool Visit([NotNull] CloseCursor closeCursor);
         bool Visit([NotNull] FetchStatement fetchStatement);
         bool Visit([NotNull] Fetch fetch);
+        bool Visit([NotNull] CloseCursorStatement closeCursorStatement);
+        bool Visit([NotNull] CloseCursor closeCursor);
     }
 
 
@@ -1694,11 +1694,11 @@ namespace TypeCobol.Compiler.CodeElements
         {
             return true;
         }
-        public virtual bool Visit([NotNull] SqlDeleteStatement sqlDeleteStatement)
+        public virtual bool Visit([NotNull] DeleteSqlStatement deleteSqlStatement)
         {
             return true;
         }
-        public virtual bool Visit([NotNull] SqlDelete sqlDelete)
+        public virtual bool Visit([NotNull] DeleteSql deleteSql)
         {
             return true;
         }
@@ -1710,19 +1710,11 @@ namespace TypeCobol.Compiler.CodeElements
         {
             return true;
         }
-        public virtual bool Visit([NotNull] SqlOpenStatement sqlOpenStatement)
+        public virtual bool Visit([NotNull] OpenCursorStatement openCursorStatement)
         {
             return true;
         }
         public virtual bool Visit([NotNull] OpenCursor openCursor)
-        {
-            return true;
-        }
-        public virtual bool Visit([NotNull] SqlCloseStatement sqlCloseStatement)
-        {
-            return true;
-        }
-        public virtual bool Visit([NotNull] CloseCursor closeCursor)
         {
             return true;
         }
@@ -1731,6 +1723,14 @@ namespace TypeCobol.Compiler.CodeElements
             return true;
         }
         public virtual bool Visit([NotNull] Fetch fetch)
+        {
+            return true;
+        }
+        public virtual bool Visit([NotNull] CloseCursorStatement closeCursorStatement)
+        {
+            return true;
+        }
+        public virtual bool Visit([NotNull] CloseCursor closeCursor)
         {
             return true;
         }

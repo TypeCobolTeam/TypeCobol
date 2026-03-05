@@ -4,12 +4,9 @@ using TypeCobol.Compiler.Sql.CodeElements.Statements;
 
 namespace TypeCobol.Compiler.Sql.Nodes
 {
-    /// <summary>
-    /// Sql CLOSE Node
-    /// </summary>
-    public class CloseCursor : GenericNode<SqlCloseStatement>, Statement
+    public class CloseCursor : GenericNode<CloseCursorStatement>, Statement
     {
-        public CloseCursor(SqlCloseStatement statement) : base(statement) { }
+        public CloseCursor(CloseCursorStatement statement) : base(statement) { }
 
         public override bool VisitNode(IASTVisitor astVisitor)
         {

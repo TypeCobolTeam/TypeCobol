@@ -914,25 +914,25 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
             foreach (var listener in _listeners) listener.OnUpdateStatement(update);
         }
-        public void OnSqlDeleteStatement([NotNull] SqlDeleteStatement delete)
+        public void OnDeleteSqlStatement([NotNull] DeleteSqlStatement deleteSql)
         {
-            foreach (var listener in _listeners) listener.OnSqlDeleteStatement(delete);
+            foreach (var listener in _listeners) listener.OnDeleteSqlStatement(deleteSql);
         }
         public void OnDeclareCursorStatement([NotNull] DeclareCursorStatement declareCursor)
         {
             foreach (var listener in _listeners) listener.OnDeclareCursorStatement(declareCursor);
         }
-        public void OnSqlOpenStatement([NotNull] SqlOpenStatement open)
+        public void OnOpenCursorStatement([NotNull] OpenCursorStatement openCursor)
         {
-            foreach (var listener in _listeners) listener.OnSqlOpenStatement(open);
-        }
-        public void OnSqlCloseStatement([NotNull] SqlCloseStatement close)
-        {
-            foreach (var listener in _listeners) listener.OnSqlCloseStatement(close);
+            foreach (var listener in _listeners) listener.OnOpenCursorStatement(openCursor);
         }
         public void OnFetchStatement([NotNull] FetchStatement fetch)
         {
             foreach (var listener in _listeners) listener.OnFetchStatement(fetch);
+        }
+        public void OnCloseCursorStatement([NotNull] CloseCursorStatement closeCursor)
+        {
+            foreach (var listener in _listeners) listener.OnCloseCursorStatement(closeCursor);
         }
     }
 }

@@ -4,9 +4,6 @@ using TypeCobol.Compiler.Sql.CodeElements.Statements;
 
 namespace TypeCobol.Compiler.Sql.Nodes
 {
-    /// <summary>
-    /// Sql DECLARE CURSOR Node
-    /// </summary>
     public class DeclareCursor : GenericNode<DeclareCursorStatement>, Statement
     {
         public DeclareCursor(DeclareCursorStatement statement) : base(statement) { }

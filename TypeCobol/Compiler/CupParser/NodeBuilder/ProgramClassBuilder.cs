@@ -1810,11 +1810,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Exit();
             Dispatcher.OnUpdateStatement(update);
         }
-        public void OnSqlDeleteStatement([NotNull] SqlDeleteStatement delete)
+        public void OnDeleteSqlStatement([NotNull] DeleteSqlStatement deleteSql)
         {
-            Enter(new SqlDelete(delete), delete);
+            Enter(new DeleteSql(deleteSql), deleteSql);
             Exit();
-            Dispatcher.OnSqlDeleteStatement(delete);
+            Dispatcher.OnDeleteSqlStatement(deleteSql);
         }
         public void OnDeclareCursorStatement([NotNull] DeclareCursorStatement declareCursor)
         {
@@ -1822,23 +1822,23 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Exit();
             Dispatcher.OnDeclareCursorStatement(declareCursor);
         }
-        public void OnSqlOpenStatement([NotNull] SqlOpenStatement open)
+        public void OnOpenCursorStatement([NotNull] OpenCursorStatement openCursor)
         {
-            Enter(new OpenCursor(open), open);
+            Enter(new OpenCursor(openCursor), openCursor);
             Exit();
-            Dispatcher.OnSqlOpenStatement(open);
-        }
-        public void OnSqlCloseStatement([NotNull] SqlCloseStatement close)
-        {
-            Enter(new CloseCursor(close), close);
-            Exit();
-            Dispatcher.OnSqlCloseStatement(close);
+            Dispatcher.OnOpenCursorStatement(openCursor);
         }
         public void OnFetchStatement([NotNull] FetchStatement fetch)
         {
             Enter(new Fetch(fetch), fetch);
             Exit();
             Dispatcher.OnFetchStatement(fetch);
+        }
+        public void OnCloseCursorStatement([NotNull] CloseCursorStatement closeCursor)
+        {
+            Enter(new CloseCursor(closeCursor), closeCursor);
+            Exit();
+            Dispatcher.OnCloseCursorStatement(closeCursor);
         }
     }
 }

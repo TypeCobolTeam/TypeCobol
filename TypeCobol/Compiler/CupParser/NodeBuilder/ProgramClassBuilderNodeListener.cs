@@ -902,7 +902,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
 
         }
-        public void OnSqlDeleteStatement([NotNull] SqlDeleteStatement delete)
+        public void OnDeleteSqlStatement([NotNull] DeleteSqlStatement deleteSql)
         {
 
         }
@@ -910,15 +910,15 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
 
         }
-        public void OnSqlOpenStatement([NotNull] SqlOpenStatement open)
-        {
-
-        }
-        public void OnSqlCloseStatement([NotNull] SqlCloseStatement close)
+        public void OnOpenCursorStatement([NotNull] OpenCursorStatement openCursor)
         {
 
         }
         public void OnFetchStatement([NotNull] FetchStatement fetch)
+        {
+
+        }
+        public void OnCloseCursorStatement([NotNull] CloseCursorStatement closeCursor)
         {
 
         }

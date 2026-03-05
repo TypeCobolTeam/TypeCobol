@@ -2476,10 +2476,10 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = _sqlCodeElementBuilder.CreateUpdateStatement(context);
         }
 
-        public override void EnterSqlDeleteStatement([NotNull] CodeElementsParser.SqlDeleteStatementContext context)
+        public override void EnterDeleteSqlStatement([NotNull] CodeElementsParser.DeleteSqlStatementContext context)
         {
             Context = context;
-            CodeElement = _sqlCodeElementBuilder.CreateSqlDeleteStatement(context);
+            CodeElement = _sqlCodeElementBuilder.CreateDeleteSqlStatement(context);
         }
 
         public override void EnterDeclareCursorStatement([NotNull] CodeElementsParser.DeclareCursorStatementContext context)
@@ -2488,22 +2488,22 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = _sqlCodeElementBuilder.CreateDeclareCursorStatement(context);
         }
 
-        public override void EnterSqlOpenStatement([NotNull] CodeElementsParser.SqlOpenStatementContext context)
+        public override void EnterOpenCursorStatement([NotNull] CodeElementsParser.OpenCursorStatementContext context)
         {
             Context = context;
-            CodeElement = _sqlCodeElementBuilder.CreateSqlOpenStatement(context);
-        }
-
-        public override void EnterSqlCloseStatement([NotNull] CodeElementsParser.SqlCloseStatementContext context)
-        {
-            Context = context;
-            CodeElement = _sqlCodeElementBuilder.CreateSqlCloseStatement(context);
+            CodeElement = _sqlCodeElementBuilder.CreateOpenCursorStatement(context);
         }
 
         public override void EnterFetchStatement([NotNull] CodeElementsParser.FetchStatementContext context)
         {
             Context = context;
             CodeElement = _sqlCodeElementBuilder.CreateFetchStatement(context);
+        }
+
+        public override void EnterCloseCursorStatement([NotNull] CodeElementsParser.CloseCursorStatementContext context)
+        {
+            Context = context;
+            CodeElement = _sqlCodeElementBuilder.CreateCloseCursorStatement(context);
         }
     }
 }

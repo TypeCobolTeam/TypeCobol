@@ -887,11 +887,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         void OnExecuteImmediateStatement([NotNull] ExecuteImmediateStatement executeImmediate);
         void OnInsertStatement([NotNull] InsertStatement insert);
         void OnUpdateStatement([NotNull] UpdateStatement update);
-        void OnSqlDeleteStatement([NotNull] SqlDeleteStatement delete);
+        void OnDeleteSqlStatement([NotNull] DeleteSqlStatement deleteSql);
         void OnDeclareCursorStatement([NotNull] DeclareCursorStatement declareCursor);
-        void OnSqlOpenStatement([NotNull] SqlOpenStatement open);
-        void OnSqlCloseStatement([NotNull] SqlCloseStatement close);
+        void OnOpenCursorStatement([NotNull] OpenCursorStatement openCursor);
         void OnFetchStatement([NotNull] FetchStatement fetch);
+        void OnCloseCursorStatement([NotNull] CloseCursorStatement closeCursor);
         #endregion
     }
 }

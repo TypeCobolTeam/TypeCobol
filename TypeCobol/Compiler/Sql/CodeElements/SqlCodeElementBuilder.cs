@@ -940,27 +940,86 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
         public InsertStatement CreateInsertStatement(CodeElementsParser.InsertStatementContext context)
         {
-            var tableName = CreateTableOrViewOrCorrelationName(context.tableOrViewOrCorrelationName());
+            TableViewCorrelationName tableName = null;
+            if (context.tableOrViewOrCorrelationName() != null)
+            {
+                tableName = CreateTableOrViewOrCorrelationName(context.tableOrViewOrCorrelationName());
+            }
+
+            List<SqlColumnName> columns = null;
+            if (context.insertColumnList() != null)
+            {
+                columns = new List<SqlColumnName>();
+                foreach (var col in context.insertColumnList().column_name())
+                {
+                    columns.Add(CreateSqlColumnName(col));
+                }
+            }
+
+            List<SqlExpression> values = null;
+            if (context.insertValueList() != null)
+            {
+                values = new List<SqlExpression>();
+                foreach (var val in context.insertValueList().sqlExpression())
+                {
+                    values.Add(CreateSqlExpression(val));
+                }
+            }
+
             FullSelect fullSelect = null;
             if (context.fullselect() != null)
             {
                 fullSelect = CreateFullSelect(context.fullselect());
             }
-            return new InsertStatement(tableName, fullSelect);
+
+            return new InsertStatement(tableName, columns, values, fullSelect);
         }
 
         public UpdateStatement CreateUpdateStatement(CodeElementsParser.UpdateStatementContext context)
         {
-            var tableName = CreateTableOrViewOrCorrelationName(context.tableOrViewOrCorrelationName());
-            bool hasWhereClause = context.SQL_WHERE() != null;
-            return new UpdateStatement(tableName, hasWhereClause);
+            TableViewCorrelationName tableName = null;
+            if (context.tableOrViewOrCorrelationName() != null)
+            {
+                tableName = CreateTableOrViewOrCorrelationName(context.tableOrViewOrCorrelationName());
+            }
+
+            var assignments = new List<Assignment>();
+            if (context.updateAssignmentClause() != null)
+            {
+                foreach (var assignCtx in context.updateAssignmentClause())
+                {
+                    SqlExpression target = null;
+                    SqlExpression source = null;
+                    if (assignCtx.column_name() != null)
+                    {
+                        target = CreateSqlColumnName(assignCtx.column_name());
+                    }
+                    if (assignCtx.sqlExpression() != null)
+                    {
+                        source = CreateSqlExpression(assignCtx.sqlExpression());
+                    }
+                    var targets = new List<TargetVariable>();
+                    var values = new List<SourceValue>();
+                    if (source != null)
+                    {
+                        values.Add(new SourceValue(source, null));
+                    }
+                    assignments.Add(new Assignment(targets, values));
+                }
+            }
+
+            return new UpdateStatement(tableName, assignments);
         }
 
-        public SqlDeleteStatement CreateSqlDeleteStatement(CodeElementsParser.SqlDeleteStatementContext context)
+        public DeleteSqlStatement CreateDeleteSqlStatement(CodeElementsParser.DeleteSqlStatementContext context)
         {
-            var tableName = CreateTableOrViewOrCorrelationName(context.tableOrViewOrCorrelationName());
-            bool hasWhereClause = context.SQL_WHERE() != null;
-            return new SqlDeleteStatement(tableName, hasWhereClause);
+            TableViewCorrelationName tableName = null;
+            if (context.tableOrViewOrCorrelationName() != null)
+            {
+                tableName = CreateTableOrViewOrCorrelationName(context.tableOrViewOrCorrelationName());
+            }
+
+            return new DeleteSqlStatement(tableName);
         }
 
         public DeclareCursorStatement CreateDeclareCursorStatement(CodeElementsParser.DeclareCursorStatementContext context)
@@ -970,33 +1029,37 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             {
                 cursorName = new SymbolReference(new AlphanumericValue((Token)context.cursor_name), SymbolType.SqlIdentifier);
             }
+
+            SyntaxProperty<bool> withHold = null;
+            if (context.withHoldClause() != null)
+            {
+                withHold = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.withHoldClause()));
+            }
+
+            SyntaxProperty<bool> withReturn = null;
+            if (context.withReturnClause() != null)
+            {
+                withReturn = new SyntaxProperty<bool>(true, ParseTreeUtils.GetFirstToken(context.withReturnClause()));
+            }
+
             FullSelect fullSelect = null;
             if (context.fullselect() != null)
             {
                 fullSelect = CreateFullSelect(context.fullselect());
             }
-            bool withHold = context.SQL_HOLD() != null;
-            return new DeclareCursorStatement(cursorName, fullSelect, withHold);
+
+            return new DeclareCursorStatement(cursorName, withHold, withReturn, fullSelect);
         }
 
-        public SqlOpenStatement CreateSqlOpenStatement(CodeElementsParser.SqlOpenStatementContext context)
+        public OpenCursorStatement CreateOpenCursorStatement(CodeElementsParser.OpenCursorStatementContext context)
         {
             SymbolReference cursorName = null;
             if (context.cursor_name != null)
             {
                 cursorName = new SymbolReference(new AlphanumericValue((Token)context.cursor_name), SymbolType.SqlIdentifier);
             }
-            return new SqlOpenStatement(cursorName);
-        }
 
-        public SqlCloseStatement CreateSqlCloseStatement(CodeElementsParser.SqlCloseStatementContext context)
-        {
-            SymbolReference cursorName = null;
-            if (context.cursor_name != null)
-            {
-                cursorName = new SymbolReference(new AlphanumericValue((Token)context.cursor_name), SymbolType.SqlIdentifier);
-            }
-            return new SqlCloseStatement(cursorName);
+            return new OpenCursorStatement(cursorName);
         }
 
         public FetchStatement CreateFetchStatement(CodeElementsParser.FetchStatementContext context)
@@ -1006,16 +1069,32 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             {
                 cursorName = new SymbolReference(new AlphanumericValue((Token)context.cursor_name), SymbolType.SqlIdentifier);
             }
-            var intoVariables = new List<SqlVariable>();
-            foreach (var hostVar in context.hostVariable())
+
+            var intoVariables = new List<HostVariable>();
+            if (context.fetchIntoClause() != null)
             {
-                var sqlVar = CreateSqlHostVariable(hostVar);
-                if (sqlVar != null)
+                foreach (var hostVarCtx in context.fetchIntoClause().hostVariable())
                 {
-                    intoVariables.Add(sqlVar);
+                    var hostVar = CreateSqlHostVariable(hostVarCtx);
+                    if (hostVar != null)
+                    {
+                        intoVariables.Add(hostVar);
+                    }
                 }
             }
+
             return new FetchStatement(cursorName, intoVariables);
+        }
+
+        public CloseCursorStatement CreateCloseCursorStatement(CodeElementsParser.CloseCursorStatementContext context)
+        {
+            SymbolReference cursorName = null;
+            if (context.cursor_name != null)
+            {
+                cursorName = new SymbolReference(new AlphanumericValue((Token)context.cursor_name), SymbolType.SqlIdentifier);
+            }
+
+            return new CloseCursorStatement(cursorName);
         }
     }
 }

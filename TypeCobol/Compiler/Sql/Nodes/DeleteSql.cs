@@ -4,12 +4,9 @@ using TypeCobol.Compiler.Sql.CodeElements.Statements;
 
 namespace TypeCobol.Compiler.Sql.Nodes
 {
-    /// <summary>
-    /// Sql DELETE Node
-    /// </summary>
-    public class SqlDelete : GenericNode<SqlDeleteStatement>, Statement
+    public class DeleteSql : GenericNode<DeleteSqlStatement>, Statement
     {
-        public SqlDelete(SqlDeleteStatement statement) : base(statement) { }
+        public DeleteSql(DeleteSqlStatement statement) : base(statement) { }
 
         public override bool VisitNode(IASTVisitor astVisitor)
         {

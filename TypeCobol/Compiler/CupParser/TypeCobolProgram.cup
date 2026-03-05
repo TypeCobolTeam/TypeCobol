@@ -250,11 +250,11 @@ terminal TypeCobol.Compiler.Sql.CodeElements.Statements.AlterSequenceStatement A
 terminal TypeCobol.Compiler.Sql.CodeElements.Statements.ExecuteImmediateStatement ExecuteImmediateStatement;
 terminal TypeCobol.Compiler.Sql.CodeElements.Statements.InsertStatement InsertStatement;
 terminal TypeCobol.Compiler.Sql.CodeElements.Statements.UpdateStatement UpdateStatement;
-terminal TypeCobol.Compiler.Sql.CodeElements.Statements.SqlDeleteStatement SqlDeleteStatement;
+terminal TypeCobol.Compiler.Sql.CodeElements.Statements.DeleteSqlStatement DeleteSqlStatement;
 terminal TypeCobol.Compiler.Sql.CodeElements.Statements.DeclareCursorStatement DeclareCursorStatement;
-terminal TypeCobol.Compiler.Sql.CodeElements.Statements.SqlOpenStatement SqlOpenStatement;
-terminal TypeCobol.Compiler.Sql.CodeElements.Statements.SqlCloseStatement SqlCloseStatement;
+terminal TypeCobol.Compiler.Sql.CodeElements.Statements.OpenCursorStatement OpenCursorStatement;
 terminal TypeCobol.Compiler.Sql.CodeElements.Statements.FetchStatement FetchStatement;
+terminal TypeCobol.Compiler.Sql.CodeElements.Statements.CloseCursorStatement CloseCursorStatement;
 
 
 terminal TypeCobol.Compiler.CodeElements.LibraryCopyCodeElement LibraryCopy;
@@ -842,16 +842,16 @@ sqlStatement ::= CommitStatement:stmt
 {: my_parser.Builder.OnInsertStatement(stmt); :}
 |	UpdateStatement:stmt
 {: my_parser.Builder.OnUpdateStatement(stmt); :}
-|	SqlDeleteStatement:stmt
-{: my_parser.Builder.OnSqlDeleteStatement(stmt); :}
+|	DeleteSqlStatement:stmt
+{: my_parser.Builder.OnDeleteSqlStatement(stmt); :}
 |	DeclareCursorStatement:stmt
 {: my_parser.Builder.OnDeclareCursorStatement(stmt); :}
-|	SqlOpenStatement:stmt
-{: my_parser.Builder.OnSqlOpenStatement(stmt); :}
-|	SqlCloseStatement:stmt
-{: my_parser.Builder.OnSqlCloseStatement(stmt); :}
+|	OpenCursorStatement:stmt
+{: my_parser.Builder.OnOpenCursorStatement(stmt); :}
 |	FetchStatement:stmt
 {: my_parser.Builder.OnFetchStatement(stmt); :}
+|	CloseCursorStatement:stmt
+{: my_parser.Builder.OnCloseCursorStatement(stmt); :}
 ;
 
 execStatementEnd ::= ExecStatementEnd:stmt
