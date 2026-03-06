@@ -28,7 +28,7 @@ namespace TypeCobol.Compiler.Symbols
         /// <summary>
         /// Redefined symbol.
         /// </summary>
-        /// <remarks>Should be set only by <see cref="Diagnostics.RedefinesChecker" /></remarks>
+        /// <remarks>Should be set only by <see cref="Diagnostics.CrossCompleteChecker" /></remarks>
         public VariableSymbol Redefined
         {
             get => _redefined;

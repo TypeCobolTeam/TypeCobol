@@ -1,14 +1,15 @@
---- Diagnostics ---
-Line 5[11,16] <27, Error, Syntax> - Syntax error : Variable with usage COMP-1, COMP-2, INDEX, POINTER, POINTER-32, PROCEDURE-POINTER and FUNCTION-POINTER cannot have a PICTURE OffendingSymbol=[11,16:MyVar1]<UserDefinedWord>
-Line 6[11,16] <27, Error, Syntax> - Syntax error : Variable with usage COMP-1, COMP-2, INDEX, POINTER, POINTER-32, PROCEDURE-POINTER and FUNCTION-POINTER cannot have a PICTURE OffendingSymbol=[11,16:MyVar2]<UserDefinedWord>
-Line 7[11,16] <27, Error, Syntax> - Syntax error : Variable with usage COMP-1, COMP-2, INDEX, POINTER, POINTER-32, PROCEDURE-POINTER and FUNCTION-POINTER cannot have a PICTURE OffendingSymbol=[11,16:MyVar3]<UserDefinedWord>
-Line 8[11,16] <27, Error, Syntax> - Syntax error : Variable with usage COMP-1, COMP-2, INDEX, POINTER, POINTER-32, PROCEDURE-POINTER and FUNCTION-POINTER cannot have a PICTURE OffendingSymbol=[11,16:MyVar4]<UserDefinedWord>
-Line 9[11,16] <27, Error, Syntax> - Syntax error : Variable with usage COMP-1, COMP-2, INDEX, POINTER, POINTER-32, PROCEDURE-POINTER and FUNCTION-POINTER cannot have a PICTURE OffendingSymbol=[11,16:MyVar5]<UserDefinedWord>
-Line 10[11,16] <27, Error, Syntax> - Syntax error : Variable with usage COMP-1, COMP-2, INDEX, POINTER, POINTER-32, PROCEDURE-POINTER and FUNCTION-POINTER cannot have a PICTURE OffendingSymbol=[11,16:MyVar6]<UserDefinedWord>
-Line 11[11,16] <27, Error, Syntax> - Syntax error : Variable with usage COMP-1, COMP-2, INDEX, POINTER, POINTER-32, PROCEDURE-POINTER and FUNCTION-POINTER cannot have a PICTURE OffendingSymbol=[11,16:MyVar7]<UserDefinedWord>
-Line 17[21,25] <27, Error, Syntax> - Syntax error : Variable with usage COMP-1, COMP-2, INDEX, POINTER, POINTER-32, PROCEDURE-POINTER and FUNCTION-POINTER cannot have a PICTURE OffendingSymbol=[21,25:var23]<UserDefinedWord>
-Line 18[21,25] <27, Error, Syntax> - Syntax error : Variable with usage COMP-1, COMP-2, INDEX, POINTER, POINTER-32, PROCEDURE-POINTER and FUNCTION-POINTER cannot have a PICTURE OffendingSymbol=[21,25:var24]<UserDefinedWord>
-Line 19[21,25] <27, Error, Syntax> - Syntax error : Variable with usage COMP-1, COMP-2, INDEX, POINTER, POINTER-32, PROCEDURE-POINTER and FUNCTION-POINTER cannot have a PICTURE OffendingSymbol=[21,25:var25]<UserDefinedWord>
+﻿--- Diagnostics ---
+Line 5[11,16] <27, Error, Syntax> - Syntax error : Variable with usage COMP-1, COMP-2, INDEX, OBJECT REFERENCE, POINTER, POINTER-32, PROCEDURE-POINTER and FUNCTION-POINTER cannot have a PICTURE OffendingSymbol=[11,16:MyVar1]<UserDefinedWord>
+Line 6[11,16] <27, Error, Syntax> - Syntax error : Variable with usage COMP-1, COMP-2, INDEX, OBJECT REFERENCE, POINTER, POINTER-32, PROCEDURE-POINTER and FUNCTION-POINTER cannot have a PICTURE OffendingSymbol=[11,16:MyVar2]<UserDefinedWord>
+Line 7[11,16] <27, Error, Syntax> - Syntax error : Variable with usage COMP-1, COMP-2, INDEX, OBJECT REFERENCE, POINTER, POINTER-32, PROCEDURE-POINTER and FUNCTION-POINTER cannot have a PICTURE OffendingSymbol=[11,16:MyVar3]<UserDefinedWord>
+Line 8[11,16] <27, Error, Syntax> - Syntax error : Variable with usage COMP-1, COMP-2, INDEX, OBJECT REFERENCE, POINTER, POINTER-32, PROCEDURE-POINTER and FUNCTION-POINTER cannot have a PICTURE OffendingSymbol=[11,16:MyVar4]<UserDefinedWord>
+Line 9[11,16] <27, Error, Syntax> - Syntax error : Variable with usage COMP-1, COMP-2, INDEX, OBJECT REFERENCE, POINTER, POINTER-32, PROCEDURE-POINTER and FUNCTION-POINTER cannot have a PICTURE OffendingSymbol=[11,16:MyVar5]<UserDefinedWord>
+Line 10[11,16] <27, Error, Syntax> - Syntax error : Variable with usage COMP-1, COMP-2, INDEX, OBJECT REFERENCE, POINTER, POINTER-32, PROCEDURE-POINTER and FUNCTION-POINTER cannot have a PICTURE OffendingSymbol=[11,16:MyVar6]<UserDefinedWord>
+Line 11[11,16] <27, Error, Syntax> - Syntax error : Variable with usage COMP-1, COMP-2, INDEX, OBJECT REFERENCE, POINTER, POINTER-32, PROCEDURE-POINTER and FUNCTION-POINTER cannot have a PICTURE OffendingSymbol=[11,16:MyVar7]<UserDefinedWord>
+Line 12[11,16] <27, Error, Syntax> - Syntax error : Variable with usage COMP-1, COMP-2, INDEX, OBJECT REFERENCE, POINTER, POINTER-32, PROCEDURE-POINTER and FUNCTION-POINTER cannot have a PICTURE OffendingSymbol=[11,16:MyVar8]<UserDefinedWord>
+Line 19[21,25] <27, Error, Syntax> - Syntax error : Variable with usage COMP-1, COMP-2, INDEX, OBJECT REFERENCE, POINTER, POINTER-32, PROCEDURE-POINTER and FUNCTION-POINTER cannot have a PICTURE OffendingSymbol=[21,25:var23]<UserDefinedWord>
+Line 20[21,25] <27, Error, Syntax> - Syntax error : Variable with usage COMP-1, COMP-2, INDEX, OBJECT REFERENCE, POINTER, POINTER-32, PROCEDURE-POINTER and FUNCTION-POINTER cannot have a PICTURE OffendingSymbol=[21,25:var24]<UserDefinedWord>
+Line 21[21,25] <27, Error, Syntax> - Syntax error : Variable with usage COMP-1, COMP-2, INDEX, OBJECT REFERENCE, POINTER, POINTER-32, PROCEDURE-POINTER and FUNCTION-POINTER cannot have a PICTURE OffendingSymbol=[21,25:var25]<UserDefinedWord>
 
 --- Program ---
 DVZF0OSM (.NET Type=ProgramSymbol, Kind=Program)
@@ -75,6 +76,15 @@ WorkingStorageData:
   Type:
     (.NET Type=PictureType, Tag=Picture)
     Usage: FunctionPointer
+    Picture: 9(4)
+  Level: 1
+  IsFiller: False
+  MyVar8 (.NET Type=VariableSymbol, Kind=Variable)
+  Flags: [WORKING_STORAGE]
+  Owner: DVZF0OSM
+  Type:
+    (.NET Type=PictureType, Tag=Picture)
+    Usage: ObjectReference
     Picture: 9(4)
   Level: 1
   IsFiller: False

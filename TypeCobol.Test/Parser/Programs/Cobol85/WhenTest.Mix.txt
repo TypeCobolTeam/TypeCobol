@@ -8,7 +8,7 @@
        01 bool1 pic 9.
        01 bool2 pic 9.
        PROCEDURE DIVISION.
-           evaluate true
+           evaluate 1
 Line 12[17,20] <27, Error, Syntax> - Syntax error : Missing condition in "when" clause
                 when
                 when bool1 display "evaluate"
@@ -19,7 +19,7 @@ Line 16[17,20] <27, Error, Syntax> - Syntax error : Missing statement in "when" 
                 when
                 when other continue
            end-evaluate
-           evaluate true
+           evaluate 1
                 when bool1 display "evaluate"
 Line 21[17,26] <27, Error, Syntax> - Syntax error : Missing statement in "when" clause
                 when bool1
@@ -37,8 +37,8 @@ Line 28[17,20] <27, Error, Syntax> - Syntax error : Missing condition in "when" 
 Line 28[17,20] <27, Error, Syntax> - Syntax error : Missing statement in "when" clause
                 when
            end-search
-Line 30[12,24] <37, Warning, General> - Warning: "when other" is missing
-           evaluate true
+Line 30[12,21] <37, Warning, General> - Warning: "when other" is missing
+           evaluate 1
                 when bool1 display "evaluate"
       *KO missing statement in "when other" clause
                 when other

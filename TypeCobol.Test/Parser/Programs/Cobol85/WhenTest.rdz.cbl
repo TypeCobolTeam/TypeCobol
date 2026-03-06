@@ -8,7 +8,7 @@
        01 bool1 pic 9.
        01 bool2 pic 9.
        PROCEDURE DIVISION.
-           evaluate true
+           evaluate 1
                 when
                 when bool1 display "evaluate"
                 when bool1
@@ -16,7 +16,7 @@
                 when
                 when other continue
            end-evaluate
-           evaluate true
+           evaluate 1
                 when bool1 display "evaluate"
                 when bool1
                 when other continue
@@ -27,7 +27,7 @@
                     when var3 = "ho" display "search"
                 when
            end-search
-           evaluate true
+           evaluate 1
                 when bool1 display "evaluate"
       *KO missing statement in "when other" clause
                 when other

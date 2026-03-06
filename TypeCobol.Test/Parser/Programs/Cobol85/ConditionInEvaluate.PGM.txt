@@ -1,0 +1,25 @@
+﻿--- Diagnostics ---
+Line 100[31,34] <27, Error, Syntax> - Syntax error : An incomplete condition VAR2 was found in a conditional expression. OffendingSymbol=[31,34:VAR2]<UserDefinedWord>
+Line 107[32,35] <27, Error, Syntax> - Syntax error : An incomplete condition VAR1 was found in a conditional expression. OffendingSymbol=[32,35:VAR1]<UserDefinedWord>
+Line 107[51,54] <27, Error, Syntax> - Syntax error : An incomplete condition VAR2 was found in a conditional expression. OffendingSymbol=[51,54:VAR2]<UserDefinedWord>
+Line 114[21,24] <27, Error, Syntax> - Syntax error : An incomplete condition VAR1 was found in a conditional expression. OffendingSymbol=[21,24:VAR1]<UserDefinedWord>
+Line 121[21,34] <30, Error, Semantics> - Semantic error: Symbol NOT-REFERENCED is not referenced OffendingSymbol=[21,34:NOT-REFERENCED]<UserDefinedWord>
+
+--- Program ---
+PROGRAM: CHKCNDTN common:False initial:False recursive:False
+ author: ? written: ? compiled: ? installation: ? security: ?
+--- Intrinsic:Namespace:Program:Global:Local
+-- DATA --------
+  MAIN-GROUP:Alphanumeric
+  VAR1:Alphanumeric
+  COND1:Level88
+  COND2:Level88
+  VAR2:Alphanumeric
+  VAR-INDEX1:Numeric
+  VAR-INDEX2:Numeric
+--- Intrinsic
+-- TYPES -------
+  BOOL:BOOL
+  DATE:DATE
+  CURRENCY:CURRENCY
+  STRING:STRING
