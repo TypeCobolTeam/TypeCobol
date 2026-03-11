@@ -19,6 +19,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
         {
             switch (tokenType)
             {
+                // Statements with full grammar rules
                 case TokenType.SQL_ALTER:
                 case TokenType.SQL_COMMIT:
                 case TokenType.SQL_CONNECT:
@@ -33,6 +34,16 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                 case TokenType.SQL_SET:
                 case TokenType.SQL_TRUNCATE:
                 case TokenType.SQL_WHENEVER:
+                // DML statements without grammar rules — listed here so that
+                // ANTLR error recovery stops at their boundaries instead of
+                // consuming tokens indefinitely.
+                case TokenType.SQL_INSERT:
+                case TokenType.SQL_UPDATE:
+                case TokenType.SQL_DELETE:
+                case TokenType.SQL_DECLARE:
+                case TokenType.SQL_OPEN:
+                case TokenType.SQL_FETCH:
+                case TokenType.SQL_CLOSE:
                     return true;
                 default:
                     return false;

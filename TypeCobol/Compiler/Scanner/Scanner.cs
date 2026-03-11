@@ -2001,8 +2001,15 @@ namespace TypeCobol.Compiler.Scanner
 
             if (tokensLine.ScanState.AfterExecSql)
             {
-                // Expect SQL code
-                tokensLine.ScanState.InsideSql = true;
+                // Only enable SQL token parsing for statements that have grammar rules.
+                // Unsupported statements (INSERT, UPDATE, DELETE, DECLARE CURSOR, OPEN,
+                // FETCH, CLOSE, SELECT with INTO/WHERE/JOIN) fall back to ExecStatementText
+                // to avoid ANTLR parser hangs during error recovery.
+                if (!compilerOptions.EnableSqlParsing || IsSupportedSqlStatement(startIndex, endIndex))
+                {
+                    tokensLine.ScanState.InsideSql = true;
+                }
+                // else: unsupported SQL → InsideSql stays false → ExecStatementText fallback
             }
 
             if (tokensLine.ScanState.InsideSql && compilerOptions.EnableSqlParsing)
@@ -2021,6 +2028,65 @@ namespace TypeCobol.Compiler.Scanner
             // Not SQL code, consume all chars as ExecStatementText
             currentIndex = endIndex + 1;
             return new Token(TokenType.ExecStatementText, startIndex, endIndex, tokensLine);
+        }
+
+        /// <summary>
+        /// Checks whether the SQL statement starting at startIndex is supported by the ANTLR grammar.
+        /// Only statements with complete grammar rules should be parsed as SQL tokens.
+        /// Unsupported statements (INSERT, UPDATE, DELETE, DECLARE CURSOR, OPEN cursor,
+        /// FETCH, CLOSE cursor, and SELECT with complex clauses) are handled as ExecStatementText
+        /// to prevent parser hangs.
+        /// </summary>
+        private bool IsSupportedSqlStatement(int startIndex, int endIndex)
+        {
+            // Supported SQL keywords that have full grammar rules in CobolCodeElements.g4
+            string[] supportedKeywords =
+            {
+                "COMMIT", "ROLLBACK", "TRUNCATE", "WHENEVER", "LOCK",
+                "RELEASE", "SAVEPOINT", "CONNECT", "DROP", "SET",
+                "GET", "ALTER", "EXECUTE"
+            };
+
+            // Skip leading whitespace
+            int pos = startIndex;
+            while (pos <= endIndex && line[pos] == ' ')
+                pos++;
+
+            if (pos > endIndex)
+                return false;
+
+            int remaining = endIndex - pos + 1;
+
+            foreach (var keyword in supportedKeywords)
+            {
+                if (remaining >= keyword.Length)
+                {
+                    bool match = true;
+                    for (int i = 0; i < keyword.Length; i++)
+                    {
+                        if (char.ToUpperInvariant(line[pos + i]) != keyword[i])
+                        {
+                            match = false;
+                            break;
+                        }
+                    }
+
+                    if (match)
+                    {
+                        // Keyword must be followed by whitespace, end of text, or non-letter
+                        if (remaining == keyword.Length ||
+                            !char.IsLetterOrDigit(line[pos + keyword.Length]))
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            // SELECT is only partially supported (no WHERE, INTO, JOIN, column names)
+            // so it is NOT included above — it causes parser hangs on real-world queries.
+            // INSERT, UPDATE, DELETE, DECLARE, OPEN, FETCH, CLOSE have no grammar rules at all.
+            return false;
         }
 
         private Token ScanKeywordOrUserDefinedWord(int startIndex)
