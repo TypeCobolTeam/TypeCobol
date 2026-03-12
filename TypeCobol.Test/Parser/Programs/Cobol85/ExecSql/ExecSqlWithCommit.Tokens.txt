@@ -1,5 +1,4 @@
-Line 5[19,24] <27, Error, Syntax> - Syntax error : extraneous input 'DELETE' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword}
-Line 16[19,19] <27, Error, Syntax> - Syntax error : no viable alternative at input 'a'
+﻿Line 16[19,19] <27, Error, Syntax> - Syntax error : no viable alternative at input 'a'
 Line 10[12,19] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement
 --- Tokens ---
 ---------------------------------
