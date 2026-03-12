@@ -906,5 +906,9 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
             foreach (var listener in _listeners) listener.OnExecuteImmediateStatement(executeImmediate);
         }
+        public void OnUnsupportedSqlStatement([NotNull] UnsupportedSqlStatement unsupportedSql)
+        {
+            foreach (var listener in _listeners) listener.OnUnsupportedSqlStatement(unsupportedSql);
+        }
     }
 }
