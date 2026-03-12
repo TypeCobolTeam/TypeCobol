@@ -2463,5 +2463,11 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = executeImmediateStatement;
             ExecuteImmediateStatementChecker.OnCodeElement(executeImmediateStatement, context);
         }
+
+        public override void EnterUnsupportedSqlStatement([NotNull] CodeElementsParser.UnsupportedSqlStatementContext context)
+        {
+            Context = context;
+            CodeElement = _sqlCodeElementBuilder.CreateUnsupportedSqlStatement(context);
+        }
     }
 }

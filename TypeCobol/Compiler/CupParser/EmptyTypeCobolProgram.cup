@@ -153,6 +153,7 @@ terminal TypeCobol.Compiler.Sql.CodeElements.Statements.SetAssignmentStatement S
 terminal TypeCobol.Compiler.Sql.CodeElements.Statements.GetDiagnosticsStatement GetDiagnosticsStatement;
 terminal TypeCobol.Compiler.Sql.CodeElements.Statements.AlterSequenceStatement AlterSequenceStatement;
 terminal TypeCobol.Compiler.Sql.CodeElements.Statements.ExecuteImmediateStatement ExecuteImmediateStatement;
+terminal TypeCobol.Compiler.Sql.CodeElements.Statements.UnsupportedSqlStatement UnsupportedSqlStatement;
 
 
 terminal TypeCobol.Compiler.CodeElements.LibraryCopyCodeElement LibraryCopy;
@@ -733,7 +734,9 @@ sqlStatement ::= CommitStatement:stmt
 {: :}
 |	AlterSequenceStatement:stmt 
 {: :}
-|	ExecuteImmediateStatement:stmt 
+|	ExecuteImmediateStatement:stmt
+{: :}
+|	UnsupportedSqlStatement:stmt
 {: :}
 ;
 
