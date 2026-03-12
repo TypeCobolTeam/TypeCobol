@@ -143,7 +143,8 @@
         SetAssignmentStatement,
         GetDiagnosticsStatement,
         AlterSequenceStatement,
-        ExecuteImmediateStatement
+        ExecuteImmediateStatement,
+        UnsupportedSqlStatement
 
     }
 }

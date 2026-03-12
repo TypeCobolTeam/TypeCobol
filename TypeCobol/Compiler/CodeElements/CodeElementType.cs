@@ -176,6 +176,7 @@
         GetDiagnosticsStatement,
         AlterSequenceStatement,
         ExecuteImmediateStatement,
+        UnsupportedSqlStatement,
 
         // [TYPECOBOL]
         LibraryCopy,
