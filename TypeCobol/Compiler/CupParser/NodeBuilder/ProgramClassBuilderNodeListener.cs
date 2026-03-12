@@ -894,5 +894,9 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
 
         }
+        public void OnUnsupportedSqlStatement([NotNull] UnsupportedSqlStatement unsupportedSql)
+        {
+
+        }
     }
 }

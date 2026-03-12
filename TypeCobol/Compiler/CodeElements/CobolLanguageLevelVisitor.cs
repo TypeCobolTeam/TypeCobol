@@ -1664,5 +1664,13 @@ namespace TypeCobol.Compiler.CodeElements
         {
             return true;
         }
+        public virtual bool Visit([NotNull] UnsupportedSqlStatement unsupportedSqlStatement)
+        {
+            return true;
+        }
+        public virtual bool Visit([NotNull] UnsupportedSql unsupportedSql)
+        {
+            return true;
+        }
     }
 }

@@ -885,6 +885,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         /// </summary>
         /// <param name="executeImmediate">The corresponding  ExecuteImmediate Statement Code Element</param>
         void OnExecuteImmediateStatement([NotNull] ExecuteImmediateStatement executeImmediate);
+        /// <summary>
+        /// Enter an UnsupportedSql Statement Node
+        /// </summary>
+        /// <param name="unsupportedSql">The corresponding UnsupportedSql Statement Code Element</param>
+        void OnUnsupportedSqlStatement([NotNull] UnsupportedSqlStatement unsupportedSql);
         #endregion
     }
 }

@@ -1798,5 +1798,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Exit();
             Dispatcher.OnExecuteImmediateStatement(executeImmediate);
         }
+        public void OnUnsupportedSqlStatement([NotNull] UnsupportedSqlStatement unsupportedSql)
+        {
+            Enter(new UnsupportedSql(unsupportedSql), unsupportedSql);
+            Exit();
+            Dispatcher.OnUnsupportedSqlStatement(unsupportedSql);
+        }
     }
 }
