@@ -937,5 +937,12 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
             return null;
         }
+
+        public UnsupportedSqlStatement CreateUnsupportedSqlStatement(CodeElementsParser.UnsupportedSqlStatementContext context)
+        {
+            var firstToken = context.Start;
+            string keyword = firstToken?.Text ?? "UNKNOWN";
+            return new UnsupportedSqlStatement(keyword);
+        }
     }
 }
