@@ -1804,5 +1804,29 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Exit();
             Dispatcher.OnUnsupportedSqlStatement(unsupportedSql);
         }
+        public void OnInsertStatement([NotNull] InsertStatement insert)
+        {
+            Enter(new Insert(insert), insert);
+            Exit();
+            Dispatcher.OnInsertStatement(insert);
+        }
+        public void OnUpdateStatement([NotNull] UpdateStatement update)
+        {
+            Enter(new Update(update), update);
+            Exit();
+            Dispatcher.OnUpdateStatement(update);
+        }
+        public void OnSqlDeleteStatement([NotNull] SqlDeleteStatement sqlDelete)
+        {
+            Enter(new SqlDelete(sqlDelete), sqlDelete);
+            Exit();
+            Dispatcher.OnSqlDeleteStatement(sqlDelete);
+        }
+        public void OnDeclareCursorStatement([NotNull] DeclareCursorStatement declareCursor)
+        {
+            Enter(new DeclareCursor(declareCursor), declareCursor);
+            Exit();
+            Dispatcher.OnDeclareCursorStatement(declareCursor);
+        }
     }
 }

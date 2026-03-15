@@ -898,5 +898,9 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
 
         }
+        public void OnInsertStatement([NotNull] InsertStatement insert) { }
+        public void OnUpdateStatement([NotNull] UpdateStatement update) { }
+        public void OnSqlDeleteStatement([NotNull] SqlDeleteStatement sqlDelete) { }
+        public void OnDeclareCursorStatement([NotNull] DeclareCursorStatement declareCursor) { }
     }
 }
