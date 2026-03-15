@@ -176,6 +176,10 @@
         GetDiagnosticsStatement,
         AlterSequenceStatement,
         ExecuteImmediateStatement,
+        InsertStatement,
+        UpdateStatement,
+        SqlDeleteStatement,
+        DeclareCursorStatement,
         UnsupportedSqlStatement,
 
         // [TYPECOBOL]

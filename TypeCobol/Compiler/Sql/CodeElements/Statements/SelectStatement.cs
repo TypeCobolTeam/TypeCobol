@@ -1,18 +1,21 @@
-﻿using TypeCobol.Compiler.CodeElements;
+using System.Collections.Generic;
+using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Sql.Model;
 
 namespace TypeCobol.Compiler.Sql.CodeElements.Statements
 {
-    /// <summary>
-    /// SQL SELECT Statement Code Element.
-    /// </summary>
     public class SelectStatement : SqlStatementElement
     {
         public FullSelect FullSelect { get; }
+        public IList<HostVariableBinding> IntoHostVariables { get; }
+        public IList<HostVariableBinding> WhereHostVariables { get; }
 
-        public SelectStatement(FullSelect fullSelect) : base(CodeElementType.SelectStatement, StatementType.SelectStatement)
+        public SelectStatement(FullSelect fullSelect, IList<HostVariableBinding> intoHostVariables = null, IList<HostVariableBinding> whereHostVariables = null)
+            : base(CodeElementType.SelectStatement, StatementType.SelectStatement)
         {
-            this.FullSelect = fullSelect;
+            FullSelect = fullSelect;
+            IntoHostVariables = intoHostVariables ?? new List<HostVariableBinding>();
+            WhereHostVariables = whereHostVariables ?? new List<HostVariableBinding>();
         }
 
         public override bool VisitCodeElement(IASTVisitor astVisitor)
@@ -22,4 +25,4 @@ namespace TypeCobol.Compiler.Sql.CodeElements.Statements
                                                      && astVisitor.SqlVisitor.ContinueVisit(FullSelect);
         }
     }
-} 
+}

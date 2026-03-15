@@ -414,6 +414,14 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit([NotNull] ExecuteImmediate executeImmediate);
         bool Visit([NotNull] UnsupportedSqlStatement unsupportedSqlStatement);
         bool Visit([NotNull] UnsupportedSql unsupportedSql);
+        bool Visit([NotNull] InsertStatement insertStatement);
+        bool Visit([NotNull] Insert insert);
+        bool Visit([NotNull] UpdateStatement updateStatement);
+        bool Visit([NotNull] Update update);
+        bool Visit([NotNull] SqlDeleteStatement sqlDeleteStatement);
+        bool Visit([NotNull] SqlDelete sqlDelete);
+        bool Visit([NotNull] DeclareCursorStatement declareCursorStatement);
+        bool Visit([NotNull] DeclareCursor declareCursor);
     }
 
 
@@ -1671,6 +1679,38 @@ namespace TypeCobol.Compiler.CodeElements
             return true;
         }
         public virtual bool Visit([NotNull] UnsupportedSql unsupportedSql)
+        {
+            return true;
+        }
+        public virtual bool Visit([NotNull] InsertStatement insertStatement)
+        {
+            return true;
+        }
+        public virtual bool Visit([NotNull] Insert insert)
+        {
+            return true;
+        }
+        public virtual bool Visit([NotNull] UpdateStatement updateStatement)
+        {
+            return true;
+        }
+        public virtual bool Visit([NotNull] Update update)
+        {
+            return true;
+        }
+        public virtual bool Visit([NotNull] SqlDeleteStatement sqlDeleteStatement)
+        {
+            return true;
+        }
+        public virtual bool Visit([NotNull] SqlDelete sqlDelete)
+        {
+            return true;
+        }
+        public virtual bool Visit([NotNull] DeclareCursorStatement declareCursorStatement)
+        {
+            return true;
+        }
+        public virtual bool Visit([NotNull] DeclareCursor declareCursor)
         {
             return true;
         }
