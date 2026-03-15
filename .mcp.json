@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "triangulatedb": {
+      "command": "python",
+      "args": ["C:\\dev\\TriangulateDB\\mcp_server\\server.py"],
+      "env": {
+        "DATABASE_URL": "postgresql://triangulate:triangulate_dev@localhost:5432/triangulatedb"
+      }
+    }
+  }
+}
