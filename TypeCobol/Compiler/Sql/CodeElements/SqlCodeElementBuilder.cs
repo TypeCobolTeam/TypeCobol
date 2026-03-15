@@ -92,7 +92,32 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                 fullSelect = CreateFullSelect(context.fullselect());
             }
 
-            return new SelectStatement(fullSelect);
+            var intoVars = new List<HostVariableBinding>();
+            var whereVars = new List<HostVariableBinding>();
+
+            var subSelectCtx = context.fullselect()?.subselect();
+            if (subSelectCtx != null)
+            {
+                if (subSelectCtx.intoClause() != null)
+                {
+                    var selections = subSelectCtx.sql_selectClause()?.selections()?.selection();
+                    int colIndex = 0;
+                    foreach (var hvCtx in subSelectCtx.intoClause().hostVariable())
+                    {
+                        string colName = null;
+                        if (selections != null && colIndex < selections.Length)
+                        {
+                            colName = selections[colIndex].GetText();
+                        }
+                        var binding = CreateHostVariableBinding(hvCtx, HostVariableDirection.OUT, colName);
+                        intoVars.Add(binding);
+                        colIndex++;
+                    }
+                }
+                whereVars = ExtractWhereHostVariables(subSelectCtx.whereClauseWithHostVars());
+            }
+
+            return new SelectStatement(fullSelect, intoVars, whereVars);
         }
 
         private FullSelect CreateFullSelect(CodeElementsParser.FullselectContext context)
@@ -943,6 +968,122 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             var firstToken = context.Start;
             string keyword = firstToken?.Text ?? "UNKNOWN";
             return new UnsupportedSqlStatement(keyword);
+        }
+
+        public InsertStatement CreateInsertStatement(CodeElementsParser.InsertStatementContext context)
+        {
+            string tableName = ExtractQualifiedTableName(context.tableOrViewOrCorrelationName());
+
+            List<string> columns = null;
+            if (context.insertColumnList() != null)
+            {
+                columns = new List<string>();
+                foreach (var col in context.insertColumnList().column_name())
+                {
+                    columns.Add(col.GetText());
+                }
+            }
+
+            var hostVariables = new List<HostVariableBinding>();
+            bool hasSubselect = false;
+
+            if (context.insertValueList() != null)
+            {
+                int colIndex = 0;
+                foreach (var value in context.insertValueList().insertValue())
+                {
+                    if (value.hostVariable() != null)
+                    {
+                        string colName = columns != null && colIndex < columns.Count ? columns[colIndex] : null;
+                        var binding = CreateHostVariableBinding(value.hostVariable(), HostVariableDirection.IN, colName);
+                        hostVariables.Add(binding);
+                    }
+                    colIndex++;
+                }
+            }
+            else if (context.fullselect() != null)
+            {
+                hasSubselect = true;
+            }
+
+            return new InsertStatement(tableName, columns, hostVariables, hasSubselect);
+        }
+
+        public UpdateStatement CreateUpdateStatement(CodeElementsParser.UpdateStatementContext context)
+        {
+            string tableName = ExtractQualifiedTableName(context.tableOrViewOrCorrelationName());
+
+            var setBindings = new List<HostVariableBinding>();
+            foreach (var setClause in context.updateSetClause())
+            {
+                string colName = setClause.column_name()?.GetText();
+                if (setClause.hostVariable() != null)
+                {
+                    var binding = CreateHostVariableBinding(setClause.hostVariable(), HostVariableDirection.IN, colName);
+                    setBindings.Add(binding);
+                }
+            }
+
+            var whereBindings = ExtractWhereHostVariables(context.whereClauseWithHostVars());
+            return new UpdateStatement(tableName, setBindings, whereBindings);
+        }
+
+        public SqlDeleteStatement CreateSqlDeleteStatement(CodeElementsParser.SqlDeleteStatementContext context)
+        {
+            string tableName = ExtractQualifiedTableName(context.tableOrViewOrCorrelationName());
+            var whereBindings = ExtractWhereHostVariables(context.whereClauseWithHostVars());
+            return new SqlDeleteStatement(tableName, whereBindings);
+        }
+
+        public DeclareCursorStatement CreateDeclareCursorStatement(CodeElementsParser.DeclareCursorStatementContext context)
+        {
+            string cursorName = context.cursorName?.Text;
+            bool withHold = context.SQL_HOLD() != null;
+            bool withReturn = context.SQL_RETURN() != null;
+
+            FullSelect innerSelect = null;
+            string statementName = null;
+
+            if (context.fullselect() != null)
+            {
+                innerSelect = CreateFullSelect(context.fullselect());
+            }
+            else if (context.statementName != null)
+            {
+                statementName = context.statementName.Text;
+            }
+
+            return new DeclareCursorStatement(cursorName, innerSelect, statementName, withHold, withReturn);
+        }
+
+        private string ExtractQualifiedTableName(CodeElementsParser.TableOrViewOrCorrelationNameContext context)
+        {
+            if (context == null) return "UNKNOWN";
+            string name = context.Name?.Text ?? "UNKNOWN";
+            if (context.SchemaName != null)
+                name = context.SchemaName.Text + "." + name;
+            if (context.DBMS != null)
+                name = context.DBMS.Text + "." + name;
+            return name;
+        }
+
+        private HostVariableBinding CreateHostVariableBinding(CodeElementsParser.HostVariableContext context, HostVariableDirection direction, string columnName = null)
+        {
+            string varName = context.mainVariable?.Text;
+            string indName = context.indicatorVariable?.Text;
+            return new HostVariableBinding(varName, direction, columnName, indName);
+        }
+
+        private List<HostVariableBinding> ExtractWhereHostVariables(CodeElementsParser.WhereClauseWithHostVarsContext context)
+        {
+            var bindings = new List<HostVariableBinding>();
+            if (context == null) return bindings;
+            foreach (var hvCtx in context.hostVariable())
+            {
+                var binding = CreateHostVariableBinding(hvCtx, HostVariableDirection.IN);
+                bindings.Add(binding);
+            }
+            return bindings;
         }
     }
 }

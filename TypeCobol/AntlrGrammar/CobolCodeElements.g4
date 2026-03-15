@@ -228,6 +228,10 @@ codeElement:
 	| getDiagnosticsStatement
 	| alterSequenceStatement
 	| executeImmediateStatement
+	| insertStatement
+	| updateStatement
+	| sqlDeleteStatement
+	| declareCursorStatement
 	| unsupportedSqlStatement
 
 //	[TYPECOBOL]
@@ -8422,7 +8426,7 @@ deleteTriggersHandlingClause: (ignore | SQL_RESTRICT SQL_WHEN) SQL_DELETE trigge
 
 selectStatement: fullselect;
 fullselect: subselect;
-subselect: sql_selectClause from_clause;
+subselect: sql_selectClause intoClause? from_clause whereClauseWithHostVars?;
 // See Documentation [https://www.ibm.com/docs/en/db2-for-zos/12?topic=subselect-select-clause]
 sql_selectClause: 
   SQL_SELECT (SQL_ALL|SQL_DISTINCT)? (star | selections);
@@ -8531,12 +8535,58 @@ executeImmediateStatement : SQL_EXECUTE SQL_IMMEDIATE (sqlVariable | stringExpre
 //TODO extend stringExpression to support all expressions that yield a string (i.e string concat, function calls returning text,...)
 stringExpression: AlphanumericLiteral;
 
+// INSERT statement
+// See Documentation [https://www.ibm.com/docs/en/db2-for-zos/12?topic=statements-insert]
+insertStatement:
+    SQL_INSERT SQL_INTO tableOrViewOrCorrelationName
+    insertColumnList?
+    (SQL_VALUES LeftParenthesisSeparator insertValueList RightParenthesisSeparator | fullselect);
+
+insertColumnList:
+    LeftParenthesisSeparator column_name (SQL_CommaSeparator column_name)* RightParenthesisSeparator;
+
+insertValueList:
+    insertValue (SQL_CommaSeparator insertValue)*;
+
+insertValue:
+    hostVariable | (~(SQL_CommaSeparator | RightParenthesisSeparator | ColonSeparator))+;
+
+// UPDATE statement
+// See Documentation [https://www.ibm.com/docs/en/db2-for-zos/12?topic=statements-update]
+updateStatement:
+    SQL_UPDATE tableOrViewOrCorrelationName SQL_SET
+    updateSetClause (SQL_CommaSeparator updateSetClause)*
+    whereClauseWithHostVars?;
+
+updateSetClause:
+    column_name EqualOperator (hostVariable | (~(SQL_CommaSeparator | SQL_WHERE | END_EXEC | ColonSeparator))+);
+
+// DELETE statement (named sqlDeleteStatement to avoid COBOL DELETE collision)
+// See Documentation [https://www.ibm.com/docs/en/db2-for-zos/12?topic=statements-delete]
+sqlDeleteStatement:
+    SQL_DELETE SQL_FROM tableOrViewOrCorrelationName
+    whereClauseWithHostVars?;
+
+// WHERE clause - gobbles tokens, creates sub-contexts for host variables
+// ColonSeparator excluded from negated set so hostVariable gets priority
+whereClauseWithHostVars:
+    SQL_WHERE (hostVariable | ~(END_EXEC | ColonSeparator))*;
+
+// DECLARE CURSOR statement
+// See Documentation [https://www.ibm.com/docs/en/db2-for-zos/12?topic=statements-declare-cursor]
+declareCursorStatement:
+    SQL_DECLARE cursorName=UserDefinedWord SQL_CURSOR
+    (SQL_WITH SQL_HOLD)? (SQL_WITH SQL_RETURN)?
+    SQL_FOR (fullselect | statementName=UserDefinedWord);
+
+// INTO clause for SELECT enrichment
+intoClause: SQL_INTO hostVariable (SQL_CommaSeparator hostVariable)*;
+
 // Catch-all rule for SQL statements without dedicated grammar rules.
 // Must be listed LAST among SQL alternatives in codeElement so that
 // supported statements are tried first.
 unsupportedSqlStatement:
-    ( SQL_INSERT | SQL_UPDATE | SQL_DELETE
-    | SQL_DECLARE | SQL_OPEN | SQL_FETCH | SQL_CLOSE ) ~END_EXEC*;
+    ( SQL_OPEN | SQL_FETCH | SQL_CLOSE ) ~END_EXEC*;
 
 // ------------------------------
 // End of DB2 coprocessor

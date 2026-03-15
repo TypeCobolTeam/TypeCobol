@@ -2469,5 +2469,29 @@ namespace TypeCobol.Compiler.Parser
             Context = context;
             CodeElement = _sqlCodeElementBuilder.CreateUnsupportedSqlStatement(context);
         }
+
+        public override void EnterInsertStatement([NotNull] CodeElementsParser.InsertStatementContext context)
+        {
+            Context = context;
+            CodeElement = _sqlCodeElementBuilder.CreateInsertStatement(context);
+        }
+
+        public override void EnterUpdateStatement([NotNull] CodeElementsParser.UpdateStatementContext context)
+        {
+            Context = context;
+            CodeElement = _sqlCodeElementBuilder.CreateUpdateStatement(context);
+        }
+
+        public override void EnterSqlDeleteStatement([NotNull] CodeElementsParser.SqlDeleteStatementContext context)
+        {
+            Context = context;
+            CodeElement = _sqlCodeElementBuilder.CreateSqlDeleteStatement(context);
+        }
+
+        public override void EnterDeclareCursorStatement([NotNull] CodeElementsParser.DeclareCursorStatementContext context)
+        {
+            Context = context;
+            CodeElement = _sqlCodeElementBuilder.CreateDeclareCursorStatement(context);
+        }
     }
 }

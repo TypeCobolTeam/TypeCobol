@@ -4,7 +4,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements.Statements
 {
     /// <summary>
     /// Represents an SQL statement that is not supported by the grammar
-    /// (e.g., INSERT, UPDATE, DELETE, DECLARE CURSOR, OPEN, FETCH, CLOSE).
+    /// (e.g., OPEN, FETCH, CLOSE).
     /// </summary>
     public class UnsupportedSqlStatement : SqlStatementElement
     {
