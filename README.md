@@ -1,5 +1,46 @@
 [![Build status](https://github.com/TypeCobolTeam/TypeCobol/actions/workflows/dotnet.yml/badge.svg?branch=master)](https://github.com/TypeCobolTeam/TypeCobol/actions/workflows/dotnet.yml)
 
+---
+
+## Fork local — Parsing SQL DML pour COBOL embarqué
+
+> **Ce dépôt est un fork local** du projet [TypeCobol](https://github.com/TypeCobolTeam/TypeCobol), dédié à l'ajout du parsing des instructions SQL DML embarquées dans le code COBOL.
+>
+> **Issue de référence** : [TypeCobolTeam/TypeCobol#2837](https://github.com/TypeCobolTeam/TypeCobol/issues/2837)
+
+### Statut
+
+Les règles de grammaire ANTLR et l'infrastructure de base sont en place. Le Scanner ne produit pas encore les tokens SQL DML attendus pour les instructions multilignes — c'est le chantier en cours.
+
+### Ce qui a été ajouté
+
+| Domaine | Description |
+|---------|-------------|
+| **Grammaire ANTLR** | Règles et builders pour `INSERT`, `UPDATE`, `DELETE`, `DECLARE CURSOR`, `SELECT INTO` |
+| **CodeElements & AST** | Nouveaux nœuds AST et CodeElements pour chaque instruction DML |
+| **Infrastructure visiteur** | Dispatcher, listener, builder et `IASTVisitor` câblés pour les instructions DML |
+| **Terminaux CUP** | Terminaux, builder et dispatcher connectés pour les statements DML |
+| **UnsupportedSqlStatement** | Gestion des instructions SQL non reconnues (CodeElement, nœud AST, grammaire, productions CUP, visiteur) |
+| **Récupération d'erreur** | Types de tokens DML ajoutés aux mots-clés de démarrage SQL pour la récupération d'erreur |
+| **Spécification de conception** | Document de design et plan d'implémentation pour le parsing SQL DML |
+
+### Commits locaux (SQL DML)
+
+- `b0c7385` — feat: règles ANTLR et builders pour INSERT/UPDATE/DELETE/DECLARE CURSOR/SELECT INTO
+- `d2d38d8` — feat: câblage terminaux CUP, builder, dispatcher, listener pour DML
+- `6ad60b5` — Fondation SQL DML : CodeElements, nœuds AST, infrastructure visiteur
+- `13f2d5b` — Plan d'implémentation pour le parsing SQL DML
+- `af210de` — Mise à jour de la spec de design (corrections de revue)
+- `c7969ce` — Spec de design pour le parsing SQL DML
+- `5103c88` — Configuration Claude, MCP, docs
+- `7275641` — Test pour instructions SQL non supportées
+- `c236121` — Ajout de UnsupportedSqlStatement à IASTVisitor
+- `e34eaee` — Règle ANTLR et productions CUP pour UnsupportedSqlStatement
+- `475ef48` — Infrastructure UnsupportedSqlStatement (visiteur, builder, dispatcher, listener)
+- `b285c1d` — CodeElement et nœud AST UnsupportedSqlStatement
+- `f56af76` — Types de tokens DML dans les mots-clés de démarrage SQL
+
+---
 
 # TypeCobol
 TypeCobol is two things:
