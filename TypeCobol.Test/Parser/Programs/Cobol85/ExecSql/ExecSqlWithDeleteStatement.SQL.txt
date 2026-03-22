@@ -1,4 +1,4 @@
---- Sql Statements ---
+﻿--- Sql Statements ---
 line 9: SqlDeleteStatement
 - TableName = EMPLOYEE
 - WhereBindings:

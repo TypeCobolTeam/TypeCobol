@@ -1,3 +1,9 @@
+﻿--- Diagnostics ---
+Line 10[26,26] <27, Error, Syntax> - Syntax error : mismatched input ',' expecting '.' RuleStack=codeElement>declareCursorStatement>fullselect>subselect>sql_selectClause>selections>selection>tableOrViewAllColumnsSelection>dot,  OffendingSymbol=[26,26:,]<SQL_CommaSeparator>
+Line 10[32,35] <27, Error, Syntax> - Syntax error : mismatched input 'FROM' expecting '.' RuleStack=codeElement>declareCursorStatement>fullselect>subselect>sql_selectClause>selections>selection>tableOrViewAllColumnsSelection>dot,  OffendingSymbol=[32,35:FROM]<SQL_FROM>
+Line 15[27,30] <27, Error, Syntax> - Syntax error : mismatched input 'FROM' expecting '.' RuleStack=codeElement>declareCursorStatement>fullselect>subselect>sql_selectClause>selections>selection>tableOrViewAllColumnsSelection>dot,  OffendingSymbol=[27,30:FROM]<SQL_FROM>
+Line 20[29,32] <27, Error, Syntax> - Syntax error : mismatched input 'FROM' expecting '.' RuleStack=codeElement>declareCursorStatement>fullselect>subselect>sql_selectClause>selections>selection>tableOrViewAllColumnsSelection>dot,  OffendingSymbol=[29,32:FROM]<SQL_FROM>
+
 --- Sql Statements ---
 line 9: DeclareCursorStatement
 - CursorName = C1
@@ -5,6 +11,24 @@ line 9: DeclareCursorStatement
 - WithReturn = False
 - InnerSelect = FullSelect
   - SubSelect = SubSelect
+    - SelectClause = SelectClause
+      - SelectionModifier = <NULL>
+      - Selections = [
+        - Selections[0] = TableOrViewAllColumnsSelection
+          - TableOrViewOrCorrelationName = TableViewCorrelationName
+            - Name = NAME
+        - Selections[1] = TableOrViewAllColumnsSelection
+          - TableOrViewOrCorrelationName = TableViewCorrelationName
+            - Name = AGE
+      ]
+    - FromClause = FromClause
+      - TableReferences = [
+        - TableReferences[0] = SingleTableReference
+          - TableOrViewName = TableViewCorrelationName
+            - Name = EMPLOYEE
+          - CorrelationClause = <NULL>
+      ]
+  - SubQuery = <NULL>
 - StatementName = <NULL>
 line 14: DeclareCursorStatement
 - CursorName = C2
@@ -12,6 +36,21 @@ line 14: DeclareCursorStatement
 - WithReturn = False
 - InnerSelect = FullSelect
   - SubSelect = SubSelect
+    - SelectClause = SelectClause
+      - SelectionModifier = <NULL>
+      - Selections = [
+        - Selections[0] = TableOrViewAllColumnsSelection
+          - TableOrViewOrCorrelationName = TableViewCorrelationName
+            - Name = NAME
+      ]
+    - FromClause = FromClause
+      - TableReferences = [
+        - TableReferences[0] = SingleTableReference
+          - TableOrViewName = TableViewCorrelationName
+            - Name = EMPLOYEE IN HR
+          - CorrelationClause = <NULL>
+      ]
+  - SubQuery = <NULL>
 - StatementName = <NULL>
 line 19: DeclareCursorStatement
 - CursorName = C3
@@ -19,6 +58,21 @@ line 19: DeclareCursorStatement
 - WithReturn = True
 - InnerSelect = FullSelect
   - SubSelect = SubSelect
+    - SelectClause = SelectClause
+      - SelectionModifier = <NULL>
+      - Selections = [
+        - Selections[0] = TableOrViewAllColumnsSelection
+          - TableOrViewOrCorrelationName = TableViewCorrelationName
+            - Name = SALARY
+      ]
+    - FromClause = FromClause
+      - TableReferences = [
+        - TableReferences[0] = SingleTableReference
+          - TableOrViewName = TableViewCorrelationName
+            - Name = EMPLOYEE
+          - CorrelationClause = <NULL>
+      ]
+  - SubQuery = <NULL>
 - StatementName = <NULL>
 line 24: DeclareCursorStatement
 - CursorName = C4

@@ -714,6 +714,11 @@ namespace TypeCobol.Test.Utils
                 SqlObject.DumpProperty(_writer, name, value, 0);
             }
 
+            private void DumpString(string name, string value)
+            {
+                _writer.WriteLine($"- {name} = {value ?? "<NULL>"}");
+            }
+
             public override bool Visit(SelectStatement selectStatement)
             {
                 _writer.WriteLine($"line {selectStatement.Line}: {nameof(SelectStatement)}");
@@ -840,8 +845,8 @@ namespace TypeCobol.Test.Utils
             public override bool Visit(InsertStatement insertStatement)
             {
                 _writer.WriteLine($"line {insertStatement.Line}: {nameof(InsertStatement)}");
-                DumpObject(nameof(insertStatement.TableName), insertStatement.TableName);
-                DumpObject(nameof(insertStatement.Columns), insertStatement.Columns);
+                DumpString(nameof(insertStatement.TableName), insertStatement.TableName);
+                DumpStringList(nameof(insertStatement.Columns), insertStatement.Columns);
                 DumpObject(nameof(insertStatement.HasSubselect), insertStatement.HasSubselect);
                 DumpHostVariableBindings(insertStatement.HostVariables);
                 return true;
@@ -850,7 +855,7 @@ namespace TypeCobol.Test.Utils
             public override bool Visit(UpdateStatement updateStatement)
             {
                 _writer.WriteLine($"line {updateStatement.Line}: {nameof(UpdateStatement)}");
-                DumpObject(nameof(updateStatement.TableName), updateStatement.TableName);
+                DumpString(nameof(updateStatement.TableName), updateStatement.TableName);
                 DumpHostVariableBindings(updateStatement.SetBindings, "SetBindings");
                 DumpHostVariableBindings(updateStatement.WhereBindings, "WhereBindings");
                 return true;
@@ -859,7 +864,7 @@ namespace TypeCobol.Test.Utils
             public override bool Visit(SqlDeleteStatement sqlDeleteStatement)
             {
                 _writer.WriteLine($"line {sqlDeleteStatement.Line}: {nameof(SqlDeleteStatement)}");
-                DumpObject(nameof(sqlDeleteStatement.TableName), sqlDeleteStatement.TableName);
+                DumpString(nameof(sqlDeleteStatement.TableName), sqlDeleteStatement.TableName);
                 DumpHostVariableBindings(sqlDeleteStatement.WhereBindings, "WhereBindings");
                 return true;
             }
@@ -867,19 +872,29 @@ namespace TypeCobol.Test.Utils
             public override bool Visit(DeclareCursorStatement declareCursorStatement)
             {
                 _writer.WriteLine($"line {declareCursorStatement.Line}: {nameof(DeclareCursorStatement)}");
-                DumpObject(nameof(declareCursorStatement.CursorName), declareCursorStatement.CursorName);
+                DumpString(nameof(declareCursorStatement.CursorName), declareCursorStatement.CursorName);
                 DumpObject(nameof(declareCursorStatement.WithHold), declareCursorStatement.WithHold);
                 DumpObject(nameof(declareCursorStatement.WithReturn), declareCursorStatement.WithReturn);
                 DumpObject(nameof(declareCursorStatement.InnerSelect), declareCursorStatement.InnerSelect);
-                DumpObject(nameof(declareCursorStatement.StatementName), declareCursorStatement.StatementName);
+                DumpString(nameof(declareCursorStatement.StatementName), declareCursorStatement.StatementName);
                 return true;
             }
 
             public override bool Visit(UnsupportedSqlStatement unsupportedSqlStatement)
             {
                 _writer.WriteLine($"line {unsupportedSqlStatement.Line}: {nameof(UnsupportedSqlStatement)}");
-                DumpObject(nameof(unsupportedSqlStatement.SqlKeyword), unsupportedSqlStatement.SqlKeyword);
+                DumpString(nameof(unsupportedSqlStatement.SqlKeyword), unsupportedSqlStatement.SqlKeyword);
                 return true;
+            }
+
+            private void DumpStringList(string name, IList<string> values)
+            {
+                if (values == null)
+                {
+                    _writer.WriteLine($"- {name} = <NULL>");
+                    return;
+                }
+                _writer.WriteLine($"- {name} = [{string.Join(", ", values)}]");
             }
 
             private void DumpHostVariableBindings(IList<HostVariableBinding> bindings, string name = "HostVariables")
