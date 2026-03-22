@@ -1,0 +1,28 @@
+--- Sql Statements ---
+line 9: DeclareCursorStatement
+- CursorName = C1
+- WithHold = False
+- WithReturn = False
+- InnerSelect = FullSelect
+  - SubSelect = SubSelect
+- StatementName = <NULL>
+line 14: DeclareCursorStatement
+- CursorName = C2
+- WithHold = True
+- WithReturn = False
+- InnerSelect = FullSelect
+  - SubSelect = SubSelect
+- StatementName = <NULL>
+line 19: DeclareCursorStatement
+- CursorName = C3
+- WithHold = False
+- WithReturn = True
+- InnerSelect = FullSelect
+  - SubSelect = SubSelect
+- StatementName = <NULL>
+line 24: DeclareCursorStatement
+- CursorName = C4
+- WithHold = False
+- WithReturn = False
+- InnerSelect = <NULL>
+- StatementName = PREP_STMT1

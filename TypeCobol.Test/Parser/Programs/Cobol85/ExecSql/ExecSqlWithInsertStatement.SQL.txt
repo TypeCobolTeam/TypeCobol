@@ -1,0 +1,27 @@
+--- Sql Statements ---
+line 10: InsertStatement
+- TableName = TABLE1.EMPLOYEE
+- Columns = [NAME, AGE]
+- HasSubselect = False
+- HostVariables:
+  - IN WS-NAME -> NAME
+  - IN WS-AGE -> AGE
+line 16: InsertStatement
+- TableName = HR.EMPLOYEE
+- Columns = [SALARY]
+- HasSubselect = False
+- HostVariables:
+  - IN WS-SALARY -> SALARY
+line 22: InsertStatement
+- TableName = ARCHIVE.EMPLOYEE
+- Columns = [NAME, AGE]
+- HasSubselect = True
+- HostVariables = <NONE>
+line 28: InsertStatement
+- TableName = EMPLOYEE
+- Columns = <NULL>
+- HasSubselect = False
+- HostVariables:
+  - IN WS-NAME -> <NULL>
+  - IN WS-AGE -> <NULL>
+  - IN WS-SALARY -> <NULL>

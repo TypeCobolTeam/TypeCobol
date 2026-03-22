@@ -1,0 +1,12 @@
+--- Sql Statements ---
+line 9: SqlDeleteStatement
+- TableName = EMPLOYEE
+- WhereBindings:
+  - IN WS-ID -> <NULL>
+line 14: SqlDeleteStatement
+- TableName = HR.EMPLOYEE
+- WhereBindings:
+  - IN WS-ID -> <NULL>
+line 19: SqlDeleteStatement
+- TableName = EMPLOYEE
+- WhereBindings = <NONE>

@@ -1,0 +1,19 @@
+--- Sql Statements ---
+line 11: UpdateStatement
+- TableName = EMPLOYEE
+- SetBindings:
+  - IN WS-NAME -> NAME
+- WhereBindings:
+  - IN WS-ID -> <NULL>
+line 17: UpdateStatement
+- TableName = HR.EMPLOYEE
+- SetBindings:
+  - IN WS-NAME -> NAME
+  - IN WS-AGE -> AGE
+- WhereBindings:
+  - IN WS-ID -> <NULL>
+line 24: UpdateStatement
+- TableName = EMPLOYEE
+- SetBindings:
+  - IN WS-AGE -> AGE
+- WhereBindings = <NONE>

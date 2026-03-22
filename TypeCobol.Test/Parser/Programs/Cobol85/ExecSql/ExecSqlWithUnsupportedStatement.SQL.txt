@@ -1,3 +1,10 @@
-﻿--- Sql Statements ---
-line 47: RollbackStatement
+--- Sql Statements ---
+line 10: CommitStatement
+line 13: UnsupportedSqlStatement
+- SqlKeyword = OPEN
+line 17: UnsupportedSqlStatement
+- SqlKeyword = FETCH
+line 21: UnsupportedSqlStatement
+- SqlKeyword = CLOSE
+line 25: RollbackStatement
 - SavePointClause = <NULL>

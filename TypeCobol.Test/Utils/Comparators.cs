@@ -7,6 +7,7 @@ using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Compiler.Scanner;
+using TypeCobol.Compiler.Sql.CodeElements;
 using TypeCobol.Compiler.Sql.CodeElements.Statements;
 using TypeCobol.Compiler.Sql.Model;
 using TypeCobol.Compiler.Text;
@@ -834,6 +835,65 @@ namespace TypeCobol.Test.Utils
                 DumpObject(nameof(executeImmediateStatement.StatementVariable), executeImmediateStatement.StatementVariable);
                 DumpObject(nameof(executeImmediateStatement.StatementExpression), executeImmediateStatement.StatementExpression);
                 return true;
+            }
+
+            public override bool Visit(InsertStatement insertStatement)
+            {
+                _writer.WriteLine($"line {insertStatement.Line}: {nameof(InsertStatement)}");
+                DumpObject(nameof(insertStatement.TableName), insertStatement.TableName);
+                DumpObject(nameof(insertStatement.Columns), insertStatement.Columns);
+                DumpObject(nameof(insertStatement.HasSubselect), insertStatement.HasSubselect);
+                DumpHostVariableBindings(insertStatement.HostVariables);
+                return true;
+            }
+
+            public override bool Visit(UpdateStatement updateStatement)
+            {
+                _writer.WriteLine($"line {updateStatement.Line}: {nameof(UpdateStatement)}");
+                DumpObject(nameof(updateStatement.TableName), updateStatement.TableName);
+                DumpHostVariableBindings(updateStatement.SetBindings, "SetBindings");
+                DumpHostVariableBindings(updateStatement.WhereBindings, "WhereBindings");
+                return true;
+            }
+
+            public override bool Visit(SqlDeleteStatement sqlDeleteStatement)
+            {
+                _writer.WriteLine($"line {sqlDeleteStatement.Line}: {nameof(SqlDeleteStatement)}");
+                DumpObject(nameof(sqlDeleteStatement.TableName), sqlDeleteStatement.TableName);
+                DumpHostVariableBindings(sqlDeleteStatement.WhereBindings, "WhereBindings");
+                return true;
+            }
+
+            public override bool Visit(DeclareCursorStatement declareCursorStatement)
+            {
+                _writer.WriteLine($"line {declareCursorStatement.Line}: {nameof(DeclareCursorStatement)}");
+                DumpObject(nameof(declareCursorStatement.CursorName), declareCursorStatement.CursorName);
+                DumpObject(nameof(declareCursorStatement.WithHold), declareCursorStatement.WithHold);
+                DumpObject(nameof(declareCursorStatement.WithReturn), declareCursorStatement.WithReturn);
+                DumpObject(nameof(declareCursorStatement.InnerSelect), declareCursorStatement.InnerSelect);
+                DumpObject(nameof(declareCursorStatement.StatementName), declareCursorStatement.StatementName);
+                return true;
+            }
+
+            public override bool Visit(UnsupportedSqlStatement unsupportedSqlStatement)
+            {
+                _writer.WriteLine($"line {unsupportedSqlStatement.Line}: {nameof(UnsupportedSqlStatement)}");
+                DumpObject(nameof(unsupportedSqlStatement.SqlKeyword), unsupportedSqlStatement.SqlKeyword);
+                return true;
+            }
+
+            private void DumpHostVariableBindings(IList<HostVariableBinding> bindings, string name = "HostVariables")
+            {
+                if (bindings == null || bindings.Count == 0)
+                {
+                    _writer.WriteLine($"- {name} = <NONE>");
+                    return;
+                }
+                _writer.WriteLine($"- {name}:");
+                foreach (var b in bindings)
+                {
+                    _writer.WriteLine($"  - {b.Direction} {b.VariableName} -> {b.ColumnName ?? "<NULL>"}");
+                }
             }
         }
 
