@@ -1804,5 +1804,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
             Exit();
             Dispatcher.OnUnsupportedSqlStatement(unsupportedSql);
         }
+        public void OnInsertStatement([NotNull] InsertStatement insert)
+        {
+            Enter(new Insert(insert), insert);
+            Exit();
+            Dispatcher.OnInsertStatement(insert);
+        }
     }
 }

@@ -228,6 +228,7 @@ codeElement:
 	| getDiagnosticsStatement
 	| alterSequenceStatement
 	| executeImmediateStatement
+	| insertStatement
 	| unsupportedSqlStatement
 
 //	[TYPECOBOL]
@@ -8530,6 +8531,15 @@ repeatedSourceValue: sourceValue (SQL_CommaSeparator sourceValue)*;
 executeImmediateStatement : SQL_EXECUTE SQL_IMMEDIATE (sqlVariable | stringExpression);
 //TODO extend stringExpression to support all expressions that yield a string (i.e string concat, function calls returning text,...)
 stringExpression: AlphanumericLiteral;
+
+// INSERT statement
+// See Documentation [https://www.ibm.com/docs/en/db2-for-zos/12?topic=statements-insert]
+insertStatement:
+    SQL_INSERT SQL_INTO tableOrViewOrCorrelationName
+    insertColumnList?
+    (SQL_VALUES LeftParenthesisSeparator repeatedSourceValue RightParenthesisSeparator | fullselect);
+insertColumnList:
+    LeftParenthesisSeparator column_name (SQL_CommaSeparator column_name)* RightParenthesisSeparator;
 
 // Catch-all rule for SQL statements without dedicated grammar rules.
 // Must be listed LAST among SQL alternatives in codeElement so that

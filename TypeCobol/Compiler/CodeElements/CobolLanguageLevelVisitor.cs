@@ -414,6 +414,8 @@ namespace TypeCobol.Compiler.CodeElements
         bool Visit([NotNull] ExecuteImmediate executeImmediate);
         bool Visit([NotNull] UnsupportedSqlStatement unsupportedSqlStatement);
         bool Visit([NotNull] UnsupportedSql unsupportedSql);
+        bool Visit([NotNull] InsertStatement insertStatement);
+        bool Visit([NotNull] Insert insert);
     }
 
 
@@ -1671,6 +1673,14 @@ namespace TypeCobol.Compiler.CodeElements
             return true;
         }
         public virtual bool Visit([NotNull] UnsupportedSql unsupportedSql)
+        {
+            return true;
+        }
+        public virtual bool Visit([NotNull] InsertStatement insertStatement)
+        {
+            return true;
+        }
+        public virtual bool Visit([NotNull] Insert insert)
         {
             return true;
         }

@@ -890,6 +890,7 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         /// </summary>
         /// <param name="unsupportedSql">The corresponding UnsupportedSql Statement Code Element</param>
         void OnUnsupportedSqlStatement([NotNull] UnsupportedSqlStatement unsupportedSql);
+        void OnInsertStatement([NotNull] InsertStatement insert);
         #endregion
     }
 }

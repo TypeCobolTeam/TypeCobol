@@ -944,5 +944,82 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             string keyword = firstToken?.Text ?? "UNKNOWN";
             return new UnsupportedSqlStatement(keyword);
         }
+
+        public InsertStatement CreateInsertStatement(CodeElementsParser.InsertStatementContext context)
+        {
+            string tableName = ExtractQualifiedTableName(context.tableOrViewOrCorrelationName());
+
+            List<string> columns = null;
+            if (context.insertColumnList() != null)
+            {
+                columns = new List<string>();
+                foreach (var col in context.insertColumnList().column_name())
+                {
+                    columns.Add(col.GetText());
+                }
+            }
+
+            var hostVariables = new List<HostVariableBinding>();
+            bool hasSubselect = false;
+
+            if (context.repeatedSourceValue() != null)
+            {
+                int colIndex = 0;
+                foreach (var value in context.repeatedSourceValue().sourceValue())
+                {
+                    // sourceValue can contain a hostVariable via sqlExpression → sqlVariable → hostVariable
+                    var hostVar = FindHostVariable(value);
+                    if (hostVar != null)
+                    {
+                        string colName = columns != null && colIndex < columns.Count ? columns[colIndex] : null;
+                        var binding = CreateHostVariableBinding(hostVar, HostVariableDirection.IN, colName);
+                        hostVariables.Add(binding);
+                    }
+                    colIndex++;
+                }
+            }
+            else if (context.fullselect() != null)
+            {
+                hasSubselect = true;
+            }
+
+            return new InsertStatement(tableName, columns, hostVariables, hasSubselect);
+        }
+
+        private string ExtractQualifiedTableName(CodeElementsParser.TableOrViewOrCorrelationNameContext context)
+        {
+            if (context == null) return "UNKNOWN";
+            string name = context.Name?.Text ?? "UNKNOWN";
+            if (context.SchemaName != null)
+                name = context.SchemaName.Text + "." + name;
+            if (context.DBMS != null)
+                name = context.DBMS.Text + "." + name;
+            return name;
+        }
+
+        private HostVariableBinding CreateHostVariableBinding(CodeElementsParser.HostVariableContext context, HostVariableDirection direction, string columnName = null)
+        {
+            string varName = context.mainVariable?.Text;
+            string indName = context.indicatorVariable?.Text;
+            return new HostVariableBinding(varName, direction, columnName, indName);
+        }
+
+        /// <summary>
+        /// Navigate sourceValue → sqlExpression → sqlVariable → hostVariable
+        /// </summary>
+        private CodeElementsParser.HostVariableContext FindHostVariable(Antlr4.Runtime.ParserRuleContext context)
+        {
+            if (context == null) return null;
+            if (context is CodeElementsParser.HostVariableContext hv) return hv;
+            foreach (var child in context.children ?? System.Array.Empty<Antlr4.Runtime.Tree.IParseTree>())
+            {
+                if (child is Antlr4.Runtime.ParserRuleContext childCtx)
+                {
+                    var result = FindHostVariable(childCtx);
+                    if (result != null) return result;
+                }
+            }
+            return null;
+        }
     }
 }

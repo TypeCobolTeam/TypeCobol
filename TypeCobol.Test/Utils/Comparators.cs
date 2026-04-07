@@ -7,6 +7,7 @@ using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Preprocessor;
 using TypeCobol.Compiler.Scanner;
+using TypeCobol.Compiler.Sql.CodeElements;
 using TypeCobol.Compiler.Sql.CodeElements.Statements;
 using TypeCobol.Compiler.Sql.Model;
 using TypeCobol.Compiler.Text;
@@ -713,6 +714,11 @@ namespace TypeCobol.Test.Utils
                 SqlObject.DumpProperty(_writer, name, value, 0);
             }
 
+            private void DumpString(string name, string value)
+            {
+                _writer.WriteLine($"- {name} = {value ?? "<NULL>"}");
+            }
+
             public override bool Visit(SelectStatement selectStatement)
             {
                 _writer.WriteLine($"line {selectStatement.Line}: {nameof(SelectStatement)}");
@@ -834,6 +840,47 @@ namespace TypeCobol.Test.Utils
                 DumpObject(nameof(executeImmediateStatement.StatementVariable), executeImmediateStatement.StatementVariable);
                 DumpObject(nameof(executeImmediateStatement.StatementExpression), executeImmediateStatement.StatementExpression);
                 return true;
+            }
+
+            public override bool Visit(InsertStatement insertStatement)
+            {
+                _writer.WriteLine($"line {insertStatement.Line}: {nameof(InsertStatement)}");
+                DumpString(nameof(insertStatement.TableName), insertStatement.TableName);
+                DumpStringList(nameof(insertStatement.Columns), insertStatement.Columns);
+                DumpObject(nameof(insertStatement.HasSubselect), insertStatement.HasSubselect);
+                DumpHostVariableBindings(insertStatement.HostVariables);
+                return true;
+            }
+
+            public override bool Visit(UnsupportedSqlStatement unsupportedSqlStatement)
+            {
+                _writer.WriteLine($"line {unsupportedSqlStatement.Line}: {nameof(UnsupportedSqlStatement)}");
+                DumpString(nameof(unsupportedSqlStatement.SqlKeyword), unsupportedSqlStatement.SqlKeyword);
+                return true;
+            }
+
+            private void DumpStringList(string name, IList<string> values)
+            {
+                if (values == null)
+                {
+                    _writer.WriteLine($"- {name} = <NULL>");
+                    return;
+                }
+                _writer.WriteLine($"- {name} = [{string.Join(", ", values)}]");
+            }
+
+            private void DumpHostVariableBindings(IList<HostVariableBinding> bindings, string name = "HostVariables")
+            {
+                if (bindings == null || bindings.Count == 0)
+                {
+                    _writer.WriteLine($"- {name} = <NONE>");
+                    return;
+                }
+                _writer.WriteLine($"- {name}:");
+                foreach (var b in bindings)
+                {
+                    _writer.WriteLine($"  - {b.Direction} {b.VariableName} -> {b.ColumnName ?? "<NULL>"}");
+                }
             }
         }
 

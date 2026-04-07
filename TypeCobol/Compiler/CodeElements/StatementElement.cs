@@ -144,6 +144,7 @@
         GetDiagnosticsStatement,
         AlterSequenceStatement,
         ExecuteImmediateStatement,
+        InsertStatement,
         UnsupportedSqlStatement
 
     }

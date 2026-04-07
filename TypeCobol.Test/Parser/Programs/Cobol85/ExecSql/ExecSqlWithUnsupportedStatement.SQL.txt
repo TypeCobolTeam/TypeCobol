@@ -1,3 +1,10 @@
-﻿--- Sql Statements ---
+--- Sql Statements ---
+line 14: InsertStatement
+- TableName = TABLE1
+- Columns = [COL1, COL2]
+- HasSubselect = False
+- HostVariables:
+  - IN WS-VAR1 -> COL1
+  - IN WS-VAR2 -> COL2
 line 47: RollbackStatement
 - SavePointClause = <NULL>

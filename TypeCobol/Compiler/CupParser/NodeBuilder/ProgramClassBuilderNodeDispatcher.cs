@@ -910,5 +910,9 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
             foreach (var listener in _listeners) listener.OnUnsupportedSqlStatement(unsupportedSql);
         }
+        public void OnInsertStatement([NotNull] InsertStatement insert)
+        {
+            foreach (var listener in _listeners) listener.OnInsertStatement(insert);
+        }
     }
 }
