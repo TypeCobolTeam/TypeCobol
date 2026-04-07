@@ -8534,9 +8534,19 @@ stringExpression: AlphanumericLiteral;
 // Catch-all rule for SQL statements without dedicated grammar rules.
 // Must be listed LAST among SQL alternatives in codeElement so that
 // supported statements are tried first.
+// The first token must be a SQL keyword to constrain matching to EXEC SQL blocks.
+// This list covers all DB2 z/OS statement-starting keywords not already handled
+// by dedicated rules (COMMIT, ROLLBACK, SELECT, ALTER, CONNECT, DROP, EXECUTE,
+// GET, LOCK, RELEASE, SAVEPOINT, SET, TRUNCATE, WHENEVER).
+// Add new SQL_* tokens here as the lexer grows.
 unsupportedSqlStatement:
-    ( SQL_INSERT | SQL_UPDATE | SQL_DELETE
-    | SQL_DECLARE | SQL_OPEN | SQL_FETCH | SQL_CLOSE ) ~END_EXEC*;
+    ( SQL_INSERT | SQL_UPDATE | SQL_DELETE | SQL_DECLARE
+    | SQL_CALL | SQL_CREATE | SQL_GRANT | SQL_REVOKE | SQL_PREPARE
+    | SQL_OPEN | SQL_FETCH | SQL_CLOSE
+    | SQL_EXPLAIN | SQL_FREE | SQL_LABEL | SQL_COMMENT
+    | SQL_RENAME | SQL_REFRESH | SQL_SIGNAL | SQL_RESIGNAL
+    | SQL_ASSOCIATE | SQL_VALUES | SQL_BEGIN | SQL_HOLD
+    ) ~END_EXEC*;
 
 // ------------------------------
 // End of DB2 coprocessor
