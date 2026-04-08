@@ -61,7 +61,7 @@ namespace TypeCobol
             SourceFileProvider sourceFileProvider = project.SourceFileProvider;
             copies = copies ?? new List<string>();
             foreach (var folder in copies) {
-                sourceFileProvider.AddLocalDirectoryLibrary(folder, false, Helpers.DEFAULT_COPY_EXTENSIONS, format.Encoding, format.EndOfLineDelimiter, format.FixedLineLength);
+                sourceFileProvider.AddLocalDirectoryLibrary(folder, true, Helpers.DEFAULT_COPY_EXTENSIONS, format.Encoding, format.EndOfLineDelimiter, format.FixedLineLength);
             }
             compiler = new FileCompiler(null, filename, format.ColumnsLayout, isCopy, project.SourceFileProvider, project, options, CustomSymbols, project);
             
