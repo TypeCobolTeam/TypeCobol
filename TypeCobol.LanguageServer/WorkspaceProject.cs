@@ -189,7 +189,7 @@ namespace TypeCobol.LanguageServer
                 var newCompilationProject = new CompilationProject(oldCompilationProject.Name, oldCompilationProject.RootDirectory, Helpers.DEFAULT_EXTENSIONS, newFormat, newOptions, newAnalyzerProvider);
                 foreach (var newCopyFolder in newCopyFolders)
                 {
-                    newCompilationProject.SourceFileProvider.AddLocalDirectoryLibrary(newCopyFolder, false, Helpers.DEFAULT_COPY_EXTENSIONS, newFormat);
+                    newCompilationProject.SourceFileProvider.AddLocalDirectoryLibrary(newCopyFolder, true, Helpers.DEFAULT_COPY_EXTENSIONS, newFormat);
                 }
 
                 Project = newCompilationProject;
