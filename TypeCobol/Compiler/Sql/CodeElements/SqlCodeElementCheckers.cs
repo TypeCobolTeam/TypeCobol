@@ -262,4 +262,15 @@ namespace TypeCobol.Compiler.Sql.CodeElements
             }
         }
     }
+
+    internal static class UnsupportedSqlStatementChecker
+    {
+        public static void OnCodeElement(UnsupportedSqlStatement unsupportedSqlStatement,
+            CodeElementsParser.UnsupportedSqlStatementContext context)
+        {
+            DiagnosticUtils.AddError(unsupportedSqlStatement,
+                $"Unsupported SQL statement found: this parser does not support {unsupportedSqlStatement.SqlKeyword} statements.",
+                context);
+        }
+    }
 }

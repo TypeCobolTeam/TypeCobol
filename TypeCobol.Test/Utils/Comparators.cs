@@ -835,6 +835,13 @@ namespace TypeCobol.Test.Utils
                 DumpObject(nameof(executeImmediateStatement.StatementExpression), executeImmediateStatement.StatementExpression);
                 return true;
             }
+
+            public override bool Visit(UnsupportedSqlStatement unsupportedSqlStatement)
+            {
+                _writer.WriteLine($"line {unsupportedSqlStatement.Line}: {nameof(UnsupportedSqlStatement)}");
+                DumpObject(nameof(unsupportedSqlStatement.SqlKeyword), unsupportedSqlStatement.SqlKeyword);
+                return true;
+            }
         }
 
         public string Format(CompilationUnit compilationResult, IncrementalChangesHistory history)

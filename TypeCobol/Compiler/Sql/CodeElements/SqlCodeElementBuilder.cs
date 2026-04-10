@@ -940,9 +940,7 @@ namespace TypeCobol.Compiler.Sql.CodeElements
 
         public UnsupportedSqlStatement CreateUnsupportedSqlStatement(CodeElementsParser.UnsupportedSqlStatementContext context)
         {
-            var firstToken = context.Start;
-            string keyword = firstToken?.Text ?? "UNKNOWN";
-            return new UnsupportedSqlStatement(keyword);
+            return new UnsupportedSqlStatement(context.Start?.Text);
         }
     }
 }

@@ -3,8 +3,7 @@ using TypeCobol.Compiler.CodeElements;
 namespace TypeCobol.Compiler.Sql.CodeElements.Statements
 {
     /// <summary>
-    /// Represents an SQL statement that is not supported by the grammar
-    /// (e.g., INSERT, UPDATE, DELETE, DECLARE CURSOR, OPEN, FETCH, CLOSE).
+    /// Represents an SQL statement that is not supported by the grammar.
     /// </summary>
     public class UnsupportedSqlStatement : SqlStatementElement
     {
@@ -17,6 +16,11 @@ namespace TypeCobol.Compiler.Sql.CodeElements.Statements
             : base(CodeElementType.UnsupportedSqlStatement, StatementType.UnsupportedSqlStatement)
         {
             SqlKeyword = sqlKeyword;
+        }
+
+        public override bool VisitCodeElement(IASTVisitor astVisitor)
+        {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this);
         }
     }
 }

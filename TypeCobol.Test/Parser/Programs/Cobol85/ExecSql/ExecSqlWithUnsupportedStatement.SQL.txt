@@ -1,3 +1,72 @@
-﻿--- Sql Statements ---
+﻿--- Diagnostics ---
+Line 14[15,20] <27, Error, Syntax> - Syntax error : Unsupported SQL statement found: this parser does not support INSERT statements. RuleStack=codeElement>unsupportedSqlStatement,  OffendingSymbol=[15,20:INSERT]<SQL_INSERT>
+Line 19[15,20] <27, Error, Syntax> - Syntax error : Unsupported SQL statement found: this parser does not support UPDATE statements. RuleStack=codeElement>unsupportedSqlStatement,  OffendingSymbol=[15,20:UPDATE]<SQL_UPDATE>
+Line 25[15,20] <27, Error, Syntax> - Syntax error : Unsupported SQL statement found: this parser does not support DELETE statements. RuleStack=codeElement>unsupportedSqlStatement,  OffendingSymbol=[15,20:DELETE]<SQL_DELETE>
+Line 30[15,21] <27, Error, Syntax> - Syntax error : Unsupported SQL statement found: this parser does not support DECLARE statements. RuleStack=codeElement>unsupportedSqlStatement,  OffendingSymbol=[15,21:DECLARE]<SQL_DECLARE>
+Line 35[15,18] <27, Error, Syntax> - Syntax error : Unsupported SQL statement found: this parser does not support OPEN statements. RuleStack=codeElement>unsupportedSqlStatement,  OffendingSymbol=[15,18:OPEN]<SQL_OPEN>
+Line 39[15,19] <27, Error, Syntax> - Syntax error : Unsupported SQL statement found: this parser does not support FETCH statements. RuleStack=codeElement>unsupportedSqlStatement,  OffendingSymbol=[15,19:FETCH]<SQL_FETCH>
+Line 43[15,19] <27, Error, Syntax> - Syntax error : Unsupported SQL statement found: this parser does not support CLOSE statements. RuleStack=codeElement>unsupportedSqlStatement,  OffendingSymbol=[15,19:CLOSE]<SQL_CLOSE>
+
+--- Sql Statements ---
+line 14: UnsupportedSqlStatement
+- SqlKeyword = [
+  - SqlKeyword[0] = I
+  - SqlKeyword[1] = N
+  - SqlKeyword[2] = S
+  - SqlKeyword[3] = E
+  - SqlKeyword[4] = R
+  - SqlKeyword[5] = T
+]
+line 19: UnsupportedSqlStatement
+- SqlKeyword = [
+  - SqlKeyword[0] = U
+  - SqlKeyword[1] = P
+  - SqlKeyword[2] = D
+  - SqlKeyword[3] = A
+  - SqlKeyword[4] = T
+  - SqlKeyword[5] = E
+]
+line 25: UnsupportedSqlStatement
+- SqlKeyword = [
+  - SqlKeyword[0] = D
+  - SqlKeyword[1] = E
+  - SqlKeyword[2] = L
+  - SqlKeyword[3] = E
+  - SqlKeyword[4] = T
+  - SqlKeyword[5] = E
+]
+line 30: UnsupportedSqlStatement
+- SqlKeyword = [
+  - SqlKeyword[0] = D
+  - SqlKeyword[1] = E
+  - SqlKeyword[2] = C
+  - SqlKeyword[3] = L
+  - SqlKeyword[4] = A
+  - SqlKeyword[5] = R
+  - SqlKeyword[6] = E
+]
+line 35: UnsupportedSqlStatement
+- SqlKeyword = [
+  - SqlKeyword[0] = O
+  - SqlKeyword[1] = P
+  - SqlKeyword[2] = E
+  - SqlKeyword[3] = N
+]
+line 39: UnsupportedSqlStatement
+- SqlKeyword = [
+  - SqlKeyword[0] = F
+  - SqlKeyword[1] = E
+  - SqlKeyword[2] = T
+  - SqlKeyword[3] = C
+  - SqlKeyword[4] = H
+]
+line 43: UnsupportedSqlStatement
+- SqlKeyword = [
+  - SqlKeyword[0] = C
+  - SqlKeyword[1] = L
+  - SqlKeyword[2] = O
+  - SqlKeyword[3] = S
+  - SqlKeyword[4] = E
+]
 line 47: RollbackStatement
 - SavePointClause = <NULL>

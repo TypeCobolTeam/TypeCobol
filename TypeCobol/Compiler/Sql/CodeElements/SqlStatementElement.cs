@@ -33,13 +33,6 @@ namespace TypeCobol.Compiler.Sql.CodeElements
                 case TokenType.SQL_SET:
                 case TokenType.SQL_TRUNCATE:
                 case TokenType.SQL_WHENEVER:
-                case TokenType.SQL_INSERT:
-                case TokenType.SQL_UPDATE:
-                case TokenType.SQL_DELETE:
-                case TokenType.SQL_DECLARE:
-                case TokenType.SQL_OPEN:
-                case TokenType.SQL_FETCH:
-                case TokenType.SQL_CLOSE:
                     return true;
                 default:
                     return false;

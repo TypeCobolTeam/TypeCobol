@@ -1,4 +1,5 @@
-﻿Line 16[19,19] <27, Error, Syntax> - Syntax error : no viable alternative at input 'a'
+﻿Line 5[19,24] <27, Error, Syntax> - Syntax error : Unsupported SQL statement found: this parser does not support DELETE statements.
+Line 16[19,19] <27, Error, Syntax> - Syntax error : no viable alternative at input 'a'
 Line 10[12,19] <37, Warning, General> - Warning: a End statement is not aligned with the matching opening statement
 --- Tokens ---
 ---------------------------------

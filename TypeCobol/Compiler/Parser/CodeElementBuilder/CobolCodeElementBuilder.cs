@@ -2467,7 +2467,9 @@ namespace TypeCobol.Compiler.Parser
         public override void EnterUnsupportedSqlStatement([NotNull] CodeElementsParser.UnsupportedSqlStatementContext context)
         {
             Context = context;
-            CodeElement = _sqlCodeElementBuilder.CreateUnsupportedSqlStatement(context);
+            var unsupportedSqlStatement = _sqlCodeElementBuilder.CreateUnsupportedSqlStatement(context);
+            CodeElement = unsupportedSqlStatement;
+            UnsupportedSqlStatementChecker.OnCodeElement(unsupportedSqlStatement, context);
         }
     }
 }
