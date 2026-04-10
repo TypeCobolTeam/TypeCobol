@@ -8,65 +8,20 @@ Line 39[15,19] <27, Error, Syntax> - Syntax error : Unsupported SQL statement fo
 Line 43[15,19] <27, Error, Syntax> - Syntax error : Unsupported SQL statement found: this parser does not support CLOSE statements. RuleStack=codeElement>unsupportedSqlStatement,  OffendingSymbol=[15,19:CLOSE]<SQL_CLOSE>
 
 --- Sql Statements ---
+line 10: CommitStatement
 line 14: UnsupportedSqlStatement
-- SqlKeyword = [
-  - SqlKeyword[0] = I
-  - SqlKeyword[1] = N
-  - SqlKeyword[2] = S
-  - SqlKeyword[3] = E
-  - SqlKeyword[4] = R
-  - SqlKeyword[5] = T
-]
+- SqlKeyword = INSERT
 line 19: UnsupportedSqlStatement
-- SqlKeyword = [
-  - SqlKeyword[0] = U
-  - SqlKeyword[1] = P
-  - SqlKeyword[2] = D
-  - SqlKeyword[3] = A
-  - SqlKeyword[4] = T
-  - SqlKeyword[5] = E
-]
+- SqlKeyword = UPDATE
 line 25: UnsupportedSqlStatement
-- SqlKeyword = [
-  - SqlKeyword[0] = D
-  - SqlKeyword[1] = E
-  - SqlKeyword[2] = L
-  - SqlKeyword[3] = E
-  - SqlKeyword[4] = T
-  - SqlKeyword[5] = E
-]
+- SqlKeyword = DELETE
 line 30: UnsupportedSqlStatement
-- SqlKeyword = [
-  - SqlKeyword[0] = D
-  - SqlKeyword[1] = E
-  - SqlKeyword[2] = C
-  - SqlKeyword[3] = L
-  - SqlKeyword[4] = A
-  - SqlKeyword[5] = R
-  - SqlKeyword[6] = E
-]
+- SqlKeyword = DECLARE
 line 35: UnsupportedSqlStatement
-- SqlKeyword = [
-  - SqlKeyword[0] = O
-  - SqlKeyword[1] = P
-  - SqlKeyword[2] = E
-  - SqlKeyword[3] = N
-]
+- SqlKeyword = OPEN
 line 39: UnsupportedSqlStatement
-- SqlKeyword = [
-  - SqlKeyword[0] = F
-  - SqlKeyword[1] = E
-  - SqlKeyword[2] = T
-  - SqlKeyword[3] = C
-  - SqlKeyword[4] = H
-]
+- SqlKeyword = FETCH
 line 43: UnsupportedSqlStatement
-- SqlKeyword = [
-  - SqlKeyword[0] = C
-  - SqlKeyword[1] = L
-  - SqlKeyword[2] = O
-  - SqlKeyword[3] = S
-  - SqlKeyword[4] = E
-]
+- SqlKeyword = CLOSE
 line 47: RollbackStatement
 - SavePointClause = <NULL>

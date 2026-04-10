@@ -1,4 +1,4 @@
-﻿using TypeCobol.Compiler.CodeElements;
+using TypeCobol.Compiler.CodeElements;
 
 namespace TypeCobol.Compiler.Sql.CodeElements.Statements
 {
@@ -9,6 +9,11 @@ namespace TypeCobol.Compiler.Sql.CodeElements.Statements
     {
         public CommitStatement() : base(CodeElementType.CommitStatement, StatementType.CommitStatement)
         {
+        }
+
+        public override bool VisitCodeElement(IASTVisitor astVisitor)
+        {
+            return base.VisitCodeElement(astVisitor) && astVisitor.Visit(this);
         }
     }
 }
