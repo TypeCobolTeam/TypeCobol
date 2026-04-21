@@ -1,0 +1,21 @@
+﻿--- Diagnostics ---
+Line 10[31,31] <27, Error, Syntax> - Syntax error : Found unexpected char '<', this syntax is not supported by this parser.
+Line 10[16,20] <27, Error, Syntax> - Syntax error : extraneous input 'WHERE' expecting {separator, numeric literal, character string, symbol, statement starting keyword, keyword, Formalized Comments elements, Sql statement starting keyword} RuleStack=,  OffendingSymbol=[16,20:WHERE]<SQL_WHERE>
+
+--- Sql Statements ---
+line 8: SelectStatement
+- FullSelect = FullSelect
+  - SubSelect = SubSelect
+    - SelectClause = SelectClause
+      - SelectionModifier = <NULL>
+      - Selections = [
+        - Selections[0] = StarSelection
+      ]
+    - FromClause = FromClause
+      - TableReferences = [
+        - TableReferences[0] = SingleTableReference
+          - TableOrViewName = TableViewCorrelationName
+            - Name = PROJECTS
+          - CorrelationClause = <NULL>
+      ]
+  - SubQuery = <NULL>

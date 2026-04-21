@@ -2013,7 +2013,7 @@ namespace TypeCobol.Compiler.Scanner
                     _sqlScanner = new SqlScanner(line, currentIndex, lastIndex, tokensLine, compilerOptions);
                 }
 
-                var sqlToken = _sqlScanner.GetTokenStartingFrom(currentIndex);
+                var sqlToken = _sqlScanner.GetTokenStartingFrom(currentIndex); // May be empty, it's ok this will be checked by caller method GetNextToken
                 currentIndex = _sqlScanner.CurrentIndex;
                 return sqlToken;
             }
