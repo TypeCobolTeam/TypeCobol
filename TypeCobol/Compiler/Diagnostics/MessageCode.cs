@@ -67,6 +67,7 @@ namespace TypeCobol.Compiler.Diagnostics
         InvalidCharInsidePseudoText = 55,
         DirectiveSyntaxWarning = 56,
         DirectiveSyntaxError = 57,
-        InvalidNumberOfCharsInHexaUTF8Literal = 58
+        InvalidNumberOfCharsInHexaUTF8Literal = 58,
+        FoundUnsupportedCharWhileScanning = 59
     }
 }

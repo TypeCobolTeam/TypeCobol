@@ -51,7 +51,7 @@ namespace TypeCobol.Compiler.Scanner
             if (token?.Length == 0)
             {
                 token = ScanOneChar(currentIndex, TokenType.InvalidToken);
-                tokensLine.AddDiagnostic(MessageCode.SyntaxErrorInParser, token, $"Found unexpected char '{token.Text}', this syntax is not supported by this parser.");
+                tokensLine.AddDiagnostic(MessageCode.FoundUnsupportedCharWhileScanning, token, token.Text, $"line text is '{tokensLine.SourceText}'.");
             }
 
             return token;
