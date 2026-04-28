@@ -885,6 +885,11 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         /// </summary>
         /// <param name="executeImmediate">The corresponding  ExecuteImmediate Statement Code Element</param>
         void OnExecuteImmediateStatement([NotNull] ExecuteImmediateStatement executeImmediate);
+        /// <summary>
+        /// Enter an Insert Statement Node
+        /// </summary>
+        /// <param name="insert">The corresponding Insert Statement Code Element</param>
+        void OnInsertStatement([NotNull] InsertStatement insert);
         #endregion
     }
 }

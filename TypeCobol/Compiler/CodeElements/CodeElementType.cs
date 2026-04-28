@@ -176,6 +176,7 @@
         GetDiagnosticsStatement,
         AlterSequenceStatement,
         ExecuteImmediateStatement,
+        InsertStatement,
 
         // [TYPECOBOL]
         LibraryCopy,
