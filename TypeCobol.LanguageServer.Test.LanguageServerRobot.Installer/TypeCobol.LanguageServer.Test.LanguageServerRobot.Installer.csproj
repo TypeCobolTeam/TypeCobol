@@ -12,7 +12,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="TypeCobol.LanguageServer.Robot.Monitor" Version="1.5.1" />
-		<PackageReference Include="TypeCobol.LanguageServerRobot" Version="1.8.1" />
+		<PackageReference Include="TypeCobol.LanguageServerRobot" Version="1.9.0" />
 	</ItemGroup>
 
 	<ItemGroup>

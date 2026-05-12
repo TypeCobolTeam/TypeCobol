@@ -94,12 +94,12 @@ public class UnstringStatement: StatementElement, VariableWriter {
             variablesWritten = new Dictionary<StorageArea, object>();
             if (ReceivingFields == null) return variablesWritten;
             string sending = SendingField == null? null : SendingField.ToString();
-            foreach(var field in ReceivingFields)
+            foreach(var @field in ReceivingFields)
             {
-                if (field.ReceivingField?.StorageArea == null) continue;
+                if (@field.ReceivingField?.StorageArea == null) continue;
         
-                if (!variablesWritten.ContainsKey(field.ReceivingField.StorageArea)) {
-                    variablesWritten.Add(field.ReceivingField.StorageArea, sending);
+                if (!variablesWritten.ContainsKey(@field.ReceivingField.StorageArea)) {
+                    variablesWritten.Add(@field.ReceivingField.StorageArea, sending);
                 }
                 
             }
