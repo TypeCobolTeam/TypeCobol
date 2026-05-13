@@ -4,6 +4,7 @@ using JetBrains.Annotations;
 using TypeCobol.Compiler.AntlrUtils;
 using TypeCobol.Compiler.CodeElements;
 using TypeCobol.Compiler.Directives;
+using TypeCobol.Compiler.Nodes;
 using TypeCobol.Compiler.Parser;
 using TypeCobol.Compiler.Parser.Generated;
 using TypeCobol.Compiler.Scanner;
@@ -163,6 +164,24 @@ namespace TypeCobol.Compiler.Diagnostics
             if (levelNumberValue == 01 || levelNumberValue == 77)
             {
                 DiagnosticUtils.AddError(codeElement, $"OCCURS cannot be specified on level {levelNumberValue}.", context);
+            }
+
+            // Check Max value cannot be zero or negative
+            var maxOcc = codeElement.MaxOccurencesCount?.Value;
+            if (maxOcc <=0 ) {
+                DiagnosticUtils.AddError(codeElement, $"The value ({maxOcc}) is not valid in an OCCURS.", context);
+            }
+            // Check Min value cannot be negative
+            var minOcc = codeElement.MinOccurencesCount?.Value;
+            if (minOcc < 0)
+            {
+                DiagnosticUtils.AddError(codeElement, $"The value ({minOcc}) is not valid in an OCCURS.", context);
+            }
+
+            // Check Min value cannot exceed Max value
+            if (minOcc > maxOcc)
+            {
+                DiagnosticUtils.AddError(codeElement, $"The 1st value ({minOcc}) must not exceed the 2nd one ({maxOcc}) in an OCCURS.", context);
             }
 
             // Create diagnostic for duplicate keys found by builder
