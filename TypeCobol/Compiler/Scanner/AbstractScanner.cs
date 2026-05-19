@@ -42,7 +42,20 @@ namespace TypeCobol.Compiler.Scanner
         /// Scan from current index and return the token found.
         /// </summary>
         /// <returns>Token instance, null if no token could be scanned.</returns>
-        public Token? GetNextToken() => GetTokenStartingFrom(currentIndex);
+        public Token? GetNextToken()
+        {
+            var token = GetTokenStartingFrom(currentIndex);
+
+            // Safety check: always avoid creating empty tokens otherwise the scanner will run on an infinite loop.
+            // The index MUST progress, so force scan an invalid token of length 1 instead of an empty one.
+            if (token?.Length == 0)
+            {
+                token = ScanOneChar(currentIndex, TokenType.InvalidToken);
+                tokensLine.AddDiagnostic(MessageCode.FoundUnsupportedCharWhileScanning, token, token.Text, $"line text is '{tokensLine.SourceText}'.");
+            }
+
+            return token;
+        }
 
         /// <summary>
         /// Scan from given index and return the token found.
