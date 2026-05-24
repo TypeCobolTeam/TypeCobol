@@ -2463,5 +2463,11 @@ namespace TypeCobol.Compiler.Parser
             CodeElement = executeImmediateStatement;
             ExecuteImmediateStatementChecker.OnCodeElement(executeImmediateStatement, context);
         }
+
+        public override void EnterInsertStatement([NotNull] CodeElementsParser.InsertStatementContext context)
+        {
+            Context = context;
+            CodeElement = _sqlCodeElementBuilder.CreateInsertStatement(context);
+        }
     }
 }
