@@ -1,8 +1,8 @@
 --- Diagnostics ---
-Line 10[25,30] <27, Error, Syntax> - Syntax error : The value (0) is not valid in an OCCURS. RuleStack=codeElement>dataDescriptionEntry>occursClause,  OffendingSymbol=[25,30:OCCURS]<OCCURS>
-Line 11[25,30] <27, Error, Syntax> - Syntax error : The value (-2) is not valid in an OCCURS. RuleStack=codeElement>dataDescriptionEntry>occursClause,  OffendingSymbol=[25,30:OCCURS]<OCCURS>
-Line 15[22,27] <27, Error, Syntax> - Syntax error : The value (-2) is not valid in an OCCURS. RuleStack=codeElement>dataDescriptionEntry>occursClause,  OffendingSymbol=[22,27:OCCURS]<OCCURS>
-Line 17[29,34] <27, Error, Syntax> - Syntax error : The 1st value (2) must not exceed the 2nd one (1) in an OCCURS. RuleStack=codeElement>dataDescriptionEntry>occursClause,  OffendingSymbol=[29,34:OCCURS]<OCCURS>
+Line 10[25,30] <27, Error, Syntax> - Syntax error : The max value ('0') is not valid in an OCCURS. RuleStack=codeElement>dataDescriptionEntry>occursClause,  OffendingSymbol=[25,30:OCCURS]<OCCURS>
+Line 11[25,30] <27, Error, Syntax> - Syntax error : The max value ('-2') is not valid in an OCCURS. RuleStack=codeElement>dataDescriptionEntry>occursClause,  OffendingSymbol=[25,30:OCCURS]<OCCURS>
+Line 15[22,27] <27, Error, Syntax> - Syntax error : The min value ('-2') is not valid in an OCCURS. RuleStack=codeElement>dataDescriptionEntry>occursClause,  OffendingSymbol=[22,27:OCCURS]<OCCURS>
+Line 17[29,34] <27, Error, Syntax> - Syntax error : The min value ('2') must not exceed the max value ('1') in an OCCURS. RuleStack=codeElement>dataDescriptionEntry>occursClause,  OffendingSymbol=[29,34:OCCURS]<OCCURS>
 --- Code Elements ---
 [[ProgramIdentification]] [8,21:IDENTIFICATION]<IDENTIFICATION> --> [28,28+:.]<PeriodSeparator>
 - ProgramName = TCOCCLVL
