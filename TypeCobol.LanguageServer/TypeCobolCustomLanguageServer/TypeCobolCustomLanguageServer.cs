@@ -237,6 +237,7 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
                 var csvResult = new GetDataLayoutCSVResult()
                 {
                     root = result.Root,
+                    expandedRowsCount = result.ExpandedRowsCount,
                     header = result.Header,
                     rows = result.Rows,
                     separator = SEPARATOR

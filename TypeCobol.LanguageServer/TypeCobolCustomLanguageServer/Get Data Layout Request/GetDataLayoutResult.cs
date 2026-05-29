@@ -29,6 +29,11 @@
         public string root { get; set; }
 
         /// <summary>
+        /// The rows count when all OCCURS are expanded
+        /// </summary>
+        public long expandedRowsCount { get; set; }
+
+        /// <summary>
         /// The table header
         /// </summary>
         public string header { get; set; }
