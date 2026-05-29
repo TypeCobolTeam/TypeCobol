@@ -720,8 +720,21 @@ namespace TypeCobol.Compiler.Nodes {
             }
         }
 
-        public long MinOccurencesCount { get { if (_CommonDataDesc != null && _CommonDataDesc.MinOccurencesCount != null) return _CommonDataDesc.MinOccurencesCount.Value; else return 1; } }
-        public long MaxOccurencesCount { get { return _CommonDataDesc != null && _CommonDataDesc.MaxOccurencesCount != null ? _CommonDataDesc.MaxOccurencesCount.Value : 1; } }
+        public long MinOccurencesCount { 
+            get 
+            {
+                long? minOccurences = _CommonDataDesc?.MinOccurencesCount?.Value;
+                return minOccurences >= 0 ? minOccurences.Value : 1;
+            } 
+        }
+        
+        public long MaxOccurencesCount { 
+            get 
+            {
+                long? maxOccurences = _CommonDataDesc?.MaxOccurencesCount?.Value;
+                return maxOccurences > 0 ? maxOccurences.Value : 1;
+            } 
+        }
 
 
         public NumericVariable OccursDependingOn { get { return _CommonDataDesc != null ? _CommonDataDesc.OccursDependingOn : null; } }

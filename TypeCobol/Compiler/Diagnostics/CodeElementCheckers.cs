@@ -165,6 +165,24 @@ namespace TypeCobol.Compiler.Diagnostics
                 DiagnosticUtils.AddError(codeElement, $"OCCURS cannot be specified on level {levelNumberValue}.", context);
             }
 
+            // Check Max value cannot be zero or negative
+            var maxOcc = codeElement.MaxOccurencesCount?.Value;
+            if (maxOcc <= 0 ) {
+                DiagnosticUtils.AddError(codeElement, $"The max value ('{maxOcc}') is not valid in an OCCURS.", context);
+            }
+            // Check Min value cannot be negative
+            var minOcc = codeElement.MinOccurencesCount?.Value;
+            if (minOcc < 0)
+            {
+                DiagnosticUtils.AddError(codeElement, $"The min value ('{minOcc}') is not valid in an OCCURS.", context);
+            }
+
+            // Check Min value cannot exceed Max value
+            if (minOcc > maxOcc)
+            {
+                DiagnosticUtils.AddError(codeElement, $"The min value ('{minOcc}') must not exceed the max value ('{maxOcc}') in an OCCURS.", context);
+            }
+
             // Create diagnostic for duplicate keys found by builder
             foreach (var duplicateSortingKeyReference in duplicateSortingKeysReferences)
             {
