@@ -150,10 +150,13 @@ namespace TypeCobol.LanguageServer
         {
             // Counting rows when OCCURS are expanded:
             // If a node is an OCCURS, it is counted as many times as its max OCCURS
-            // If a node is included in one or several OCCURS, it is counted as many times as the product of the cumulative max OCCURS
+            // And/or if a node is included in one or several OCCURS, it is counted as many times as the product of the cumulative max OCCURS
             // Otherwise, it is counted as one
-            // -> we maintain the product of the cumulative max OCCURS (as long as an OCCURS is ongoing)
+            // For example an OCCURS 5 included in an OCCURS 10 contains:
+            // data1 -> data1 should be counted 5*10=50 times
+            // data2 which is an OCCURS 2 -> data2 should be counted 5*10*2=100 times
             long expandedRowsCount = 0;
+            // Product of the cumulative max OCCURS (as long as an OCCURS is ongoing)
             long occursCumulativeProduct = 1;
 
             var rootDLN = DataLayoutNodeBuilder.From(program);
