@@ -66,5 +66,8 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
 
         [TestMethod]
         public void NestedPgm() => ExecuteTest("stackedAndNestedPgm");
+
+        [TestMethod]
+        public void MiscPgm() => ExecuteTest("miscPgm");
     }
 }
