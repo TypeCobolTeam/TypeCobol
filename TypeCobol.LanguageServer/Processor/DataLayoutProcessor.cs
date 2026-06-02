@@ -152,6 +152,7 @@ namespace TypeCobol.LanguageServer
             // If a node is an OCCURS, it is counted as many times as its max OCCURS
             // And/or if a node is included in one or several OCCURS, it is counted as many times as the product of the cumulative max OCCURS
             // Otherwise, it is counted as one
+            // Note: an OCCURS with the UNBOUNDED clause is also counted as one
             // For example an OCCURS 5 included in an OCCURS 10 contains:
             // data1 -> data1 should be counted 5*10=50 times
             // data2 which is an OCCURS 2 -> data2 should be counted 5*10*2=100 times
