@@ -10,6 +10,7 @@ namespace TypeCobol.LanguageServer.JsonRPC
     /// </summary>
     static class ErrorCodes
     {
+        public const int DataLayoutNotSupportedError = -32800;
         public const int ParseError = -32700;
         public const int InvalidRequest = -32600;
         public const int MethodNotFound = -32601;

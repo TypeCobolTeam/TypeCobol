@@ -69,5 +69,9 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
 
         [TestMethod]
         public void MiscPgm() => ExecuteTest("miscPgm");
+
+        [TestMethod]
+        // Test throwing a DataLayoutNotSupportedException
+        public void SyncInOccurs() => ExecuteTest("syncInOccurs");
     }
 }
