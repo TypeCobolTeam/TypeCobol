@@ -1,0 +1,4 @@
+{"line":10,"character":26}
+---------------------------------------------------------------------------------
+TypeCobol.LanguageServer.DataLayoutNotSupportedException
+Source not supported by DataLayout because it contains a data (SYNCED-VAR) using a SYNCHRONIZED clause and included in an OCCURS

@@ -196,6 +196,16 @@ namespace TypeCobol.LanguageServer
                     {
                         var childDLN = DataLayoutNodeBuilder.From(childDefinition, parentDLN, i);
 
+                        bool isSynchronized = childDefinition.Synchronized != null;
+                        if (isSynchronized && childDLN.OccursDimension > 0)
+                        {
+                            // SYNCHRONIZED clause used for a data included in an OCCURS
+                            // Possible slackBytes may be added at the end of each occurrence (not managed correctly by our parser)
+                            // It may result in wrong data length and positions -> it is better to throw an exception
+                            string errMsg = $"Source not supported by DataLayout because it contains a data ({childDefinition.Name}) using a SYNCHRONIZED clause and included in an OCCURS";
+                            throw new DataLayoutNotSupportedException(errMsg);
+                        }
+
                         // Ignore Generated 01 in expanded rows count
                         bool generated = childDLN.Flags.HasFlag(DataLayoutNodeFlags.Generated);
                         if (!generated)

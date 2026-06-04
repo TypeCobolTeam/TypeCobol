@@ -137,6 +137,11 @@ namespace TypeCobol.LanguageServer.TypeCobolCustomLanguageServerProtocol
                 var dataLayout = OnDidReceiveGetDataLayout((GetDataLayoutParams)parameters);
                 resultOrError = new ResponseResultOrError() { result = dataLayout };
             }
+            catch (DataLayoutNotSupportedException e)
+            {
+                NotifyException(e);
+                resultOrError = new ResponseResultOrError() { code = ErrorCodes.DataLayoutNotSupportedError, message = e.Message };
+            }
             catch (Exception e)
             {
                 NotifyException(e);
