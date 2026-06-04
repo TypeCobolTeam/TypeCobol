@@ -21,6 +21,7 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
             // Build actual result
             var actual = new StringBuilder();
             actual.AppendLine(processorResult.Root);
+            actual.AppendLine(processorResult.ExpandedRowsCount.ToString());
             actual.AppendLine(processorResult.Header);
             foreach (var row in processorResult.Rows)
             {
@@ -65,5 +66,8 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
 
         [TestMethod]
         public void NestedPgm() => ExecuteTest("stackedAndNestedPgm");
+
+        [TestMethod]
+        public void MiscPgm() => ExecuteTest("miscPgm");
     }
 }
