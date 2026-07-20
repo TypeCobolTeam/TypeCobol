@@ -114,6 +114,9 @@ namespace TypeCobol.LanguageServer
         [JsonIgnore]
         public DataLayoutNodeFlags Flags { get => (DataLayoutNodeFlags)dataValues[INDEX_FLAGS]; set => dataValues[INDEX_FLAGS] = value; }
 
+        [JsonIgnore]
+        public long MaxOccurs { get; set; }
+
         /// <summary>
         /// Array gathering all data values (to make Json more compact).
         /// Here is the matching between the array index and the data value:
