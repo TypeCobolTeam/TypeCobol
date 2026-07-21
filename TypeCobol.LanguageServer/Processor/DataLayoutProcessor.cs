@@ -279,6 +279,7 @@ namespace TypeCobol.LanguageServer
                 bool isNamed = !string.IsNullOrEmpty(dataDefinition.Name);
                 var name = isNamed ? dataDefinition.Name : FILLER;
                 int occursDimension = parent.OccursDimension + (incrementDimension ? 1 : 0);
+                // Max OCCURS: default value is different between DataLayout result (which uses 0 for non-OCCURS data) and DataDefinition (which uses 1)
                 long maxOccurs = dataDefinition.IsTableOccurence ? dataDefinition.MaxOccurencesCount : 0;
                 long start = dataDefinition.StartPosition;
                 long length = dataDefinition.PhysicalLength;
