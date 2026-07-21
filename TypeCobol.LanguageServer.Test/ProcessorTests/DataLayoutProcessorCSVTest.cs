@@ -69,5 +69,8 @@ namespace TypeCobol.LanguageServer.Test.ProcessorTests
 
         [TestMethod]
         public void MiscPgm() => ExecuteTest("miscPgm");
+
+        [TestMethod]
+        public void OccursPgm() => ExecuteTest("occursPgm");
     }
 }
