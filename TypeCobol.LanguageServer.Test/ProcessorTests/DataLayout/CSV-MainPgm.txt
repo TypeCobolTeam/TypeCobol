@@ -2,6 +2,6 @@
 ---------------------------------------------------------------------------------
 MAINPGM
 2
-LineNumber;NodeLevel;LevelNumber;VariableName;PictureTypeOrUsage;Start;End;Length
-6;0;1;main-group;GROUP;1;1;1
-7;1;5;main-var;PIC X;1;1;1
+LineNumber;NodeLevel;LevelNumber;VariableName;PictureTypeOrUsage;Start;End;Length;MaxOccurs
+6;0;1;main-group;GROUP;1;1;1;0
+7;1;5;main-var;PIC X;1;1;1;0

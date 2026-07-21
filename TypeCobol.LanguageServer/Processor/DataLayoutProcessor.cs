@@ -34,7 +34,7 @@ namespace TypeCobol.LanguageServer
             var (rootDLN, expandedRowsCount) = CollectDataLayoutNodesAtPosition(compilationUnit, position, ConvertToRow);
             var root = rootDLN.Name;
 
-            string header = $"LineNumber{separator}NodeLevel{separator}LevelNumber{separator}VariableName{separator}PictureTypeOrUsage{separator}Start{separator}End{separator}Length";
+            string header = $"LineNumber{separator}NodeLevel{separator}LevelNumber{separator}VariableName{separator}PictureTypeOrUsage{separator}Start{separator}End{separator}Length{separator}MaxOccurs";
             return (root, expandedRowsCount, header, rows.ToArray());
 
             void ConvertToRow(DataLayoutNode dataLayoutNode)
@@ -59,7 +59,8 @@ namespace TypeCobol.LanguageServer
                 var length = dataLayoutNode.Length;
                 AppendToRow(start);
                 AppendToRow(GetEnd());
-                row.Append(length);
+                AppendToRow(length);
+                row.Append(dataLayoutNode.MaxOccurs);
 
                 rows.Add(row.ToString());
 
@@ -278,6 +279,8 @@ namespace TypeCobol.LanguageServer
                 bool isNamed = !string.IsNullOrEmpty(dataDefinition.Name);
                 var name = isNamed ? dataDefinition.Name : FILLER;
                 int occursDimension = parent.OccursDimension + (incrementDimension ? 1 : 0);
+                // Max OCCURS: default value is different between DataLayout result (which uses 0 for non-OCCURS data) and DataDefinition (which uses 1)
+                long maxOccurs = dataDefinition.IsTableOccurence ? dataDefinition.MaxOccurencesCount : 0;
                 long start = dataDefinition.StartPosition;
                 long length = dataDefinition.PhysicalLength;
                 string copy = dataDefinition.CodeElement.FirstCopyDirective?.TextName;
@@ -293,6 +296,7 @@ namespace TypeCobol.LanguageServer
                     Name = name,
                     Declaration = declaration,
                     OccursDimension = occursDimension,
+                    MaxOccurs = maxOccurs,
                     Start = start,
                     Length = length,
                     Copy = copy,

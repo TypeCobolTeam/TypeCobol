@@ -2,4 +2,4 @@
 ---------------------------------------------------------------------------------
 empty
 0
-LineNumber;NodeLevel;LevelNumber;VariableName;PictureTypeOrUsage;Start;End;Length
+LineNumber;NodeLevel;LevelNumber;VariableName;PictureTypeOrUsage;Start;End;Length;MaxOccurs
