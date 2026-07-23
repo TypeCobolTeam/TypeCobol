@@ -932,8 +932,8 @@ namespace TypeCobol.LanguageServer
         /// <param name="compilationUnit">Compilation unit resulting from parsing the Copy or Program</param>
         /// <param name="position">Position determining the data to be considered (useful in case of the stacked/nested Programs)</param>
         /// <param name="separator">Separator for fields to use</param>
-        /// <returns>Tuple made of the root (the Copy or the Program containing the data), CSV header and CSV rows</returns>
-        public (string Root, string Header, string[] Rows) GetDataLayoutAsCSV(CompilationUnit compilationUnit, VsCodeProtocol.Position position, string separator)
+        /// <returns>Tuple made of the root (the Copy or the Program containing the data), the rows count when all OCCURS are expanded, the CSV header and CSV rows</returns>
+        public (string Root, long ExpandedRowsCount, string Header, string[] Rows) GetDataLayoutAsCSV(CompilationUnit compilationUnit, VsCodeProtocol.Position position, string separator)
         {
             return _dataLayoutProcessor.GetDataLayoutAsCSV(compilationUnit, position, separator);
         }

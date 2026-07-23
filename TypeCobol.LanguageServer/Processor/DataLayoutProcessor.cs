@@ -26,16 +26,16 @@ namespace TypeCobol.LanguageServer
         /// <param name="compilationUnit">Compilation unit resulting from parsing the Copy or Program</param>
         /// <param name="position">Position determining the data to be considered (useful in case of the stacked/nested Programs)</param>
         /// <param name="separator">Separator for fields to use</param>
-        /// <returns>Tuple made of the root (the Copy or the Program containing the data), CSV header and CSV rows</returns>
-        public (string Root, string Header, string[] Rows) GetDataLayoutAsCSV(CompilationUnit compilationUnit, Position position, string separator)
+        /// <returns>Tuple made of the root (the Copy or the Program containing the data), the rows count when all OCCURS are expanded, the CSV header and CSV rows</returns>
+        public (string Root, long ExpandedRowsCount, string Header, string[] Rows) GetDataLayoutAsCSV(CompilationUnit compilationUnit, Position position, string separator)
         {
             var rows = new List<string>();
             var row = new StringBuilder();
-            var rootDLN = CollectDataLayoutNodesAtPosition(compilationUnit, position, ConvertToRow);
+            var (rootDLN, expandedRowsCount) = CollectDataLayoutNodesAtPosition(compilationUnit, position, ConvertToRow);
             var root = rootDLN.Name;
 
-            string header = $"LineNumber{separator}NodeLevel{separator}LevelNumber{separator}VariableName{separator}PictureTypeOrUsage{separator}Start{separator}End{separator}Length";
-            return (root, header, rows.ToArray());
+            string header = $"LineNumber{separator}NodeLevel{separator}LevelNumber{separator}VariableName{separator}PictureTypeOrUsage{separator}Start{separator}End{separator}Length{separator}MaxOccurs";
+            return (root, expandedRowsCount, header, rows.ToArray());
 
             void ConvertToRow(DataLayoutNode dataLayoutNode)
             {
@@ -59,7 +59,8 @@ namespace TypeCobol.LanguageServer
                 var length = dataLayoutNode.Length;
                 AppendToRow(start);
                 AppendToRow(GetEnd());
-                row.Append(length);
+                AppendToRow(length);
+                row.Append(dataLayoutNode.MaxOccurs);
 
                 rows.Add(row.ToString());
 
@@ -91,20 +92,20 @@ namespace TypeCobol.LanguageServer
         /// <returns>Root data layout node</returns>
         public DataLayoutNode GetDataLayoutAsTree(CompilationUnit compilationUnit, Position position)
         {
-            return CollectDataLayoutNodesAtPosition(compilationUnit, position, null);
+            return CollectDataLayoutNodesAtPosition(compilationUnit, position, null).rootDLN;
         }
 
-        private DataLayoutNode CollectDataLayoutNodesAtPosition(CompilationUnit compilationUnit, Position position, Action<DataLayoutNode> convert)
+        private (DataLayoutNode rootDLN, long expandedRowsCount) CollectDataLayoutNodesAtPosition(CompilationUnit compilationUnit, Position position, Action<DataLayoutNode> convert)
         {
             var program = GetProgram(compilationUnit, position);
             if (program == null)
             {
-                // Could not find target program, return empty node
-                return new()
+                // Could not find target program, return empty node and expanded rows count = 0
+                return (new()
                 {
                     Name = compilationUnit.TextSourceInfo.Name,
                     children = []
-                };
+                }, 0);
             }
 
             return CollectInProgram(program, convert);
@@ -146,8 +147,20 @@ namespace TypeCobol.LanguageServer
             return program;
         }
 
-        private DataLayoutNode CollectInProgram(Program program, Action<DataLayoutNode> convert)
+        private (DataLayoutNode rootDLN, long expandedRowsCount) CollectInProgram(Program program, Action<DataLayoutNode> convert)
         {
+            // Counting rows when OCCURS are expanded:
+            // If a node is an OCCURS, it is counted as many times as its max OCCURS
+            // And/or if a node is included in one or several OCCURS, it is counted as many times as the product of the cumulative max OCCURS
+            // Otherwise, it is counted as one
+            // Note: an OCCURS with the UNBOUNDED clause is also counted as one
+            // For example an OCCURS 5 included in an OCCURS 10 contains:
+            // data1 -> data1 should be counted 5*10=50 times
+            // data2 which is an OCCURS 2 -> data2 should be counted 5*10*2=100 times
+            long expandedRowsCount = 0;
+            // Product of the cumulative max OCCURS (as long as an OCCURS is ongoing)
+            long occursCumulativeProduct = 1;
+
             var rootDLN = DataLayoutNodeBuilder.From(program);
 
             DataDivision dataDivision = program.Children.OfType<DataDivision>().FirstOrDefault();
@@ -173,7 +186,7 @@ namespace TypeCobol.LanguageServer
                 }
             }
 
-            return rootDLN;
+            return (rootDLN, expandedRowsCount);
 
             void CollectDataLayoutNodes(Node parentNode, DataLayoutNode parentDLN)
             {
@@ -183,6 +196,20 @@ namespace TypeCobol.LanguageServer
                     if (child is DataDefinition childDefinition && IsInScope(childDefinition))
                     {
                         var childDLN = DataLayoutNodeBuilder.From(childDefinition, parentDLN, i);
+
+                        // Ignore Generated 01 in expanded rows count
+                        bool generated = childDLN.Flags.HasFlag(DataLayoutNodeFlags.Generated);
+                        if (!generated)
+                        {
+                            if (childDefinition.IsTableOccurence)
+                            {
+                                // Add max OCCURS in cumulative product
+                                occursCumulativeProduct *= childDefinition.MaxOccurencesCount;
+                            }
+
+                            expandedRowsCount += occursCumulativeProduct;
+                        }
+
                         parentDLN.children.Add(childDLN);
 
                         convert?.Invoke(childDLN);
@@ -190,6 +217,12 @@ namespace TypeCobol.LanguageServer
                         if (childDefinition.Children.Count > 0)
                         {
                             CollectDataLayoutNodes(child, childDLN);
+                        }
+
+                        if (!generated && childDefinition.IsTableOccurence)
+                        {
+                            // Remove max OCCURS from cumulative product
+                            occursCumulativeProduct /= childDefinition.MaxOccurencesCount;
                         }
                     }
                 }
@@ -246,6 +279,8 @@ namespace TypeCobol.LanguageServer
                 bool isNamed = !string.IsNullOrEmpty(dataDefinition.Name);
                 var name = isNamed ? dataDefinition.Name : FILLER;
                 int occursDimension = parent.OccursDimension + (incrementDimension ? 1 : 0);
+                // Max OCCURS: default value is different between DataLayout result (which uses 0 for non-OCCURS data) and DataDefinition (which uses 1)
+                long maxOccurs = dataDefinition.IsTableOccurence ? dataDefinition.MaxOccurencesCount : 0;
                 long start = dataDefinition.StartPosition;
                 long length = dataDefinition.PhysicalLength;
                 string copy = dataDefinition.CodeElement.FirstCopyDirective?.TextName;
@@ -261,6 +296,7 @@ namespace TypeCobol.LanguageServer
                     Name = name,
                     Declaration = declaration,
                     OccursDimension = occursDimension,
+                    MaxOccurs = maxOccurs,
                     Start = start,
                     Length = length,
                     Copy = copy,
