@@ -248,6 +248,7 @@ terminal TypeCobol.Compiler.Sql.CodeElements.Statements.SetAssignmentStatement S
 terminal TypeCobol.Compiler.Sql.CodeElements.Statements.GetDiagnosticsStatement GetDiagnosticsStatement;
 terminal TypeCobol.Compiler.Sql.CodeElements.Statements.AlterSequenceStatement AlterSequenceStatement;
 terminal TypeCobol.Compiler.Sql.CodeElements.Statements.ExecuteImmediateStatement ExecuteImmediateStatement;
+terminal TypeCobol.Compiler.Sql.CodeElements.Statements.InsertStatement InsertStatement;
 
 
 terminal TypeCobol.Compiler.CodeElements.LibraryCopyCodeElement LibraryCopy;
@@ -831,6 +832,8 @@ sqlStatement ::= CommitStatement:stmt
 {: my_parser.Builder.OnAlterSequenceStatement(stmt); :}
 |	ExecuteImmediateStatement:stmt
 {: my_parser.Builder.OnExecuteImmediateStatement(stmt); :}
+|	InsertStatement:stmt
+{: my_parser.Builder.OnInsertStatement(stmt); :}
 ;
 
 execStatementEnd ::= ExecStatementEnd:stmt

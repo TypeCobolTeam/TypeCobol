@@ -894,5 +894,6 @@ namespace TypeCobol.Compiler.CupParser.NodeBuilder
         {
 
         }
+        public void OnInsertStatement([NotNull] InsertStatement insert) { }
     }
 }

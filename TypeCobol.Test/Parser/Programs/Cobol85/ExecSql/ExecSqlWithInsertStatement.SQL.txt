@@ -1,0 +1,31 @@
+--- Diagnostics ---
+Line 22[26,26] <27, Error, Syntax> - Syntax error : mismatched input ',' expecting '.' RuleStack=codeElement>insertStatement>fullselect>subselect>sql_selectClause>selections>selection>tableOrViewAllColumnsSelection>dot,  OffendingSymbol=[26,26:,]<SQL_CommaSeparator>
+Line 22[32,35] <27, Error, Syntax> - Syntax error : mismatched input 'FROM' expecting '.' RuleStack=codeElement>insertStatement>fullselect>subselect>sql_selectClause>selections>selection>tableOrViewAllColumnsSelection>dot,  OffendingSymbol=[32,35:FROM]<SQL_FROM>
+
+--- Sql Statements ---
+line 11: InsertStatement
+- TableName = EMPLOYEE
+- Columns = [NAME, AGE]
+- HasSubselect = False
+- HostVariables:
+  - IN WS-NAME -> NAME
+  - IN WS-AGE -> AGE
+line 16: InsertStatement
+- TableName = HR.EMPLOYEE
+- Columns = [SALARY]
+- HasSubselect = False
+- HostVariables:
+  - IN WS-SALARY -> SALARY
+line 21: InsertStatement
+- TableName = ARCHIVE.EMPLOYEE
+- Columns = [NAME, AGE]
+- HasSubselect = True
+- HostVariables = <NONE>
+line 26: InsertStatement
+- TableName = EMPLOYEE
+- Columns = <NULL>
+- HasSubselect = False
+- HostVariables:
+  - IN WS-NAME -> <NULL>
+  - IN WS-AGE -> <NULL>
+  - IN WS-SALARY -> <NULL>

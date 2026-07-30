@@ -28,6 +28,10 @@ namespace TypeCobol.Compiler.Sql.Model
                     //Special case for QualifiedSymbolReference which is also IEnumerable, we want to use SymbolReference.ToString() here
                     output.WriteLine(symbolReference.ToString());
                     break;
+                case string str:
+                    //string is IEnumerable<char> but we want to dump it as a single value
+                    output.WriteLine(str);
+                    break;
                 case System.Collections.IEnumerable enumerable:
                 {
                     output.WriteLine("[");
